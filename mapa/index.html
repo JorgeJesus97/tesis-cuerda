@@ -1,0 +1,1529 @@
+<!doctype html><html><head><meta charset=utf8><meta name=viewport content="width=device-width,initial-scale=1,viewport-fit=cover"><style>:root{color-scheme:light;box-sizing:border-box;padding-top:env(safe-area-inset-top,0px);padding-bottom:env(safe-area-inset-bottom,0px)}html{scroll-padding-top:env(safe-area-inset-top,0px)}body{margin:0;padding:0;font:14px -apple-system,BlinkMacSystemFont,sans-serif;background:#fff;color:#000}img{max-width:100%}[hidden]:not([hidden=until-found i]){display:none!important}</style><style>.ceja a{color:inherit;text-decoration:underline;text-decoration-thickness:1px;text-underline-offset:3px}.ceja a:hover{color:var(--tinta)}</style>
+</head><body>
+<title>Mapa de los tres casos</title>
+<meta name="claude:viewport-fit-sides" content="cover">
+<link rel="preconnect" href="https://fonts.googleapis.com">
+<link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+<link rel="stylesheet" href="https://fonts.googleapis.com/css2?family=Barlow:ital,wght@0,400;0,500;0,600;1,400&family=Barlow+Semi+Condensed:wght@500;600;700&family=IBM+Plex+Mono:wght@400;500&display=swap">
+<style>
+/* Diseño: el mismo banco de ensayo de las consolas (papel, tinta pizarra, Barlow e
+   IBM Plex Mono). Arriba, el plano alfa-mu como índice; al centro, el mapa en tres
+   columnas I | III | II, con el caso general al medio y sus límites hacia los lados;
+   abajo, la tabla de hilos que cruzan los tres casos. Caso I aqua (ondas), Caso II
+   azul (trayectoria), Caso III pizarra (el caso general). Ámbar para lo resaltado. */
+:root {
+  --papel: #EDF0F3;
+  --panel: #FBFCFD;
+  --tinta: #17202A;
+  --tinta-2: #46515E;
+  --tinta-3: #76808C;
+  --linea: #D4DAE1;
+  --linea-fuerte: #AEB8C3;
+  --mm: #E6EBF1;
+  --mm-mayor: #D9E0E8;
+  --reposo: #E3E7EC;
+  --chip: #E6EAEF;
+  --mando: #17202A;
+  --mando-texto: #F6F8FA;
+  --foco: #2A78D6;
+  --resalte: #E1E8F0;
+  --cuerda: #EB6834;
+  --c1: #1BAF7A;
+  --c1-tinta: #127A55;
+  --c1-suave: #E1F3EB;
+  --c2: #2A78D6;
+  --c2-tinta: #1D5DAE;
+  --c2-suave: #E2EDFB;
+  --c3: #46515E;
+  --c3-tinta: #17202A;
+  --c3-suave: #E4E8ED;
+  --consola-fondo: #F3F5F8;
+  --consola-borde: #98A3AF;
+  --enlace: #9EA9B5;
+  --trama: rgba(23, 32, 42, 0.42);
+  --hilo: #FFF2D2;
+  --hilo-borde: #D49A2A;
+  --f-display: "Barlow Semi Condensed", "Barlow", "Arial Narrow", system-ui, -apple-system, "Segoe UI", Roboto, Arial, sans-serif;
+  --f-texto: "Barlow", system-ui, -apple-system, "Segoe UI", Roboto, Helvetica, Arial, sans-serif;
+  --f-datos: "IBM Plex Mono", ui-monospace, SFMono-Regular, Menlo, Consolas, "Liberation Mono", monospace;
+  --fila-gap: 26px;
+}
+@media (prefers-color-scheme: dark) {
+  :root:not([data-theme="light"]) {
+    --papel: #0C1117;
+    --panel: #131A22;
+    --tinta: #E3E8EE;
+    --tinta-2: #A8B3BF;
+    --tinta-3: #7B8693;
+    --linea: #263240;
+    --linea-fuerte: #3D4A5A;
+    --mm: #19222C;
+    --mm-mayor: #222D39;
+    --reposo: #19212A;
+    --chip: #1C2631;
+    --mando: #E3E8EE;
+    --mando-texto: #0C1117;
+    --foco: #3987E5;
+    --resalte: #22303F;
+    --cuerda: #D95926;
+    --c1: #199E70;
+    --c1-tinta: #3FC795;
+    --c1-suave: #10271F;
+    --c2: #3987E5;
+    --c2-tinta: #7BB0F0;
+    --c2-suave: #122338;
+    --c3: #A8B3BF;
+    --c3-tinta: #E3E8EE;
+    --c3-suave: #1D2631;
+    --consola-fondo: #161E27;
+    --consola-borde: #4C5969;
+    --enlace: #4C5968;
+    --trama: rgba(227, 232, 238, 0.40);
+    --hilo: #2E2614;
+    --hilo-borde: #B9832A;
+    color-scheme: dark;
+  }
+}
+:root[data-theme="dark"] {
+  --papel: #0C1117;
+  --panel: #131A22;
+  --tinta: #E3E8EE;
+  --tinta-2: #A8B3BF;
+  --tinta-3: #7B8693;
+  --linea: #263240;
+  --linea-fuerte: #3D4A5A;
+  --mm: #19222C;
+  --mm-mayor: #222D39;
+  --reposo: #19212A;
+  --chip: #1C2631;
+  --mando: #E3E8EE;
+  --mando-texto: #0C1117;
+  --foco: #3987E5;
+  --resalte: #22303F;
+  --cuerda: #D95926;
+  --c1: #199E70;
+  --c1-tinta: #3FC795;
+  --c1-suave: #10271F;
+  --c2: #3987E5;
+  --c2-tinta: #7BB0F0;
+  --c2-suave: #122338;
+  --c3: #A8B3BF;
+  --c3-tinta: #E3E8EE;
+  --c3-suave: #1D2631;
+  --consola-fondo: #161E27;
+  --consola-borde: #4C5969;
+  --enlace: #4C5968;
+  --trama: rgba(227, 232, 238, 0.40);
+  --hilo: #2E2614;
+  --hilo-borde: #B9832A;
+  color-scheme: dark;
+}
+
+*, *::before, *::after { box-sizing: border-box; }
+body {
+  margin: 0;
+  background: var(--papel);
+  color: var(--tinta);
+  font-family: var(--f-texto);
+  font-size: 15px;
+  line-height: 1.5;
+  -webkit-font-smoothing: antialiased;
+}
+.pagina {
+  max-width: 1380px;
+  margin: 0 auto;
+  padding-left: max(16px, env(safe-area-inset-left, 0px));
+  padding-right: max(16px, env(safe-area-inset-right, 0px));
+  padding-block: 22px 48px;
+}
+.nw { white-space: nowrap; }
+a { color: inherit; }
+button { font-family: inherit; }
+
+/* ---------- Cabecera ---------- */
+.cabecera { display: grid; gap: 4px; margin-bottom: 22px; }
+.cab-fila { display: flex; flex-wrap: wrap; justify-content: space-between; align-items: center; gap: 6px 16px; }
+.ceja { margin: 0; font: 600 12px/1.2 var(--f-display); letter-spacing: .12em; text-transform: uppercase; color: var(--tinta-3); }
+.nav-casos { display: inline-flex; border: 1px solid var(--linea); border-radius: 5px; overflow: hidden; }
+.nav-casos a, .nav-casos span {
+  font: 600 13px/1 var(--f-display);
+  letter-spacing: .06em;
+  text-transform: uppercase;
+  padding: 7px 12px;
+  color: var(--tinta-2);
+  text-decoration: none;
+  border-left: 1px solid var(--linea);
+}
+.nav-casos > :first-child { border-left: 0; }
+.nav-casos a:hover { color: var(--tinta); background: var(--chip); }
+.nav-casos [aria-current="page"] { background: var(--mando); color: var(--mando-texto); }
+h1 { margin: 0; font: 700 clamp(28px, 3.6vw, 40px)/1.06 var(--f-display); letter-spacing: -.005em; text-wrap: balance; }
+.bajada { margin: 8px 0 0; max-width: 80ch; color: var(--tinta-2); }
+.comun-titulo { margin: 16px 0 0; font: 600 12px/1.2 var(--f-display); letter-spacing: .12em; text-transform: uppercase; color: var(--tinta-3); }
+.comun { margin: 8px 0 0; padding: 0; list-style: none; display: flex; flex-wrap: wrap; gap: 8px; }
+.comun li { display: grid; gap: 1px; padding: 6px 10px 7px; border: 1px solid var(--linea); border-radius: 5px; background: var(--panel); min-width: 0; }
+.comun .def { font-size: 15px; color: var(--tinta); }
+.comun small { font-size: 12px; line-height: 1.3; color: var(--tinta-3); }
+.comun li.titulo-comun { border: 0; background: none; padding-left: 0; align-content: center; }
+.comun li.titulo-comun span { font: 600 12px/1.2 var(--f-display); letter-spacing: .12em; text-transform: uppercase; color: var(--tinta-3); }
+.leyenda-casos { display: flex; flex-wrap: wrap; gap: 6px 18px; margin: 12px 0 0; padding: 0; list-style: none; font-size: 13px; color: var(--tinta-2); }
+.leyenda-casos li { display: inline-flex; align-items: center; gap: 7px; }
+
+/* Marcas de caso, números de ecuación y etiqueta de consola */
+.marca {
+  display: inline-flex; align-items: center; justify-content: center;
+  min-width: 26px; height: 22px; padding: 0 5px;
+  font: 700 12.5px/1 var(--f-display); letter-spacing: .04em;
+  border-radius: 4px; color: var(--panel); flex: none;
+}
+.marca.m1 { background: var(--c1); }
+.marca.m2 { background: var(--c2); }
+.marca.m3 { background: var(--c3); }
+.num {
+  flex: none;
+  font: 500 11.5px/1.35 var(--f-datos);
+  color: var(--tinta-2);
+  border: 1px solid var(--linea);
+  border-radius: 3px;
+  padding: 1px 5px;
+  text-align: center;
+  white-space: nowrap;
+  font-variant-numeric: tabular-nums;
+}
+.tag {
+  display: inline-block;
+  font: 500 10.5px/1.5 var(--f-datos);
+  letter-spacing: .06em;
+  text-transform: uppercase;
+  color: var(--tinta-2);
+  border: 1px dashed var(--consola-borde);
+  border-radius: 3px;
+  padding: 0 5px;
+  margin-right: 6px;
+  vertical-align: 1px;
+  white-space: nowrap;
+}
+
+/* Botones y controles comunes */
+.btn {
+  display: inline-flex; align-items: center; gap: 6px;
+  font: 600 12.5px/1 var(--f-display); letter-spacing: .05em; text-transform: uppercase;
+  border-radius: 4px; padding: 7px 10px; cursor: pointer;
+  background: transparent; color: var(--tinta); border: 1px solid var(--linea);
+}
+.btn:hover { border-color: var(--tinta-3); }
+.btn:focus-visible, .chip:focus-visible, .elem-btn:focus-visible, .salto:focus-visible { outline: 2px solid var(--foco); outline-offset: 2px; }
+.casilla { display: inline-flex; align-items: center; gap: 6px; font-size: 13.5px; color: var(--tinta-2); cursor: pointer; }
+.casilla input { accent-color: var(--mando); width: 16px; height: 16px; margin: 0; }
+
+/* Secciones */
+.seccion { margin-top: 34px; }
+.sec-cab { display: grid; gap: 6px; margin-bottom: 14px; }
+.sec-cab h2 { margin: 0; font: 700 24px/1.12 var(--f-display); letter-spacing: .01em; text-wrap: balance; }
+.sec-cab p { margin: 0; max-width: 84ch; color: var(--tinta-2); font-size: 14.5px; }
+
+/* ---------- 1. Plano ---------- */
+.plano-banda {
+  display: grid;
+  grid-template-columns: minmax(0, 1fr) 360px;
+  gap: 16px 22px;
+  align-items: start;
+}
+.instrumento { background: var(--panel); border: 1px solid var(--linea); border-radius: 6px; padding: 12px 14px; min-width: 0; }
+.instr-cab { display: flex; flex-wrap: wrap; align-items: baseline; justify-content: space-between; gap: 2px 16px; margin-bottom: 6px; }
+.instr-cab h3 { margin: 0; font: 600 15px/1.25 var(--f-display); letter-spacing: .07em; text-transform: uppercase; }
+.insignia { font: 500 12px/1.4 var(--f-datos); color: var(--tinta-2); border: 1px solid var(--linea); border-radius: 4px; padding: 1px 7px; white-space: nowrap; }
+.lienzo-plano { overflow-x: auto; overflow-y: hidden; }
+#plano-svg { display: block; width: 100%; height: auto; }
+.plano-pie { display: flex; flex-wrap: wrap; gap: 4px 16px; margin: 6px 0 0; padding: 0; list-style: none; font-size: 12.5px; color: var(--tinta-2); }
+.plano-pie li { display: inline-flex; align-items: center; gap: 6px; }
+.plano-pie svg { width: 26px; height: 12px; flex: none; }
+.lado-plano { display: grid; gap: 12px; min-width: 0; align-content: start; }
+.elementos { list-style: none; margin: 0; padding: 0; display: grid; gap: 6px; }
+.elem-btn {
+  width: 100%;
+  display: grid;
+  grid-template-columns: 30px minmax(0, 1fr);
+  gap: 1px 10px;
+  align-items: center;
+  text-align: left;
+  padding: 7px 10px;
+  border: 1px solid var(--linea);
+  border-radius: 6px;
+  background: var(--panel);
+  color: var(--tinta);
+  cursor: pointer;
+}
+.elem-btn:hover, .elem-btn.sobre { border-color: var(--tinta-3); }
+.elem-btn[aria-pressed="true"] { border-color: var(--tinta); box-shadow: inset 0 0 0 1px var(--tinta); }
+.elem-btn .muestra { grid-row: span 2; width: 30px; height: 22px; }
+.elem-btn b { font: 600 14.5px/1.2 var(--f-display); letter-spacing: .03em; }
+.elem-btn small { font-size: 12.5px; line-height: 1.3; color: var(--tinta-2); }
+.leyenda-elem { background: var(--panel); border: 1px solid var(--linea); border-left: 3px solid var(--tinta-3); border-radius: 4px; padding: 10px 12px; display: grid; gap: 8px; }
+.leyenda-elem[data-elem="caso1"] { border-left-color: var(--c1); }
+.leyenda-elem[data-elem="caso2"] { border-left-color: var(--c2); }
+.leyenda-elem[data-elem="zona"] { border-left-color: var(--hilo-borde); }
+.leyenda-elem h4 { margin: 0; font: 600 15px/1.2 var(--f-display); letter-spacing: .03em; }
+.leyenda-elem p { margin: 0; font-size: 13.5px; color: var(--tinta-2); }
+.leyenda-elem .acciones { display: flex; flex-wrap: wrap; gap: 6px; }
+
+/* SVG del plano */
+.p-interior { fill: var(--panel); }
+.p-super { fill: var(--reposo); }
+.p-rejilla line { stroke: var(--mm-mayor); stroke-width: 1; }
+.p-trama { stroke: var(--trama); stroke-width: 1.3; }
+.p-zona { fill: url(#trama); }
+.p-frontera { fill: none; stroke: var(--tinta); stroke-width: 1.6; }
+.p-lam { fill: none; stroke: var(--c2); stroke-width: 1.2; opacity: .6; }
+.p-lam6 { fill: none; stroke: var(--c2-tinta); stroke-width: 2; stroke-dasharray: 7 4; }
+.p-critica { stroke: var(--tinta); stroke-width: 1.8; }
+.p-golpe { fill: transparent; }
+.p-caso2 { fill: var(--c2-suave); stroke: var(--c2); stroke-width: 1.6; }
+.p-caso1 { fill: var(--c1-suave); stroke: var(--c1); stroke-width: 1.6; }
+.p-esquina { fill: var(--tinta); stroke: var(--panel); stroke-width: 2; }
+.p-marco { fill: none; stroke: var(--tinta-3); stroke-width: 1; }
+.p-eje { font: 500 12px var(--f-datos); fill: var(--tinta-3); }
+.p-titulo-eje { font: 500 13px var(--f-texto); fill: var(--tinta-2); }
+.p-txt { font: 500 13px var(--f-texto); fill: var(--tinta-2); }
+.p-txt-chico { font: 500 12px var(--f-texto); fill: var(--tinta-2); }
+.p-rotulo { font: 700 18px var(--f-display); letter-spacing: .03em; fill: var(--c3-tinta); }
+.p-rotulo.r1 { fill: var(--c1-tinta); font-size: 14px; }
+.p-rotulo.r2 { fill: var(--c2-tinta); font-size: 14px; }
+.p-lam-txt { font: 600 12.5px var(--f-texto); fill: var(--c2-tinta); }
+.halo { paint-order: stroke; stroke: var(--panel); stroke-width: 4px; stroke-linejoin: round; }
+.halo-reposo { paint-order: stroke; stroke: var(--reposo); stroke-width: 4px; stroke-linejoin: round; }
+.p-marca circle { fill: var(--tinta); stroke: var(--panel); stroke-width: 2; }
+.p-marca text { font: 700 11px var(--f-display); fill: var(--panel); }
+.region { cursor: pointer; }
+.region:hover .p-interior, .region.elegida .p-interior { fill: var(--resalte); }
+.region:hover .p-super, .region.elegida .p-super { fill: var(--mm-mayor); }
+.region:hover .p-caso1, .region.elegida .p-caso1 { stroke-width: 3; }
+.region:hover .p-caso2, .region.elegida .p-caso2 { stroke-width: 3; }
+.region:hover .p-frontera, .region.elegida .p-frontera { stroke-width: 3; stroke: var(--hilo-borde); }
+.region:hover .p-critica, .region.elegida .p-critica { stroke-width: 3.4; }
+.region:hover .p-esquina, .region.elegida .p-esquina { stroke: var(--hilo-borde); stroke-width: 3; }
+.p-sec { pointer-events: none; }
+svg.estrecho .p-txt { font-size: 14.5px; }
+svg.estrecho .p-txt-chico, svg.estrecho .p-lam-txt { font-size: 13.5px; }
+svg.estrecho .p-eje { font-size: 13px; }
+svg.estrecho .p-titulo-eje { font-size: 14px; }
+svg.estrecho .solo-ancho { display: none; }
+
+/* ---------- 2. Mapa ---------- */
+.barra-mapa { display: flex; flex-wrap: wrap; align-items: center; gap: 8px 14px; margin-bottom: 12px; }
+.chips { display: flex; flex-wrap: wrap; gap: 6px; margin: 0; padding: 0; list-style: none; }
+.chips-titulo { font: 600 12px/1.2 var(--f-display); letter-spacing: .1em; text-transform: uppercase; color: var(--tinta-3); }
+.chip {
+  font: 600 12.5px/1 var(--f-display); letter-spacing: .04em;
+  padding: 6px 10px; border-radius: 999px;
+  border: 1px solid var(--linea); background: var(--panel); color: var(--tinta-2);
+  cursor: pointer;
+}
+.chip:hover { border-color: var(--tinta-3); color: var(--tinta); }
+.chip[aria-pressed="true"] { background: var(--hilo); border-color: var(--hilo-borde); color: var(--tinta); }
+.estado { margin: 0 0 12px; font-size: 13.5px; color: var(--tinta); background: var(--hilo); border: 1px solid var(--hilo-borde); border-radius: 4px; padding: 6px 10px; display: flex; flex-wrap: wrap; align-items: center; gap: 6px 12px; }
+.estado button { font: 600 12px/1 var(--f-display); letter-spacing: .05em; text-transform: uppercase; background: transparent; border: 1px solid var(--hilo-borde); border-radius: 3px; padding: 4px 8px; color: var(--tinta); cursor: pointer; }
+.seg-caso { display: none; border: 1px solid var(--linea); border-radius: 5px; overflow: hidden; margin-bottom: 12px; }
+.seg-caso label { position: relative; flex: 1 1 0; display: flex; min-width: 0; }
+.seg-caso input { position: absolute; opacity: 0; inset: 0; margin: 0; cursor: pointer; }
+.seg-caso span { display: flex; align-items: center; justify-content: center; gap: 6px; width: 100%; padding: 8px 6px; font: 600 13px/1.1 var(--f-display); letter-spacing: .05em; text-transform: uppercase; color: var(--tinta-2); border-left: 1px solid var(--linea); cursor: pointer; text-align: center; }
+.seg-caso label:first-child span { border-left: 0; }
+.seg-caso input:checked + span { background: var(--mando); color: var(--mando-texto); }
+.seg-caso input:focus-visible + span { outline: 2px solid var(--foco); outline-offset: -2px; }
+.seg-caso label[data-resalte="si"] span::after { content: ""; width: 7px; height: 7px; border-radius: 50%; background: var(--hilo-borde); }
+
+.mapa {
+  position: relative;
+  display: grid;
+  grid-template-columns: 74px repeat(3, minmax(0, 1fr));
+  column-gap: 42px;
+  row-gap: var(--fila-gap);
+  align-items: stretch;
+}
+.mapa-svg { position: absolute; left: 0; top: 0; pointer-events: none; z-index: 2; overflow: visible; }
+.col-cab {
+  position: sticky;
+  top: env(safe-area-inset-top, 0px);
+  z-index: 4;
+  background: var(--papel);
+  display: flex; align-items: center; gap: 10px;
+  padding: 8px 2px 8px;
+  border-bottom: 2px solid var(--linea);
+  min-width: 0;
+}
+.col-cab b { display: block; font: 700 18px/1.1 var(--f-display); letter-spacing: .03em; }
+.col-cab small { display: block; font-size: 12.5px; line-height: 1.3; color: var(--tinta-2); }
+.col-cab[data-caso="1"] { border-bottom-color: var(--c1); }
+.col-cab[data-caso="2"] { border-bottom-color: var(--c2); }
+.col-cab[data-caso="3"] { border-bottom-color: var(--c3); }
+.col-cab .param { margin-left: auto; }
+.col-vacia { position: sticky; top: env(safe-area-inset-top, 0px); z-index: 4; background: var(--papel); border-bottom: 2px solid transparent; }
+.etapa { grid-column: 1; padding-top: 10px; text-align: right; }
+.etapa span { display: block; font: 600 12px/1.25 var(--f-display); letter-spacing: .1em; text-transform: uppercase; color: var(--tinta-3); }
+.etapa i { display: block; font: 500 11px/1 var(--f-datos); font-style: normal; color: var(--tinta-3); margin-bottom: 4px; }
+.col-cab[data-caso="1"], .nodo[data-caso="1"] { grid-column: 2; }
+.col-cab[data-caso="3"], .nodo[data-caso="3"] { grid-column: 3; }
+.col-cab[data-caso="2"], .nodo[data-caso="2"] { grid-column: 4; }
+.col-cab, .col-vacia { grid-row: 1; }
+[data-fila="A"] { grid-row: 2; }
+[data-fila="B"] { grid-row: 3; }
+[data-fila="C"] { grid-row: 4; }
+[data-fila="D"] { grid-row: 5; }
+[data-fila="E"] { grid-row: 6; }
+[data-fila="F"] { grid-row: 7; }
+.tierra { grid-column: 2 / 5; grid-row: 8; }
+
+.nodo {
+  position: relative;
+  background: var(--panel);
+  border: 1px solid var(--linea);
+  border-radius: 6px;
+  padding: 10px 12px 12px;
+  min-width: 0;
+  display: flex;
+  flex-direction: column;
+  gap: 6px;
+  transition: border-color .15s, box-shadow .15s;
+}
+.nodo:focus-visible { outline: 2px solid var(--foco); outline-offset: 2px; }
+.nodo.fijo { border-color: var(--tinta-3); box-shadow: 0 0 0 1px var(--tinta-3); }
+.nodo-cab { display: flex; align-items: center; gap: 8px; }
+.nodo-t { margin: 0; font: 600 15.5px/1.2 var(--f-display); letter-spacing: .02em; text-wrap: balance; }
+.nodo[data-caso="1"] .nodo-t { color: var(--c1-tinta); }
+.nodo[data-caso="2"] .nodo-t { color: var(--c2-tinta); }
+.nodo[data-caso="3"] .nodo-t { color: var(--c3-tinta); }
+.nodo-etapa { display: none; margin: 0; font: 600 11.5px/1.2 var(--f-display); letter-spacing: .1em; text-transform: uppercase; color: var(--tinta-3); }
+.nodo .marca { display: none; }
+.boceto { width: 132px; height: 40px; display: block; }
+.boceto .b-cuerda { fill: none; stroke: var(--cuerda); stroke-width: 2.2; stroke-linecap: round; stroke-linejoin: round; }
+.boceto .b-reposo { stroke: var(--linea-fuerte); stroke-width: 1; stroke-dasharray: 3 3; }
+.boceto .b-apoyo { fill: var(--reposo); stroke: var(--tinta-3); stroke-width: 1; }
+.boceto .b-fuerza { stroke: var(--tinta); stroke-width: 1.6; fill: none; }
+.boceto .b-punta { fill: var(--tinta); }
+.boceto .b-masa { fill: var(--tinta); }
+.nodo.fluye::after {
+  content: "";
+  position: absolute; left: 50%; top: 100%;
+  height: calc(var(--fila-gap) - 6px); width: 0;
+  border-left: 1.5px solid var(--linea-fuerte);
+  transform: translateX(-50%);
+}
+.nodo.fluye::before {
+  content: "";
+  position: absolute; left: 50%; top: calc(100% + var(--fila-gap) - 8px);
+  transform: translateX(-50%);
+  border-left: 5px solid transparent; border-right: 5px solid transparent;
+  border-top: 7px solid var(--linea-fuerte);
+}
+.sub { margin: 6px 0 0; font: 600 11.5px/1.3 var(--f-display); letter-spacing: .1em; text-transform: uppercase; color: var(--tinta-3); }
+.item {
+  position: relative;
+  border-radius: 4px;
+  padding: 5px 6px;
+  margin: 0 -6px;
+  transition: background-color .15s, box-shadow .15s, opacity .15s;
+}
+.item + .item { border-top: 1px dashed var(--linea); border-radius: 0 0 4px 4px; padding-top: 8px; }
+.item p { margin: 0; font-size: 13.5px; line-height: 1.45; color: var(--tinta-2); }
+.item p + p { margin-top: 4px; }
+.item p b { color: var(--tinta); font-weight: 600; }
+.item.consola { border: 1px dashed var(--consola-borde); background: var(--consola-fondo); border-radius: 4px; padding: 7px 8px 6px; margin: 4px 0 0; }
+.item.consola + .item { border-top: 0; }
+.ec { display: flex; flex-wrap: wrap; align-items: center; gap: 2px 8px; margin: 4px 0 2px; }
+.ec-m { flex: 1 0 auto; max-width: 100%; min-width: 0; overflow-x: auto; overflow-y: hidden; font-size: 13.5px; scrollbar-width: thin; }
+.ec-m mjx-container[display="true"] { margin: 3px 0 !important; }
+.ec .num { align-self: center; margin-left: auto; }
+.item mjx-container:not([display="true"]) { font-size: 103%; }
+.saltos { display: none; flex-wrap: wrap; gap: 6px; margin-top: 6px; }
+.salto {
+  font: 600 12px/1 var(--f-display); letter-spacing: .04em; text-transform: uppercase;
+  padding: 6px 9px; border-radius: 4px; border: 1px solid var(--linea); background: var(--panel); color: var(--tinta-2); cursor: pointer;
+}
+.salto[data-destino="1"] { border-color: var(--c1); color: var(--c1-tinta); }
+.salto[data-destino="2"] { border-color: var(--c2); color: var(--c2-tinta); }
+.salto[data-destino="3"] { border-color: var(--c3); color: var(--c3-tinta); }
+.tierra { background: var(--panel); border: 1px solid var(--linea-fuerte); border-radius: 6px; padding: 12px 16px; display: grid; grid-template-columns: minmax(0, 1fr) minmax(0, 1.25fr); gap: 6px 24px; align-items: center; transition: background-color .15s, box-shadow .15s, opacity .15s; }
+.tierra h3 { margin: 0 0 4px; font: 600 16px/1.2 var(--f-display); letter-spacing: .02em; }
+.tierra p { margin: 0; font-size: 13.5px; color: var(--tinta-2); }
+
+/* Estados del mapa */
+.mapa.hay-activo .item.encendido { background: var(--resalte); }
+.nodo[data-caso="1"] .item.destino { background: var(--c1-suave); box-shadow: inset 0 0 0 1.5px var(--c1); }
+.nodo[data-caso="2"] .item.destino { background: var(--c2-suave); box-shadow: inset 0 0 0 1.5px var(--c2); }
+.nodo[data-caso="3"] .item.destino { background: var(--c3-suave); box-shadow: inset 0 0 0 1.5px var(--c3); }
+.mapa.hay-resalte .item:not(.en-resalte) { opacity: .4; }
+.mapa.hay-resalte .tierra:not(.en-resalte) { opacity: .45; }
+.item.en-resalte, .tierra.en-resalte { background: var(--hilo); box-shadow: inset 0 0 0 1.5px var(--hilo-borde); opacity: 1; }
+.item.destello { animation: destello 1.2s ease-out 1; }
+@keyframes destello { 0% { box-shadow: inset 0 0 0 3px var(--hilo-borde); } 100% { box-shadow: inset 0 0 0 0 transparent; } }
+.enlace { fill: none; stroke: var(--enlace); stroke-width: 1.4; transition: opacity .15s, stroke-width .15s; }
+.punta, .origen { fill: var(--enlace); stroke: none; transition: opacity .15s; }
+.mapa.hay-activo .enlace:not(.activa), .mapa.hay-activo .punta:not(.activa), .mapa.hay-activo .origen:not(.activa) { opacity: .18; }
+.enlace.activa { stroke-width: 2.4; }
+.enlace.activa.hacia-1 { stroke: var(--c1); }
+.enlace.activa.hacia-2 { stroke: var(--c2); }
+.punta.activa.hacia-1, .origen.activa.hacia-1 { fill: var(--c1); }
+.punta.activa.hacia-2, .origen.activa.hacia-2 { fill: var(--c2); }
+.enlace.en-resalte { stroke: var(--hilo-borde); stroke-width: 2.4; }
+.punta.en-resalte, .origen.en-resalte { fill: var(--hilo-borde); }
+
+/* ---------- 3. Hilos ---------- */
+.tabla-hilos { overflow-x: auto; }
+table.hilos { width: 100%; border-collapse: separate; border-spacing: 0; background: var(--panel); border: 1px solid var(--linea); border-radius: 6px; }
+.hilos th, .hilos td { text-align: left; vertical-align: top; padding: 10px 12px; border-top: 1px solid var(--linea); font-size: 13.5px; color: var(--tinta-2); }
+.hilos thead th { border-top: 0; font: 600 13px/1.2 var(--f-display); letter-spacing: .08em; text-transform: uppercase; color: var(--tinta); background: var(--mm); }
+.hilos thead th:first-child { border-top-left-radius: 6px; }
+.hilos thead th:last-child { border-top-right-radius: 6px; }
+.hilos thead th[data-caso] .marca { margin-right: 6px; vertical-align: -1px; }
+.hilos tbody th { width: 17%; font-weight: 400; }
+.hilos tbody th .hilo-n { display: block; font: 600 15px/1.2 var(--f-display); letter-spacing: .02em; color: var(--tinta); }
+.hilos tbody th small { display: block; margin-top: 4px; font-size: 12.5px; line-height: 1.35; color: var(--tinta-3); }
+.hilos tbody th .btn { margin-top: 8px; padding: 5px 8px; font-size: 11.5px; }
+.hilos td { width: 27.6%; }
+.hilos td small { display: block; margin-top: 3px; font-size: 12.5px; line-height: 1.35; color: var(--tinta-3); }
+.hilos td .num { margin-left: 4px; }
+.hilos td.na { color: var(--tinta-3); font-style: italic; }
+.hilos td[data-caso="1"] { box-shadow: inset 3px 0 0 var(--c1-suave); }
+.hilos td[data-caso="3"] { box-shadow: inset 3px 0 0 var(--c3-suave); }
+.hilos td[data-caso="2"] { box-shadow: inset 3px 0 0 var(--c2-suave); }
+.hilos .ec-m { font-size: 13.5px; }
+
+.pie { margin-top: 34px; padding-top: 14px; border-top: 1px solid var(--linea); display: grid; gap: 6px; font-size: 13px; color: var(--tinta-3); max-width: 96ch; }
+.pie p { margin: 0; }
+
+/* ---------- Respuesta ---------- */
+@media (max-width: 1180px) {
+  .mapa { grid-template-columns: repeat(3, minmax(0, 1fr)); column-gap: 36px; }
+  .etapa, .col-vacia { display: none; }
+  .col-cab[data-caso="1"], .nodo[data-caso="1"] { grid-column: 1; }
+  .col-cab[data-caso="3"], .nodo[data-caso="3"] { grid-column: 2; }
+  .col-cab[data-caso="2"], .nodo[data-caso="2"] { grid-column: 3; }
+  .tierra { grid-column: 1 / 4; }
+  .nodo-etapa { display: block; }
+  .ec-m { font-size: 12.5px; }
+  .col-cab .param { display: none; }
+}
+@media (max-width: 1040px) {
+  .plano-banda { grid-template-columns: minmax(0, 1fr); }
+  .elementos { grid-template-columns: repeat(auto-fill, minmax(220px, 1fr)); }
+}
+@media (max-width: 899px) {
+  .seg-caso { display: flex; }
+  .mapa { grid-template-columns: minmax(0, 1fr); row-gap: var(--fila-gap); }
+  .mapa .col-cab, .mapa .nodo, .mapa .tierra { grid-column: 1; grid-row: auto; }
+  .mapa[data-caso="1"] [data-caso="2"], .mapa[data-caso="1"] [data-caso="3"],
+  .mapa[data-caso="2"] [data-caso="1"], .mapa[data-caso="2"] [data-caso="3"],
+  .mapa[data-caso="3"] [data-caso="1"], .mapa[data-caso="3"] [data-caso="2"] { display: none; }
+  .col-cab { position: static; }
+  .mapa-svg { display: none; }
+  .saltos { display: flex; }
+  .ec-m { font-size: 13px; }
+  .tierra { grid-template-columns: minmax(0, 1fr); }
+  .chips-titulo { width: 100%; }
+}
+@media (max-width: 760px) {
+  table.hilos, .hilos tbody, .hilos tr, .hilos td, .hilos tbody th { display: block; width: auto; }
+  .hilos thead { display: none; }
+  .hilos tr { border-top: 1px solid var(--linea); padding: 4px 0 8px; }
+  .hilos tbody tr:first-child { border-top: 0; }
+  .hilos th, .hilos td { border-top: 0; padding: 6px 12px; }
+  .hilos td::before { content: attr(data-etiqueta); display: block; font: 600 11.5px/1.3 var(--f-display); letter-spacing: .1em; text-transform: uppercase; margin-bottom: 2px; }
+  .hilos td[data-caso="1"]::before { color: var(--c1-tinta); }
+  .hilos td[data-caso="2"]::before { color: var(--c2-tinta); }
+  .hilos td[data-caso="3"]::before { color: var(--c3-tinta); }
+}
+@media (prefers-reduced-motion: reduce) {
+  *, *::before, *::after { transition: none !important; animation: none !important; }
+}
+</style>
+<script>
+  window.MathJax = {
+    tex: { inlineMath: [["\\(", "\\)"]], displayMath: [["\\[", "\\]"]] },
+    svg: { fontCache: "global", displayAlign: "left", displayIndent: "0" },
+    options: { enableMenu: false },
+    startup: {
+      pageReady: function () {
+        return MathJax.startup.defaultPageReady().then(function () {
+          document.dispatchEvent(new Event("mathjax-listo"));
+        });
+      }
+    }
+  };
+</script>
+<script src="https://cdn.jsdelivr.net/npm/mathjax@3.2.2/es5/tex-svg.js" defer></script>
+
+<div class="pagina">
+  <header class="cabecera">
+    <div class="cab-fila">
+      <p class="ceja"><a href="../">Trabajo de título</a> · Mapa</p>
+      <nav class="nav-casos" aria-label="Mapa y consolas de los tres casos">
+        <span aria-current="page">Mapa</span>
+        <a href="../caso1/">Caso I</a>
+        <a href="../caso2/">Caso II</a>
+        <a href="../caso3/">Caso III</a>
+      </nav>
+    </div>
+    <h1>Mapa de los tres casos</h1>
+    <p class="bajada">Cómo se desarrolla cada caso, desde su ecuación de movimiento hasta sus valores límite, y cómo se conectan entre sí. Las ecuaciones usan la notación y la numeración de la tesis (versión del 2 de noviembre); lo marcado <span class="tag">consola</span> se obtuvo en las consolas y todavía no está en el texto.</p>
+    <p class="comun-titulo" id="t-comun">Variables comunes</p>
+    <ul class="comun" aria-labelledby="t-comun">
+      <li><span class="def">\(\tau=vt/L\)</span><small>posición de la carga y tiempo</small></li>
+      <li><span class="def">\(\bar y=Nu/(PL)=u/(4w_0)\)</span><small>deflexión de la partícula</small></li>
+      <li><span class="def">\(f=F_c/P=1-\lambda\bar y''\)</span><small>fuerza de contacto</small></li>
+      <li><span class="def">\(\alpha=v/c\)</span><small>velocidad frente a las ondas</small></li>
+      <li><span class="def">\(\mu=m/(\rho AL)\)</span><small>masa de la carga frente a la de la cuerda</small></li>
+      <li><span class="def">\(\lambda=mv^2/(LN)=\alpha^2\mu\)</span><small>inercia de la carga</small></li>
+    </ul>
+  </header>
+
+  <!-- ====================== 1. PLANO ====================== -->
+  <section class="seccion" id="plano" aria-labelledby="t-plano" style="margin-top: 8px">
+    <div class="sec-cab">
+      <h2 id="t-plano">Dónde vive cada caso</h2>
+      <p>En el plano de \(\alpha=v/c\) y \(\mu=m/(\rho AL)\), los Casos I y II son bordes y el Caso III ocupa el interior. Elige una parte del plano para ver qué la caracteriza y dónde está en el mapa.</p>
+    </div>
+    <div class="plano-banda">
+      <div class="instrumento">
+        <div class="instr-cab">
+          <h3>Plano de los parámetros</h3>
+          <span class="insignia">μ en escala logarítmica</span>
+        </div>
+        <div class="lienzo-plano">
+          <svg id="plano-svg" viewBox="0 0 720 420" role="img" aria-label="Plano alfa-mu con los tres casos, la velocidad crítica, la banda supercrítica y la zona sin contacto"></svg>
+        </div>
+        <ul class="plano-pie">
+          <li><svg viewBox="0 0 26 12" aria-hidden="true"><line x1="1" y1="6" x2="25" y2="6" class="p-lam6"/></svg>λ = 1/6, primer valor de Smith</li>
+          <li><svg viewBox="0 0 26 12" aria-hidden="true"><line x1="1" y1="6" x2="25" y2="6" class="p-lam"/></svg>λ = 1, una curva hacia el Caso II</li>
+          <li><svg viewBox="0 0 26 12" aria-hidden="true"><defs><pattern id="trama-pie" width="5" height="5" patternUnits="userSpaceOnUse" patternTransform="rotate(45)"><line x1="0" y1="0" x2="0" y2="5" class="p-trama"/></pattern></defs><rect x="1" y="1" width="24" height="10" style="fill: url(#trama-pie)" class="p-frontera"/></svg>sin contacto, f &lt; 0 <span class="tag" style="margin-left:4px">consola</span></li>
+          <li><svg viewBox="0 0 26 12" aria-hidden="true"><circle cx="13" cy="6" r="5" class="p-esquina"/></svg>①②③ casos de la tesis</li>
+        </ul>
+      </div>
+      <div class="lado-plano">
+        <ul class="elementos" aria-label="Partes del plano">
+          <li><button type="button" class="elem-btn" data-elem="caso1" aria-pressed="false"><svg class="muestra" viewBox="0 0 30 22" aria-hidden="true"><rect x="1" y="13" width="28" height="8" class="p-caso1"/></svg><b>Caso I · μ = 0</b><small>Fuerza sin masa, borde inferior</small></button></li>
+          <li><button type="button" class="elem-btn" data-elem="caso2" aria-pressed="false"><svg class="muestra" viewBox="0 0 30 22" aria-hidden="true"><rect x="1" y="1" width="9" height="20" class="p-caso2"/></svg><b>Caso II · α → 0, λ fijo</b><small>Cuerda sin masa, borde izquierdo</small></button></li>
+          <li><button type="button" class="elem-btn" data-elem="caso3" aria-pressed="false"><svg class="muestra" viewBox="0 0 30 22" aria-hidden="true"><rect x="1" y="1" width="28" height="20" style="fill: var(--panel); stroke: var(--c3); stroke-width: 1.5"/></svg><b>Caso III · el interior</b><small>Ambas masas</small></button></li>
+          <li><button type="button" class="elem-btn" data-elem="critico" aria-pressed="false"><svg class="muestra" viewBox="0 0 30 22" aria-hidden="true"><line x1="15" y1="1" x2="15" y2="21" class="p-critica"/></svg><b>Velocidad crítica · α = 1</b><small>Escalón bajo la carga</small></button></li>
+          <li><button type="button" class="elem-btn" data-elem="super" aria-pressed="false"><svg class="muestra" viewBox="0 0 30 22" aria-hidden="true"><rect x="1" y="1" width="28" height="20" class="p-super" style="stroke: var(--linea-fuerte)"/></svg><b>Supercrítico · α &gt; 1</b><small>La masa de la carga no influye</small></button></li>
+          <li><button type="button" class="elem-btn" data-elem="zona" aria-pressed="false"><svg class="muestra" viewBox="0 0 30 22" aria-hidden="true"><rect x="1" y="1" width="28" height="20" style="fill: url(#trama-pie)" class="p-frontera"/></svg><b>Sin contacto · f &lt; 0</b><small>La cuerda tendría que tirar de la partícula</small></button></li>
+          <li><button type="button" class="elem-btn" data-elem="estatico" aria-pressed="false"><svg class="muestra" viewBox="0 0 30 22" aria-hidden="true"><circle cx="9" cy="15" r="5" class="p-esquina"/></svg><b>Esquina estática</b><small>Sin inercia: el límite común</small></button></li>
+        </ul>
+
+        <div class="leyenda-elem" data-elem="caso1" hidden>
+          <h4>Caso I · borde inferior, μ = 0</h4>
+          <p>La carga no tiene masa: \(\lambda=0\) y \(f=1\), de modo que la cuerda recibe siempre \(P\). Los modos se desacoplan y la solución es la serie (3.23), que solo depende de \(\alpha\).</p>
+          <p><span class="tag">consola</span>El límite \(\mu\to0\) es singular para la fuerza: la trayectoria tiende a la del Caso I, pero \(f\) conserva pulsos angostos en cada quiebre, por eso la zona sin contacto llega hasta el borde.</p>
+          <div class="acciones"><button type="button" class="btn ver-mapa" data-items="i3F1 i3F1c i1D1 i1A1" data-nombre="Caso I · μ = 0">Ver en el mapa</button><a class="btn" href="../caso1/">Consola del Caso I</a></div>
+        </div>
+        <div class="leyenda-elem" data-elem="caso2" hidden>
+          <h4>Caso II · α → 0 con λ fijo</h4>
+          <p>Siguiendo una curva de \(\lambda=\alpha^2\mu\) constante hacia \(\alpha\to0\), la cuerda pierde su inercia (\(\mu\to\infty\)). Los modos siguen a la carga, \(\bar y=f\,\tau(1-\tau)\), y con \(f=1-\lambda\bar y''\) resulta la ecuación de Smith (4.7).</p>
+          <p>La diferencia baja como \(\alpha^2\) (Tabla 5.3). Lo que controla la aproximación es \(\alpha\) y no la razón de masas: con \(\mu=4\) todavía hay diferencias de 6 a 8 % de la deflexión máxima.</p>
+          <div class="acciones"><button type="button" class="btn ver-mapa" data-items="i3F2 i2C1 i2A1" data-nombre="Caso II · α → 0 con λ fijo">Ver en el mapa</button><a class="btn" href="../caso2/">Consola del Caso II</a></div>
+        </div>
+        <div class="leyenda-elem" data-elem="caso3" hidden>
+          <h4>Caso III · el interior</h4>
+          <p>Ambas masas. La solución modal (5.10), con la fuerza de contacto explícita (5.12), sirve para cualquier \(\alpha&lt;1\) y \(\mu\); la solución por ondas de Smith (5.16)–(5.19) la verifica.</p>
+          <p>El punto ① es \(\alpha=0{,}5\), \(\mu=1\): la partícula llega al apoyo con \(\bar y(1)=0{,}274\), contra 0,156 sobre la cuerda sin masa con el mismo \(\lambda=0{,}25\) (Tabla 5.5).</p>
+          <div class="acciones"><button type="button" class="btn ver-mapa" data-items="i3A1 i3C1 i3C3" data-nombre="Caso III · el interior">Ver en el mapa</button><a class="btn" href="../caso3/">Consola del Caso III</a></div>
+        </div>
+        <div class="leyenda-elem" data-elem="critico" hidden>
+          <h4>Velocidad crítica · α = 1</h4>
+          <p>La tensión efectiva \(N(1-\alpha^2)\) de (5.14) se anula. En el Caso I la cuerda forma un escalón (3.27). En el Caso III la cuerda solo frena a la partícula como un amortiguador:</p>
+          <div class="ec"><div class="ec-m">\[\bar y=\frac{\tau}{2}-\frac{\mu}{4}\bigl(1-e^{-2\tau/\mu}\bigr)\]</div><span class="num">(5.21)</span></div>
+          <p>Con \(\mu\to0\) se recupera \(\bar y=\tau/2\), la altura del escalón del Caso I.</p>
+          <div class="acciones"><button type="button" class="btn ver-mapa" data-items="i1F2 i3F3 i3C2 i2F2" data-nombre="Velocidad crítica">Ver en el mapa</button></div>
+        </div>
+        <div class="leyenda-elem" data-elem="super" hidden>
+          <h4>Supercrítico · α &gt; 1</h4>
+          <p>La carga avanza más rápido que las ondas que genera: el punto de la cuerda bajo ella no se mueve, \(\bar y=0\) y \(f=1\). La masa de la carga no influye y, en toda la banda, el Caso III coincide con el Caso I.</p>
+          <div class="acciones"><button type="button" class="btn ver-mapa" data-items="i1F3 i3F4" data-nombre="Supercrítico">Ver en el mapa</button></div>
+        </div>
+        <div class="leyenda-elem" data-elem="zona" hidden>
+          <h4>Sin contacto · f &lt; 0</h4>
+          <p>La cuerda tendría que tirar de la partícula hacia abajo, y la partícula se separaría. Calculada con la solución por ondas en 3116 puntos, la zona reúne 1072 <span class="tag">consola</span></p>
+          <p>Mientras \(\alpha\le0{,}5\) la frontera sigue de cerca la curva \(\lambda=1/6\), el primer valor de Smith del Caso II (sobre la frontera, \(\lambda\) va de 0,166 a 0,185); con \(\alpha\) mayor baja hasta \(\mu\approx0{,}06\) en \(\alpha\approx0{,}88\). Toda llegada sobre el apoyo, \(\bar y(1)&lt;0\), queda dentro.</p>
+          <p>② \(\alpha=0{,}2\), \(\mu=2\): \(f&lt;0\) desde \(\tau\approx0{,}905\) (Fig. 5.11). ③ \(\alpha=0{,}5\), \(\mu\approx0{,}272\): llega justo al apoyo, pero \(f&lt;0\) desde \(\tau\approx0{,}975\) (Sec. 5.10).</p>
+          <div class="acciones"><button type="button" class="btn ver-mapa" data-items="i3E3 i3E5 i2E6 i3F1c" data-nombre="Pérdida de contacto">Ver en el mapa</button><a class="btn" href="../caso3/">Plano en la consola</a></div>
+        </div>
+        <div class="leyenda-elem" data-elem="estatico" hidden>
+          <h4>Esquina estática</h4>
+          <p>Sin inercia de la cuerda ni de la carga (\(\alpha\to0\), \(\lambda\to0\)), la cuerda toma en cada instante su forma estática (3.24) y los tres casos dan la misma trayectoria:</p>
+          <div class="ec"><div class="ec-m">\[\frac{w_s(vt)}{w_0}=4\tau(1-\tau)\ \Longleftrightarrow\ \bar y_{qs}=\tau(1-\tau)\]</div><span class="num">(3.25)<br>(4.8)</span></div>
+          <div class="acciones"><button type="button" class="btn ver-mapa" data-items="i1F1 i2F1 tierra" data-nombre="Límite cuasiestático">Ver en el mapa</button></div>
+        </div>
+      </div>
+    </div>
+  </section>
+
+  <!-- ====================== 2. MAPA ====================== -->
+  <section class="seccion" id="desarrollo" aria-labelledby="t-desarrollo">
+    <div class="sec-cab">
+      <h2 id="t-desarrollo">Cómo se desarrolla cada caso</h2>
+      <p>Cada columna baja desde el modelo hasta los valores límite. El Caso III va al centro porque contiene a los otros dos: las flechas que salen de él hacia la izquierda llegan al Caso I (\(\mu\to0\)) y las de la derecha al Caso II (\(\alpha\to0\) con \(\lambda\) fijo). Pasa el cursor sobre una tarjeta, o tócala, para seguir sus enlaces.</p>
+    </div>
+
+    <div class="barra-mapa">
+      <span class="chips-titulo" id="t-hilos">Resaltar un hilo</span>
+      <ul class="chips" aria-labelledby="t-hilos">
+        <li><button type="button" class="chip" data-hilo="cuasi" aria-pressed="false">Cuasiestático</button></li>
+        <li><button type="button" class="chip" data-hilo="ondas" aria-pressed="false">Ondas y τ*</button></li>
+        <li><button type="button" class="chip" data-hilo="salto" aria-pressed="false">Salto de pendiente</button></li>
+        <li><button type="button" class="chip" data-hilo="critico" aria-pressed="false">Velocidad crítica</button></li>
+        <li><button type="button" class="chip" data-hilo="super" aria-pressed="false">Supercrítico</button></li>
+        <li><button type="button" class="chip" data-hilo="llegada" aria-pressed="false">Llegada al apoyo</button></li>
+        <li><button type="button" class="chip" data-hilo="contacto" aria-pressed="false">Contacto</button></li>
+        <li><button type="button" class="chip" data-hilo="amplif" aria-pressed="false">Amplificación</button></li>
+      </ul>
+      <label class="casilla"><input type="checkbox" id="v-enlaces" checked> Enlaces entre casos</label>
+    </div>
+    <p class="estado" id="estado" hidden><span>Resaltado: <b id="estado-nombre"></b></span><button type="button" id="quitar-resalte">Quitar</button></p>
+
+    <div class="seg-caso" role="radiogroup" aria-label="Caso que se muestra">
+      <label data-caso="1"><input type="radio" name="caso-movil" value="1" id="caso-movil-1"><span>Caso I</span></label>
+      <label data-caso="3"><input type="radio" name="caso-movil" value="3" id="caso-movil-3" checked><span>Caso III</span></label>
+      <label data-caso="2"><input type="radio" name="caso-movil" value="2" id="caso-movil-2"><span>Caso II</span></label>
+    </div>
+
+    <div class="mapa" id="mapa" data-caso="3">
+      <svg class="mapa-svg" id="mapa-svg" aria-hidden="true"></svg>
+
+      <div class="col-vacia" aria-hidden="true"></div>
+      <div class="col-cab" data-caso="1"><span class="marca m1">I</span><div><b>Caso I</b><small>Cuerda con masa, fuerza sin masa · Cap. 3</small></div><span class="num param">α</span></div>
+      <div class="col-cab" data-caso="3"><span class="marca m3">III</span><div><b>Caso III</b><small>Cuerda con masa, masa móvil · Cap. 5</small></div><span class="num param">α, μ</span></div>
+      <div class="col-cab" data-caso="2"><span class="marca m2">II</span><div><b>Caso II</b><small>Cuerda sin masa, masa móvil · Cap. 4</small></div><span class="num param">λ</span></div>
+
+      <div class="etapa" data-fila="A" aria-hidden="true"><i>1</i><span>Modelo</span></div>
+      <div class="etapa" data-fila="B" aria-hidden="true"><i>2</i><span>Ecuación</span></div>
+      <div class="etapa" data-fila="C" aria-hidden="true"><i>3</i><span>Método</span></div>
+      <div class="etapa" data-fila="D" aria-hidden="true"><i>4</i><span>Solución</span></div>
+      <div class="etapa" data-fila="E" aria-hidden="true"><i>5</i><span>Resultados</span></div>
+      <div class="etapa" data-fila="F" aria-hidden="true"><i>6</i><span>Límites</span></div>
+
+      <!-- ---------- Fila A: modelo ---------- -->
+      <article class="nodo fluye" data-caso="1" data-fila="A" id="n1A" tabindex="0" aria-labelledby="n1A-t">
+        <p class="nodo-etapa">1 · Modelo</p>
+        <div class="nodo-cab"><h3 class="nodo-t" id="n1A-t">Fuerza móvil sin masa</h3></div>
+        <svg class="boceto" viewBox="0 0 132 40" aria-hidden="true"><line x1="10" y1="12" x2="122" y2="12" class="b-reposo"/><path d="M10 12 C 30 20, 40 28, 52 28 C 72 28, 100 18, 122 12" class="b-cuerda"/><path d="M6 18 L10 12 L14 18 Z M118 18 L122 12 L126 18 Z" class="b-apoyo"/><line x1="52" y1="2" x2="52" y2="22" class="b-fuerza"/><path d="M48 21 L52 27 L56 21 Z" class="b-punta"/></svg>
+        <div class="item" id="i1A1" data-hilo="ondas">
+          <p>Una fuerza constante \(P\) recorre con velocidad \(v\) una cuerda de tensión \(N\) y masa \(\rho A\) por unidad de largo. La carga no tiene masa: la cuerda recibe siempre \(P\).</p>
+          <div class="ec"><div class="ec-m">\[c=\sqrt{\frac{N}{\rho A}},\qquad \alpha=\frac{v}{c}\]</div><span class="num">(3.14)<br>(3.20)</span></div>
+        </div>
+      </article>
+
+      <article class="nodo fluye" data-caso="3" data-fila="A" id="n3A" tabindex="0" aria-labelledby="n3A-t">
+        <p class="nodo-etapa">1 · Modelo</p>
+        <div class="nodo-cab"><h3 class="nodo-t" id="n3A-t">Masa móvil sobre una cuerda con masa</h3></div>
+        <svg class="boceto" viewBox="0 0 132 40" aria-hidden="true"><line x1="10" y1="12" x2="122" y2="12" class="b-reposo"/><path d="M10 12 C 30 22, 46 29, 60 29 C 80 29, 102 18, 122 12" class="b-cuerda"/><path d="M6 18 L10 12 L14 18 Z M118 18 L122 12 L126 18 Z" class="b-apoyo"/><circle cx="60" cy="25" r="4.6" class="b-masa"/></svg>
+        <div class="item" id="i3A1">
+          <p>Una partícula de masa \(m\), bajo la fuerza \(P\), recorre la cuerda con masa. Ninguna de las dos masas se desprecia, y el problema depende de dos parámetros independientes.</p>
+          <div class="ec"><div class="ec-m">\[\alpha=\frac{v}{c},\qquad \mu=\frac{m}{\rho AL},\qquad \lambda=\alpha^2\mu\]</div><span class="num">(1.5)</span></div>
+        </div>
+      </article>
+
+      <article class="nodo fluye" data-caso="2" data-fila="A" id="n2A" tabindex="0" aria-labelledby="n2A-t">
+        <p class="nodo-etapa">1 · Modelo</p>
+        <div class="nodo-cab"><h3 class="nodo-t" id="n2A-t">Masa móvil sobre una cuerda sin masa</h3></div>
+        <svg class="boceto" viewBox="0 0 132 40" aria-hidden="true"><line x1="10" y1="12" x2="122" y2="12" class="b-reposo"/><path d="M10 12 L 60 30 L 122 12" class="b-cuerda"/><path d="M6 18 L10 12 L14 18 Z M118 18 L122 12 L126 18 Z" class="b-apoyo"/><circle cx="60" cy="26" r="4.6" class="b-masa"/></svg>
+        <div class="item" id="i2A1" data-hilo="ondas">
+          <p>Con \(\rho A\to0\), la velocidad de las ondas tiende a infinito: la cuerda se adapta de inmediato a la partícula y forma dos rectas. Todo depende de un solo parámetro.</p>
+          <div class="ec"><div class="ec-m">\[\lambda=\frac{m v^2}{L N}\]</div><span class="num">(4.6)</span></div>
+        </div>
+      </article>
+
+      <!-- ---------- Fila B: ecuación ---------- -->
+      <article class="nodo fluye" data-caso="1" data-fila="B" id="n1B" tabindex="0" aria-labelledby="n1B-t">
+        <p class="nodo-etapa">2 · Ecuación</p>
+        <div class="nodo-cab"><h3 class="nodo-t" id="n1B-t">Ecuación de la cuerda</h3></div>
+        <div class="item" id="i1B1">
+          <p>Balance de fuerzas en un elemento de cuerda, con la carga concentrada por la delta de Dirac:</p>
+          <div class="ec"><div class="ec-m">\[-N\frac{\partial^2 w}{\partial x^2}+\rho A\frac{\partial^2 w}{\partial t^2}=\delta(x-vt)\,P\]</div><span class="num">(3.8)</span></div>
+        </div>
+        <div class="item" id="i1B2">
+          <p>Apoyos fijos y cuerda inicialmente en reposo:</p>
+          <div class="ec"><div class="ec-m">\[\begin{aligned}&amp;w(0,t)=w(L,t)=0\\ &amp;w(x,0)=0,\quad \frac{\partial w}{\partial t}\Big|_{t=0}=0\end{aligned}\]</div><span class="num">(3.9)<br>(3.10)</span></div>
+        </div>
+      </article>
+
+      <article class="nodo fluye" data-caso="3" data-fila="B" id="n3B" tabindex="0" aria-labelledby="n3B-t">
+        <p class="nodo-etapa">2 · Ecuación</p>
+        <div class="nodo-cab"><h3 class="nodo-t" id="n3B-t">Ecuación general</h3></div>
+        <div class="item" id="i3B1">
+          <p>A la fuerza \(P\) se suma la fuerza de inercia de la partícula, que sigue a la cuerda, \(u(t)=w(vt,t)\):</p>
+          <div class="ec"><div class="ec-m">\[-N\frac{\partial^2 w}{\partial x^2}+\rho A\frac{\partial^2 w}{\partial t^2}=\delta(x-vt)\bigl[P-m\,\ddot u\bigr]\]</div><span class="num">(4.1)</span></div>
+          <p>Es la ecuación (1.4) del planteamiento. Con \(m=0\) es la (3.8) del Caso I; con \(\rho A=0\), la (4.2) del Caso II.</p>
+        </div>
+      </article>
+
+      <article class="nodo fluye" data-caso="2" data-fila="B" id="n2B" tabindex="0" aria-labelledby="n2B-t">
+        <p class="nodo-etapa">2 · Ecuación</p>
+        <div class="nodo-cab"><h3 class="nodo-t" id="n2B-t">Ecuación de la partícula</h3></div>
+        <div class="item" id="i2B1">
+          <p>Sin masa en la cuerda, (4.1) queda</p>
+          <div class="ec"><div class="ec-m">\[-N\frac{\partial^2 w}{\partial x^2}=\delta(x-vt)\bigl[P-m\,\ddot u(t)\bigr]\]</div><span class="num">(4.2)</span></div>
+          <p>y a cada lado de la partícula la cuerda es una recta (4.3).</p>
+        </div>
+        <div class="item" id="i2B2" data-hilo="salto">
+          <p>Salto de pendiente bajo la partícula:</p>
+          <div class="ec"><div class="ec-m">\[-N\Bigl[\frac{\partial w}{\partial x}\Big|_{vt^+}-\frac{\partial w}{\partial x}\Big|_{vt^-}\Bigr]=P-m\,\ddot u\]</div><span class="num">(4.4)</span></div>
+        </div>
+        <div class="item" id="i2B3" data-hilo="ondas">
+          <p>Un oscilador cuya rigidez es mínima en el centro e infinita en los apoyos:</p>
+          <div class="ec"><div class="ec-m">\[m\,\ddot u+\frac{NL}{vt\,(L-vt)}\,u=P\]</div><span class="num">(4.5)</span></div>
+        </div>
+      </article>
+
+      <!-- ---------- Fila C: método ---------- -->
+      <article class="nodo fluye" data-caso="1" data-fila="C" id="n1C" tabindex="0" aria-labelledby="n1C-t">
+        <p class="nodo-etapa">3 · Método</p>
+        <div class="nodo-cab"><h3 class="nodo-t" id="n1C-t">Un oscilador por modo</h3></div>
+        <div class="item" id="i1C1">
+          <p>La transformada seno finita (3.11) elimina \(x\), y cada modo queda como un oscilador forzado sin amortiguamiento:</p>
+          <div class="ec"><div class="ec-m">\[\ddot W(j,t)+\omega_{(j)}^2\,W(j,t)=\frac{P}{\rho A}\sin(\omega t)\]</div><span class="num">(3.12)</span></div>
+          <p>con \(\omega=j\pi v/L\) y \(\omega_{(j)}=j\pi c/L\) (3.13), cuya razón \(\omega/\omega_{(j)}=\alpha\) es la misma en todos los modos.</p>
+        </div>
+        <div class="item" id="i1C2" data-hilo="critico">
+          <p>Se resuelve con coeficientes indeterminados (3.17). Como la razón no depende del modo, todos resuenan a la vez en una única velocidad crítica, \(v_{cr}=c\) (3.19).</p>
+        </div>
+      </article>
+
+      <article class="nodo fluye" data-caso="3" data-fila="C" id="n3C" tabindex="0" aria-labelledby="n3C-t">
+        <p class="nodo-etapa">3 · Método</p>
+        <div class="nodo-cab"><h3 class="nodo-t" id="n3C-t">Dos caminos</h3></div>
+        <p class="sub">Solución modal · se integra numéricamente</p>
+        <div class="item" id="i3C1" data-hilo="contacto">
+          <div class="ec"><div class="ec-m">\[\eta_j''+\Bigl(\frac{j\pi}{\alpha}\Bigr)^{2}\eta_j=\frac{2}{\alpha^2}\,f(\tau)\sin(j\pi\tau)\]</div><span class="num">(5.10)</span></div>
+          <p>con \(\bar y=\sum_j\eta_j\sin(j\pi\tau)\) (5.8). La fuerza de contacto se despeja en forma explícita (Sherman–Morrison), y es lo único que acopla los modos:</p>
+          <div class="ec"><div class="ec-m">\[f=1-\lambda\bar y''=\frac{1-\lambda B}{1+2\mu S}\]</div><span class="num">(5.9)<br>(5.12)</span></div>
+        </div>
+        <p class="sub">Solución por ondas (Smith) · exacta, por tramos</p>
+        <div class="item" id="i3C2" data-hilo="salto critico">
+          <p>Bajo una carga en movimiento la tensión efectiva es \(N(1-\alpha^2)\):</p>
+          <div class="ec"><div class="ec-m">\[-N(1-\alpha^2)\Bigl[\frac{\partial w}{\partial x}\Bigr]=P-m\,\ddot u\]</div><span class="num">(5.14)</span></div>
+        </div>
+        <div class="item" id="i3C3" data-hilo="ondas">
+          <p>Hasta que llega la onda reflejada en el apoyo final, en \(\tau^*=2\alpha/(1+\alpha)\) (5.13), con \(\kappa=(1-\alpha)/(1+\alpha)\):</p>
+          <div class="ec"><div class="ec-m">\[\lambda\bar y''+2\alpha\sum_{k=0}^{\infty}\kappa^{k}\,\bar y'(\kappa^{k}\tau)=1\]</div><span class="num">(5.16)</span></div>
+          <p>La cuerda actúa como un amortiguador \(2N/c\) más las ondas que vuelven del apoyo inicial. Con un solo retardo es (5.17) y su solución es la serie (5.18); después de \(\tau^*\), (5.19) para \(\alpha&gt;1/3\), por pasos en \(\tau_n=1-\kappa^n\).</p>
+        </div>
+        <div class="item consola" id="i3C4" data-hilo="ondas llegada">
+          <p><span class="tag">consola</span>Ecuación por imágenes para todo \(\alpha&lt;1\), integrada en \(s=-\ln(1-\tau)\): en esa variable el retardo de la onda que vuelve del apoyo final es constante, \(\ln(1/\kappa)\).</p>
+        </div>
+      </article>
+
+      <article class="nodo fluye" data-caso="2" data-fila="C" id="n2C" tabindex="0" aria-labelledby="n2C-t">
+        <p class="nodo-etapa">3 · Método</p>
+        <div class="nodo-cab"><h3 class="nodo-t" id="n2C-t">Forma adimensional y Gauss</h3></div>
+        <div class="item" id="i2C1">
+          <p>Con \(\tau=vt/L\) y \(\bar y=Nu/(PL)\) (4.6):</p>
+          <div class="ec"><div class="ec-m">\[\lambda\,\bar y''+\frac{\bar y}{\tau(1-\tau)}=1,\qquad \bar y(0)=\bar y'(0)=0\]</div><span class="num">(4.7)</span></div>
+        </div>
+        <div class="item" id="i2C2">
+          <p>Solución particular: la forma estática bajo la fuerza constante \(P/(1-2\lambda)\).</p>
+          <div class="ec"><div class="ec-m">\[\bar y_p=\frac{\tau(1-\tau)}{1-2\lambda}\]</div><span class="num">(4.10)</span></div>
+        </div>
+        <div class="item" id="i2C3">
+          <p>Solución homogénea, con la función hipergeométrica de Gauss:</p>
+          <div class="ec"><div class="ec-m">\[\begin{aligned}&amp;\bar y_1=\tau\,{}_2F_1(p,1-p;2;\tau)\\ &amp;p=\frac{1+\sqrt{1+4/\lambda}}{2}\end{aligned}\]</div><span class="num">(4.12)</span></div>
+        </div>
+      </article>
+
+      <!-- ---------- Fila D: solución ---------- -->
+      <article class="nodo fluye" data-caso="1" data-fila="D" id="n1D" tabindex="0" aria-labelledby="n1D-t">
+        <p class="nodo-etapa">4 · Solución</p>
+        <div class="nodo-cab"><h3 class="nodo-t" id="n1D-t">Serie de modos</h3></div>
+        <div class="item" id="i1D1" data-hilo="ondas">
+          <div class="ec"><div class="ec-m">\[\begin{aligned}\frac{w}{w_0}=\frac{8}{\pi^2}\sum_{j=1}^{\infty}&amp;\frac{\sin(j\pi\tau)-\alpha\sin(j\pi\tau/\alpha)}{j^2(1-\alpha^2)}\\ &amp;\times\sin\frac{j\pi x}{L}\end{aligned}\]</div><span class="num">(3.23)</span></div>
+          <p>con \(w_0=PL/(4N)\) (3.21): una parte forzada, que acompaña a la carga, y una parte libre, que oscila con \(\omega_{(j)}\). Con 3000 modos el error es menor que \(8/[\pi^2 n\,|1-\alpha|]\).</p>
+        </div>
+        <div class="item consola" id="i1D2" data-hilo="ondas">
+          <p><span class="tag">consola</span>Suma cerrada de la serie:</p>
+          <div class="ec"><div class="ec-m">\[\frac{w}{w_0}=\frac{4}{1-\alpha^2}\Bigl[G\Bigl(\frac{x}{L},\tau\Bigr)-\alpha\,\tilde G\Bigl(\frac{x}{L},\frac{\tau}{\alpha}\Bigr)\Bigr]\]</div></div>
+          <p>\(G(p,q)=\min(p,q)\,[1-\max(p,q)]\) es la forma estática (3.24) en unidades de \(w_0/4\), y \(\tilde G\) su extensión impar y de período 2 en \(q\). El vértice de la parte libre es el frente de onda, que viaja con \(c\) y se refleja en los apoyos.</p>
+        </div>
+      </article>
+
+      <article class="nodo fluye" data-caso="3" data-fila="D" id="n3D" tabindex="0" aria-labelledby="n3D-t">
+        <p class="nodo-etapa">4 · Solución</p>
+        <div class="nodo-cab"><h3 class="nodo-t" id="n3D-t">Cómo se evalúa</h3></div>
+        <div class="item" id="i3D1">
+          <p><b>Modal:</b> DOP853 con \(n=400\) modos. Converge a la solución por ondas con un error proporcional a \(1/n\), del orden de \(5\times10^{-4}\) antes de \(\tau^*\) (Tabla 5.2).</p>
+        </div>
+        <div class="item" id="i3D3" data-hilo="ondas">
+          <p><b>Por ondas:</b> analítica antes de \(\tau^*\), con la serie (5.18); integrada numéricamente por pasos después (Tabla 5.1).</p>
+        </div>
+        <div class="item consola" id="i3D2" data-hilo="ondas">
+          <p><span class="tag">consola</span>Forma de la cuerda por imágenes, para todo \(\alpha&lt;1\):</p>
+          <div class="ec"><div class="ec-m">\[\begin{aligned}&amp;2\alpha\,\bar w(x,\tau)=\sum_i\sigma_i\,\bar Q(\varphi_i)\\ &amp;\bar Q(s)=s-\lambda\bar y'(s)\end{aligned}\]</div></div>
+          <p>\(\bar Q(s)=\int_0^s f\,d\tau'\) es el impulso de la fuerza de contacto; cada fuente imagen de los apoyos, de signo \(\sigma_i=\pm1\), aporta el que emitió hasta \(\varphi_i(x,\tau)\). Con \(\lambda=0\), \(\bar Q(s)=s\) y se recupera el Caso I.</p>
+        </div>
+      </article>
+
+      <article class="nodo fluye" data-caso="2" data-fila="D" id="n2D" tabindex="0" aria-labelledby="n2D-t">
+        <p class="nodo-etapa">4 · Solución</p>
+        <div class="nodo-cab"><h3 class="nodo-t" id="n2D-t">Trayectoria exacta</h3></div>
+        <div class="item" id="i2D1">
+          <div class="ec"><div class="ec-m">\[\bar y(\tau)=\frac{\tau(1-\tau)-\tau\,{}_2F_1(p,1-p;2;\tau)}{1-2\lambda}\]</div><span class="num">(4.13)</span></div>
+          <p>La cuerda es en cada instante un par de rectas (4.3). La integración numérica con DOP853 coincide en \(10^{-11}\) (Tabla 4.1).</p>
+        </div>
+      </article>
+
+      <!-- ---------- Fila E: resultados ---------- -->
+      <article class="nodo fluye" data-caso="1" data-fila="E" id="n1E" tabindex="0" aria-labelledby="n1E-t">
+        <p class="nodo-etapa">5 · Resultados</p>
+        <div class="nodo-cab"><h3 class="nodo-t" id="n1E-t">Ondas y amplificación</h3></div>
+        <div class="item" id="i1E1" data-hilo="ondas">
+          <p>La onda reflejada en el apoyo final alcanza a la carga en</p>
+          <div class="ec"><div class="ec-m">\[\tau^*=\frac{2\alpha}{1+\alpha}\]</div><span class="num">(3.28)</span></div>
+        </div>
+        <div class="item" id="i1E2" data-hilo="ondas llegada">
+          <p>La trayectoria está hecha de tramos rectos; para \(\alpha&gt;1/3\), de dos:</p>
+          <div class="ec"><div class="ec-m">\[\frac{w(vt,t)}{w_0}=\begin{cases}\dfrac{4\tau}{1+\alpha}, & \tau\le\tau^*\\[8pt]\dfrac{8\alpha(1-\tau)}{1-\alpha^2}, & \tau\ge\tau^*\end{cases}\]</div><span class="num">(3.29)</span></div>
+          <p>con el máximo \(8\alpha/(1+\alpha)^2\) en \(\tau^*\). La carga llega al apoyo con \(w=0\): la trayectoria es continua.</p>
+        </div>
+        <div class="item" id="i1E3" data-hilo="amplif">
+          <p>Factor de amplificación dinámica en el centro (3.30):</p>
+          <div class="ec"><div class="ec-m">\[\begin{aligned}&amp;D_{\max}=\tfrac32\ \ \text{en}\ \ \alpha=\tfrac13\\ &amp;D=\frac{2}{1+\alpha},\quad \tfrac13\le\alpha\le2\end{aligned}\]</div><span class="num">(3.31)</span></div>
+        </div>
+        <div class="item consola" id="i1E4" data-hilo="ondas">
+          <p><span class="tag">consola</span>Regiones de Smith en el plano \(x\)–\(\tau\): en cada una la cuerda es una recta, quieta o moviéndose con rapidez \(4/(1-\alpha^2)\) en \(w/w_0\) por unidad de \(\tau\). Son seis para \(1/3\le\alpha&lt;1/2\).</p>
+        </div>
+      </article>
+
+      <article class="nodo fluye" data-caso="3" data-fila="E" id="n3E" tabindex="0" aria-labelledby="n3E-t">
+        <p class="nodo-etapa">5 · Resultados</p>
+        <div class="nodo-cab"><h3 class="nodo-t" id="n3E-t">Fuerza, llegada y contacto</h3></div>
+        <div class="item" id="i3E1" data-hilo="ondas contacto">
+          <p>La fuerza de contacto parte en \(f=0\), porque la partícula entra en caída libre, y cambia de pendiente con cada onda reflejada que la alcanza (Sec. 5.8).</p>
+        </div>
+        <div class="item" id="i3E2" data-hilo="llegada contacto">
+          <p>La discontinuidad en el apoyo final persiste, \(\bar y(1)\neq0\) (Tabla 5.5), y cerca de él la fuerza cumple, con \(s=-\ln(1-\tau)\),</p>
+          <div class="ec"><div class="ec-m">\[f(\tau)(1-\tau)\to\frac{\alpha}{\operatorname{artanh}\alpha}\,\bar y(1)+p(s)\]</div><span class="num">(5.27)</span></div>
+          <p>donde \(p\) es una oscilación sin amortiguar de período \(\ln[(1+\alpha)/(1-\alpha)]\) en \(s\).</p>
+        </div>
+        <div class="item" id="i3E3" data-hilo="contacto">
+          <p>Con \(f&lt;0\) la partícula se separaría de la cuerda: ocurre cerca del apoyo a bajas velocidades (\(\alpha=0{,}2\)) y con cargas livianas (\(\alpha=0{,}5\), \(\mu\le0{,}5\)).</p>
+        </div>
+        <div class="item" id="i3E4" data-hilo="amplif">
+          <p>La masa de la carga sube el máximo de \(D\) a cerca de 1,6 y lo lleva a velocidades menores (Fig. 5.5).</p>
+        </div>
+        <div class="item consola" id="i3E5" data-hilo="contacto llegada">
+          <p><span class="tag">consola</span>Plano \(\alpha\)–\(\mu\) con la solución por ondas: se pierde el contacto en 1072 de 3116 puntos, y toda llegada sobre el apoyo, \(\bar y(1)&lt;0\), queda dentro de esa zona.</p>
+        </div>
+      </article>
+
+      <article class="nodo fluye" data-caso="2" data-fila="E" id="n2E" tabindex="0" aria-labelledby="n2E-t">
+        <p class="nodo-etapa">5 · Resultados</p>
+        <div class="nodo-cab"><h3 class="nodo-t" id="n2E-t">Caída libre y llegada</h3></div>
+        <div class="item" id="i2E1" data-hilo="contacto">
+          <p>Al entrar, el tramo izquierdo está casi horizontal y no sostiene a la partícula: caída libre.</p>
+          <div class="ec"><div class="ec-m">\[u\approx\frac{P}{2m}\,t^2\quad\Longleftrightarrow\quad \bar y\approx\frac{\tau^2}{2\lambda}\]</div><span class="num">(4.14)</span></div>
+        </div>
+        <div class="item" id="i2E2" data-hilo="llegada">
+          <p>Con el teorema de Gauss (4.15), la altura de llegada:</p>
+          <div class="ec"><div class="ec-m">\[\bar y(1)=\frac{\lambda\sin(\pi p)}{\pi(1-2\lambda)}\]</div><span class="num">(4.16)</span></div>
+          <p>En general distinta de cero: la trayectoria es discontinua en \(x=L\).</p>
+        </div>
+        <div class="item" id="i2E3" data-hilo="llegada">
+          <p>Valores de Smith: la serie se corta y la partícula llega justo al apoyo.</p>
+          <div class="ec"><div class="ec-m">\[\begin{aligned}&amp;\frac{1}{\lambda}=n(n+1),\quad n=2,3,\dots\\ &amp;\bar y=3\tau^2(1-\tau),\quad \lambda=\tfrac16\end{aligned}\]</div><span class="num">(4.17)<br>(4.18)</span></div>
+        </div>
+        <div class="item" id="i2E4" data-hilo="llegada">
+          <p>Cerca del apoyo, con \(s=1-\tau\), aparecen las funciones de Bessel \(\sqrt s\,J_1\) y \(\sqrt s\,Y_1\) de \(2\sqrt{s/\lambda}\) (4.19): la velocidad crece como \(\ln s\).</p>
+        </div>
+        <div class="item" id="i2E5" data-hilo="amplif">
+          <p>\(\bar y_{\max}\approx0{,}455\), 1,82 veces la deflexión estática máxima, en \(\lambda\approx0{,}24\) (Sec. 4.6).</p>
+        </div>
+        <div class="item consola" id="i2E6" data-hilo="contacto">
+          <p><span class="tag">consola</span>Fuerza de contacto:</p>
+          <div class="ec"><div class="ec-m">\[f=1-\lambda\bar y''=\frac{\bar y}{\tau(1-\tau)}\]</div></div>
+          <p>Se pierde el contacto justo cuando la partícula sube sobre los apoyos (\(\bar y&lt;0\)). En los casos calculados, de \(\lambda=0{,}005\) a 2, solo ocurre si llega por encima, \(\bar y(1)&lt;0\), como con \(\lambda=0{,}12\).</p>
+        </div>
+      </article>
+
+      <!-- ---------- Fila F: límites ---------- -->
+      <article class="nodo fluye" data-caso="1" data-fila="F" id="n1F" tabindex="0" aria-labelledby="n1F-t">
+        <p class="nodo-etapa">6 · Límites</p>
+        <div class="nodo-cab"><h3 class="nodo-t" id="n1F-t">Valores límite</h3></div>
+        <div class="item" id="i1F1" data-hilo="cuasi">
+          <p><b>\(\alpha\to0\):</b> la cuerda toma en cada instante su forma estática y la carga sigue la parábola</p>
+          <div class="ec"><div class="ec-m">\[\frac{w_s(vt)}{w_0}=4\tau(1-\tau)\]</div><span class="num">(3.25)</span></div>
+        </div>
+        <div class="item" id="i1F2" data-hilo="critico">
+          <p><b>\(\alpha=1\):</b> todos los modos resuenan (3.26) y la cuerda forma un escalón bajo la carga:</p>
+          <div class="ec"><div class="ec-m">\[\begin{aligned}&amp;w=\frac{Px}{2N},\quad 0\le x&lt;ct\\ &amp;w=0,\quad x&gt;ct\end{aligned}\]</div><span class="num">(3.27)</span></div>
+          <p>es decir, \(w/w_0=2x/L\) detrás de la carga.</p>
+        </div>
+        <div class="item" id="i1F3" data-hilo="super">
+          <p><b>\(\alpha&gt;1\):</b> la carga adelanta a las ondas; bajo ella \(w=0\), y detrás queda una V con el vértice en el frente, <span class="nw">\(x=ct\).</span></p>
+        </div>
+      </article>
+
+      <article class="nodo fluye" data-caso="3" data-fila="F" id="n3F" tabindex="0" aria-labelledby="n3F-t">
+        <p class="nodo-etapa">6 · Límites</p>
+        <div class="nodo-cab"><h3 class="nodo-t" id="n3F-t">Valores límite</h3></div>
+        <div class="item" id="i3F1">
+          <p><b>\(\mu\to0\) ⇒ Caso I:</b> \(\lambda=0\) y \(f=1\) en (5.12), los modos se desacoplan y (5.10) da la serie (3.23).</p>
+        </div>
+        <div class="item consola" id="i3F1c" data-hilo="contacto">
+          <p><span class="tag">consola</span>La trayectoria converge al Caso I, pero la fuerza no: quedan pulsos angostos en cada quiebre. El límite es singular para \(f\).</p>
+        </div>
+        <div class="item" id="i3F2">
+          <p><b>\(\alpha\to0\) con \(\lambda\) fijo ⇒ Caso II:</b> los modos siguen a la carga, \(\bar y=f\,\tau(1-\tau)\), y con \(f=1-\lambda\bar y''\) resulta (4.7). La diferencia baja como \(\alpha^2\) (Tabla 5.3).</p>
+        </div>
+        <div class="item" id="i3F3" data-hilo="critico">
+          <p><b>\(\alpha=1\):</b> de la suma de (5.16) solo queda el amortiguador:</p>
+          <div class="ec"><div class="ec-m">\[\begin{aligned}&amp;\mu\bar y''+2\bar y'=1\\ &amp;\bar y=\frac{\tau}{2}-\frac{\mu}{4}\bigl(1-e^{-2\tau/\mu}\bigr)\\ &amp;f=1-e^{-2\tau/\mu}\end{aligned}\]</div><span class="num">(5.20)<br>(5.21)</span></div>
+          <p>Con \(\mu\to0\) da \(\bar y=\tau/2\), la altura del escalón. La solución modal converge, en cambio, al punto medio del escalón (5.24).</p>
+        </div>
+        <div class="item" id="i3F4" data-hilo="super">
+          <p><b>\(\alpha&gt;1\):</b> \(\bar y=0\) y \(f=1\). La masa de la carga no influye y la cuerda es la del Caso I.</p>
+        </div>
+      </article>
+
+      <article class="nodo fluye" data-caso="2" data-fila="F" id="n2F" tabindex="0" aria-labelledby="n2F-t">
+        <p class="nodo-etapa">6 · Límites</p>
+        <div class="nodo-cab"><h3 class="nodo-t" id="n2F-t">Valores límite</h3></div>
+        <div class="item" id="i2F1" data-hilo="cuasi">
+          <p><b>\(\lambda\to0\):</b> la trayectoria cuasiestática,</p>
+          <div class="ec"><div class="ec-m">\[\bar y_{qs}=\tau(1-\tau)\]</div><span class="num">(4.8)</span></div>
+          <p>que es (3.25) dividida por 4, porque \(\bar y=u/(4w_0)\).</p>
+        </div>
+        <div class="item" id="i2F2" data-hilo="critico llegada">
+          <p><b>\(\lambda=1/2\):</b> el lado derecho de (4.9) es solución homogénea, como en \(\alpha=1\) del Caso I, y aparece un logaritmo:</p>
+          <div class="ec"><div class="ec-m">\[\begin{aligned}&amp;\bar y=\tfrac13\bigl[\tau^2-2\tau(1-\tau)\ln(1-\tau)\bigr]\\ &amp;\bar y(1)=\tfrac13\end{aligned}\]</div><span class="num">(4.20)</span></div>
+        </div>
+        <div class="item" id="i2F3">
+          <p><b>\(\lambda\to\infty\):</b> la partícula cruza casi en caída libre, \(\bar y\approx\tau^2/(2\lambda)\), y \(\bar y_{\max}\to0\).</p>
+        </div>
+      </article>
+
+      <!-- ---------- Base común ---------- -->
+      <article class="tierra" id="tierra" data-hilo="cuasi" tabindex="0" aria-labelledby="tierra-t">
+        <div>
+          <h3 id="tierra-t">Límite común: sin inercia</h3>
+          <p>Si la carga avanza muy lento frente a las ondas y su inercia es despreciable (\(\alpha\to0\), \(\lambda\to0\)), los tres casos dan la forma estática (3.24) bajo la carga y la misma trayectoria. En el plano es la esquina inferior izquierda.</p>
+        </div>
+        <div class="ec"><div class="ec-m">\[\frac{w_s(vt)}{w_0}=4\tau(1-\tau)\quad\Longleftrightarrow\quad \bar y_{qs}=\tau(1-\tau)\]</div><span class="num">(3.25)<br>(4.8)</span></div>
+      </article>
+    </div>
+  </section>
+
+  <!-- ====================== 3. HILOS ====================== -->
+  <section class="seccion" id="hilos" aria-labelledby="t-hilos-tabla">
+    <div class="sec-cab">
+      <h2 id="t-hilos-tabla">Un mismo lenguaje</h2>
+      <p>Cada fila sigue una idea a través de los tres casos, con el mismo orden de columnas del mapa: el caso general al centro y sus dos límites a los lados.</p>
+    </div>
+    <div class="tabla-hilos">
+      <table class="hilos">
+        <thead>
+          <tr>
+            <th scope="col">Hilo</th>
+            <th scope="col" data-caso="1"><span class="marca m1">I</span>Caso I · fuerza</th>
+            <th scope="col" data-caso="3"><span class="marca m3">III</span>Caso III · general</th>
+            <th scope="col" data-caso="2"><span class="marca m2">II</span>Caso II · cuerda sin masa</th>
+          </tr>
+        </thead>
+        <tbody>
+          <tr>
+            <th scope="row"><span class="hilo-n">Parámetros</span><small>qué compara cada uno</small></th>
+            <td data-caso="1" data-etiqueta="Caso I">\(\alpha=v/c\)<span class="num">(3.20)</span><small>la velocidad de la carga con la de las ondas</small></td>
+            <td data-caso="3" data-etiqueta="Caso III">\(\alpha\) y \(\mu=m/(\rho AL)\), con \(\lambda=\alpha^2\mu\)<span class="num">(1.5)</span><small>dos parámetros independientes</small></td>
+            <td data-caso="2" data-etiqueta="Caso II">\(\lambda=mv^2/(LN)\)<span class="num">(4.6)</span><small>la energía cinética de la partícula con el trabajo de la tensión</small></td>
+          </tr>
+          <tr>
+            <th scope="row"><span class="hilo-n">Deflexión</span><small>un mismo desplazamiento se ve cuatro veces más chico en \(\bar y\) que en \(w/w_0\)</small></th>
+            <td data-caso="1" data-etiqueta="Caso I">\(w/w_0\), con \(w_0=PL/(4N)\)<span class="num">(3.21)</span></td>
+            <td data-caso="3" data-etiqueta="Caso III">\(\bar w=Nw/(PL)\) y \(\bar y=\bar w(vt,\tau)\)<span class="num">(5.8)</span></td>
+            <td data-caso="2" data-etiqueta="Caso II">\(\bar y=Nu/(PL)=u/(4w_0)\)<span class="num">(4.6)</span></td>
+          </tr>
+          <tr>
+            <th scope="row"><span class="hilo-n">Fuerza sobre la cuerda</span><small>\(f=F_c/P\)</small></th>
+            <td data-caso="1" data-etiqueta="Caso I">\(f=1\): la carga es solo \(P\)</td>
+            <td data-caso="3" data-etiqueta="Caso III"><div class="ec"><div class="ec-m">\[f=1-\lambda\bar y''=\frac{1-\lambda B}{1+2\mu S}\]</div><span class="num">(5.9)<br>(5.12)</span></div></td>
+            <td data-caso="2" data-etiqueta="Caso II"><div class="ec"><div class="ec-m">\[f=\frac{\bar y}{\tau(1-\tau)}\]</div><span class="tag">consola</span></div></td>
+          </tr>
+          <tr>
+            <th scope="row"><span class="hilo-n">Cuasiestático</span><button type="button" class="btn ver-hilo" data-hilo="cuasi">Ver en el mapa</button></th>
+            <td data-caso="1" data-etiqueta="Caso I">\(\alpha\to0\): \(4\tau(1-\tau)\)<span class="num">(3.25)</span></td>
+            <td data-caso="3" data-etiqueta="Caso III">\(\alpha\to0\) y \(\lambda\to0\): la esquina del plano</td>
+            <td data-caso="2" data-etiqueta="Caso II">\(\lambda\to0\): \(\tau(1-\tau)\)<span class="num">(4.8)</span></td>
+          </tr>
+          <tr>
+            <th scope="row"><span class="hilo-n">Ondas y τ*</span><button type="button" class="btn ver-hilo" data-hilo="ondas">Ver en el mapa</button></th>
+            <td data-caso="1" data-etiqueta="Caso I">Frente con velocidad \(c\); \(\tau^*=2\alpha/(1+\alpha)\) da el máximo de la trayectoria<span class="num">(3.28)</span></td>
+            <td data-caso="3" data-etiqueta="Caso III">El mismo \(\tau^*\) cierra el primer tramo (5.16); después, \(\tau_n=1-\kappa^n\)<span class="num">(5.13)</span><span class="num">(5.19)</span></td>
+            <td data-caso="2" data-etiqueta="Caso II">\(c\to\infty\): \(\tau^*\to0\) y, con \(\kappa\to1\), la suma de (5.15) tiende a \(Nu/(vt)\), el tramo izquierdo de (4.5)</td>
+          </tr>
+          <tr>
+            <th scope="row"><span class="hilo-n">Salto de pendiente</span><small>la tensión efectiva \(N(1-\alpha^2)\) se anula en \(v=c\)</small><button type="button" class="btn ver-hilo" data-hilo="salto">Ver en el mapa</button></th>
+            <td data-caso="1" data-etiqueta="Caso I">Bajo la carga, la pendiente salta en \(P/[N(1-\alpha^2)]\): es (5.14) con \(m=0\)</td>
+            <td data-caso="3" data-etiqueta="Caso III"><div class="ec"><div class="ec-m">\[-N(1-\alpha^2)\Bigl[\frac{\partial w}{\partial x}\Bigr]=P-m\ddot u\]</div><span class="num">(5.14)</span></div></td>
+            <td data-caso="2" data-etiqueta="Caso II"><div class="ec"><div class="ec-m">\[-N\Bigl[\frac{\partial w}{\partial x}\Bigr]=P-m\ddot u\]</div><span class="num">(4.4)</span></div></td>
+          </tr>
+          <tr>
+            <th scope="row"><span class="hilo-n">Velocidad crítica</span><button type="button" class="btn ver-hilo" data-hilo="critico">Ver en el mapa</button></th>
+            <td data-caso="1" data-etiqueta="Caso I">Todos los modos resuenan (3.26); escalón con \(w/w_0=2x/L\) detrás de la carga<span class="num">(3.27)</span></td>
+            <td data-caso="3" data-etiqueta="Caso III">\(\mu\bar y''+2\bar y'=1\); con \(\mu\to0\), \(\bar y=\tau/2\); la modal converge al punto medio (5.24)<span class="num">(5.20)</span><span class="num">(5.21)</span></td>
+            <td data-caso="2" data-etiqueta="Caso II">No aplica (\(\alpha\to0\)). Su análogo es \(\lambda=1/2\), donde el forzante es solución homogénea<span class="num">(4.20)</span></td>
+          </tr>
+          <tr>
+            <th scope="row"><span class="hilo-n">Supercrítico</span><button type="button" class="btn ver-hilo" data-hilo="super">Ver en el mapa</button></th>
+            <td data-caso="1" data-etiqueta="Caso I">\(w=0\) bajo la carga; detrás, una V con el vértice en el frente</td>
+            <td data-caso="3" data-etiqueta="Caso III">\(\bar y=0\) y \(f=1\): igual al Caso I</td>
+            <td data-caso="2" class="na" data-etiqueta="Caso II">No aplica</td>
+          </tr>
+          <tr>
+            <th scope="row"><span class="hilo-n">Llegada al apoyo final</span><small>con \(\alpha\to0\) el factor \(2\alpha/\ln\frac{1+\alpha}{1-\alpha}\) de (5.26) tiende a 1 y se recupera la ley del Caso II</small><button type="button" class="btn ver-hilo" data-hilo="llegada">Ver en el mapa</button></th>
+            <td data-caso="1" data-etiqueta="Caso I">Continua: (3.29) termina en \(w=0\)</td>
+            <td data-caso="3" data-etiqueta="Caso III">\(\bar y(1)\neq0\) (Tabla 5.5); la velocidad crece como \(\ln(1-\tau)\); en \(\alpha=1\) llega con velocidad finita (5.22)<span class="num">(5.26)</span></td>
+            <td data-caso="2" data-etiqueta="Caso II">\(\bar y(1)\neq0\) salvo en los valores de Smith (4.17); \(\bar y'\approx[\bar y(1)/\lambda]\ln s\)<span class="num">(4.16)</span></td>
+          </tr>
+          <tr>
+            <th scope="row"><span class="hilo-n">Pérdida de contacto</span><button type="button" class="btn ver-hilo" data-hilo="contacto">Ver en el mapa</button></th>
+            <td data-caso="1" class="na" data-etiqueta="Caso I">No aplica: la fuerza está impuesta</td>
+            <td data-caso="3" data-etiqueta="Caso III">Promedio \(\propto\bar y(1)\) más una oscilación<span class="num">(5.27)</span><small><span class="tag">consola</span>zona del plano, con la frontera cerca de \(\lambda=1/6\) para \(\alpha\le0{,}5\)</small></td>
+            <td data-caso="2" data-etiqueta="Caso II">\(f&lt;0\Leftrightarrow\bar y&lt;0\): la partícula sube sobre los apoyos<small><span class="tag">consola</span>en los casos calculados, solo si \(\bar y(1)&lt;0\)</small></td>
+          </tr>
+          <tr>
+            <th scope="row"><span class="hilo-n">Amplificación</span><button type="button" class="btn ver-hilo" data-hilo="amplif">Ver en el mapa</button></th>
+            <td data-caso="1" data-etiqueta="Caso I">\(D_{\max}=3/2\) en \(\alpha=1/3\)<span class="num">(3.31)</span></td>
+            <td data-caso="3" data-etiqueta="Caso III">\(D_{\max}\approx1{,}6\), a menor \(\alpha\) (Fig. 5.5); en \(\alpha=1\), \(D=4[\bar y(3/4)-\bar y(1/4)]\)</td>
+            <td data-caso="2" data-etiqueta="Caso II">\(\bar y_{\max}\approx0{,}455\), 1,82 veces la estática, en \(\lambda\approx0{,}24\) (Sec. 4.6)</td>
+          </tr>
+        </tbody>
+      </table>
+    </div>
+  </section>
+
+  <footer class="pie">
+    <p>Fuente: Trabajo de título, versión del 2 de noviembre de 2026. Los números entre paréntesis son los de sus ecuaciones; las tablas, figuras y secciones también siguen esa versión.</p>
+    <p><span class="tag">consola</span>marca lo que se obtuvo con las consolas y aún no está en el texto. La zona sin contacto del plano viene de la solución por ondas en una grilla de 76 valores de α por 41 de μ.</p>
+  </footer>
+</div>
+
+<script>
+(function () {
+  "use strict";
+  var $ = function (s, r) { return (r || document).querySelector(s); };
+  var $$ = function (s, r) { return Array.prototype.slice.call((r || document).querySelectorAll(s)); };
+  var CLAVE = "mapa-tres-casos-v1";
+  var prefs = {};
+  try { prefs = JSON.parse(localStorage.getItem(CLAVE) || "{}") || {}; } catch (e) { prefs = {}; }
+  function guardar() { try { localStorage.setItem(CLAVE, JSON.stringify(prefs)); } catch (e) {} }
+  var reducir = window.matchMedia && window.matchMedia("(prefers-reduced-motion: reduce)").matches;
+  var ROMANO = { "1": "I", "2": "II", "3": "III" };
+
+  /* ================= 1. Plano de los parámetros ================= */
+  var FRONTERA = [[0.05,67.0242],[0.075,29.9825],[0.1,17.1173],[0.125,11.1156],[0.15,7.8293],[0.175,5.8522],[0.2,4.5164],[0.225,3.5979],[0.25,2.9346],[0.275,2.4375],[0.3,2.0492],[0.325,1.7389],[0.35,1.4916],[0.375,1.2899],[0.4,1.1196],[0.425,0.9781],[0.45,0.8609],[0.475,0.7557],[0.5,0.6647],[0.525,0.588],[0.55,0.5162],[0.575,0.4531],[0.6,0.3993],[0.625,0.3479],[0.65,0.3021],[0.675,0.2611],[0.7,0.2255],[0.725,0.1916],[0.75,0.1604],[0.775,0.133],[0.8,0.1104],[0.825,0.0903],[0.85,0.0701],[0.875,0.0565]];
+  var SVGNS = "http://www.w3.org/2000/svg";
+  var P = { x0: 64, x1: 700, yTop: 22, yBot: 326, aMax: 1.35, muMin: 0.05, muMax: 100, yS0: 338, yS1: 360 };
+  var LMIN = Math.log10(P.muMin), LMAX = Math.log10(P.muMax);
+  function X(a) { return P.x0 + (a / P.aMax) * (P.x1 - P.x0); }
+  function Y(mu) { return P.yBot - (Math.log10(mu) - LMIN) / (LMAX - LMIN) * (P.yBot - P.yTop); }
+  function el(tag, attrs, padre) {
+    var e = document.createElementNS(SVGNS, tag);
+    for (var k in attrs) if (Object.prototype.hasOwnProperty.call(attrs, k)) e.setAttribute(k, attrs[k]);
+    if (padre) padre.appendChild(e);
+    return e;
+  }
+  function txt(padre, x, y, s, clase, ancla, extra) {
+    var t = el("text", Object.assign({ x: x, y: y, class: clase || "p-txt", "text-anchor": ancla || "start" }, extra || {}), padre);
+    t.textContent = s;
+    return t;
+  }
+  function f1(v) { return Math.round(v * 10) / 10; }
+
+  var planoAngosto = null;
+  function anchoPlano() { var s = $("#plano-svg"); return (s && s.parentNode.clientWidth) || 720; }
+  function dibujarPlano() {
+    var svg = $("#plano-svg");
+    if (!svg) return;
+    planoAngosto = anchoPlano() < 600;
+    P.x1 = planoAngosto ? 432 : 700;
+    svg.setAttribute("viewBox", "0 0 " + (planoAngosto ? 446 : 720) + " 420");
+    svg.classList.toggle("estrecho", planoAngosto);
+    while (svg.firstChild) svg.removeChild(svg.firstChild);
+    var defs = el("defs", {}, svg);
+    var pat = el("pattern", { id: "trama", width: 7, height: 7, patternUnits: "userSpaceOnUse", patternTransform: "rotate(45)" }, defs);
+    el("line", { x1: 0, y1: 0, x2: 0, y2: 7, class: "p-trama" }, pat);
+
+    // Interior (Caso III) y banda supercrítica
+    var g3 = el("g", { class: "region", "data-elem": "caso3" }, svg);
+    el("rect", { x: P.x0, y: P.yTop, width: X(1) - P.x0, height: P.yBot - P.yTop, class: "p-interior" }, g3);
+    var gs = el("g", { class: "region", "data-elem": "super" }, svg);
+    el("rect", { x: X(1), y: P.yTop, width: P.x1 - X(1), height: P.yBot - P.yTop, class: "p-super" }, gs);
+
+    // Rejilla
+    var gr = el("g", { class: "p-rejilla p-sec" }, svg);
+    [0.25, 0.5, 0.75, 1.25].forEach(function (a) { el("line", { x1: f1(X(a)), x2: f1(X(a)), y1: P.yTop, y2: P.yBot }, gr); });
+    [0.1, 1, 10].forEach(function (m) { el("line", { x1: P.x0, x2: P.x1, y1: f1(Y(m)), y2: f1(Y(m)) }, gr); });
+
+    // Zona sin contacto (datos del plano de la consola)
+    var aFin = 0.889;
+    var pts = FRONTERA.map(function (p) { return f1(X(p[0])) + "," + f1(Y(p[1])); });
+    var dBorde = "M" + pts.join(" L") + " L" + f1(X(aFin)) + "," + f1(Y(P.muMin));
+    var dZona = "M" + f1(X(FRONTERA[0][0])) + "," + f1(Y(P.muMin)) + " L" + pts.join(" L") + " L" + f1(X(aFin)) + "," + f1(Y(P.muMin)) + " Z";
+    var gz = el("g", { class: "region", "data-elem": "zona" }, svg);
+    el("path", { d: dZona, class: "p-zona" }, gz);
+    el("path", { d: dBorde, class: "p-frontera" }, gz);
+
+    // Curvas de lambda constante (hasta alfa = 1)
+    function curva(lam) {
+      var a0 = Math.sqrt(lam / P.muMax), d = "";
+      for (var i = 0; i <= 90; i++) {
+        var a = a0 + (1 - a0) * i / 90, m = lam / (a * a);
+        if (m < P.muMin) break;
+        d += (i ? " L" : "M") + f1(X(a)) + "," + f1(Y(m));
+      }
+      return d;
+    }
+    var gl = el("g", { class: "p-sec" }, svg);
+    el("path", { d: curva(1), class: "p-lam" }, gl);
+    el("path", { d: curva(1 / 6), class: "p-lam6" }, gl);
+    txt(gl, f1(X(0.5) + 8), f1(Y(4) - 6), "λ = 1", "p-lam-txt halo");
+    txt(gl, f1(X(0.70) + 8), f1(Y(1 / 6 / 0.49) - 8), "λ = 1/6", "p-lam-txt halo");
+
+    // Velocidad crítica
+    var gc = el("g", { class: "region", "data-elem": "critico" }, svg);
+    el("line", { x1: f1(X(1)), x2: f1(X(1)), y1: P.yTop, y2: P.yS1, class: "p-critica" }, gc);
+    el("rect", { x: f1(X(1) - 7), y: P.yTop, width: 14, height: P.yS1 - P.yTop, class: "p-golpe" }, gc);
+
+    // Caso II: banda izquierda
+    var g2 = el("g", { class: "region", "data-elem": "caso2" }, svg);
+    el("rect", { x: P.x0, y: P.yTop, width: f1(X(0.045) - P.x0), height: P.yBot - P.yTop, class: "p-caso2" }, g2);
+
+    // Caso I: franja mu = 0
+    var g1 = el("g", { class: "region", "data-elem": "caso1" }, svg);
+    el("rect", { x: P.x0, y: P.yS0, width: P.x1 - P.x0, height: P.yS1 - P.yS0, class: "p-caso1" }, g1);
+
+    // Marco
+    el("rect", { x: P.x0, y: P.yTop, width: P.x1 - P.x0, height: P.yBot - P.yTop, class: "p-marco p-sec" }, svg);
+
+    // Esquina estática
+    var ge = el("g", { class: "region", "data-elem": "estatico" }, svg);
+    el("circle", { cx: P.x0, cy: (P.yS0 + P.yS1) / 2, r: 7, class: "p-esquina" }, ge);
+
+    // Rótulos
+    var gt = el("g", { class: "p-sec" }, svg);
+    txt(gt, f1(X(0.72)), f1(Y(14)), "Caso III", "p-rotulo halo", "middle");
+    txt(gt, f1(X(0.72)), f1(Y(14) + 18), "ambas masas", "p-txt halo solo-ancho", "middle");
+    txt(gt, f1(X(0.2)), f1(Y(0.22)), "sin contacto", "p-txt halo", "middle");
+    txt(gt, f1(X(0.2)), f1(Y(0.22) + 16), "f < 0", "p-txt-chico halo", "middle");
+    txt(gt, f1(X(1.175)), 150, "supercrítico", "p-txt halo-reposo", "middle");
+    txt(gt, f1(X(1.175)), 168, "ȳ = 0, f = 1", "p-txt-chico halo-reposo solo-ancho", "middle");
+    txt(gt, f1(X(1) + 6), 40, "α = 1", "p-txt halo-reposo", "start");
+    txt(gt, f1(X(0.5)), P.yS1 - 6, "Caso I · μ = 0", "p-rotulo r1", "middle");
+    var t2 = txt(gt, 0, 0, "Caso II", "p-rotulo r2", "middle", { transform: "translate(" + f1((P.x0 + X(0.045)) / 2 + 4.5) + "," + f1(Y(1)) + ") rotate(-90)" });
+    t2.setAttribute("x", 0); t2.setAttribute("y", 0);
+    txt(gt, P.x0 + 13, P.yS1 + 16, "estático", "p-txt-chico", "start");
+
+    // Ejes
+    var ga = el("g", { class: "p-sec" }, svg);
+    [[0, "0"], [0.25, "0,25"], [0.5, "0,5"], [0.75, "0,75"], [1, "1"], [1.25, "1,25"]].forEach(function (p) {
+      txt(ga, f1(X(p[0])), P.yS1 + 34, p[1], "p-eje", "middle");
+    });
+    txt(ga, P.x1, P.yS1 + 54, "α = v/c", "p-titulo-eje", "end");
+    [[0.1, "0,1"], [1, "1"], [10, "10"], [100, "100"]].forEach(function (p) {
+      txt(ga, P.x0 - 8, f1(Y(p[0]) + 4), p[1], "p-eje", "end");
+    });
+    txt(ga, P.x0 - 8, f1((P.yS0 + P.yS1) / 2 + 4), "0", "p-eje", "end");
+    txt(ga, 8, 14, "μ = m/(ρAL)", "p-titulo-eje", "start");
+
+    // Casos de la tesis
+    [[0.5, 1, "1", "caso3"], [0.2, 2, "2", "zona"], [0.5, 0.272, "3", "zona"]].forEach(function (p) {
+      var gm = el("g", { class: "region p-marca", "data-elem": p[3] }, svg);
+      el("circle", { cx: f1(X(p[0])), cy: f1(Y(p[1])), r: 8 }, gm);
+      txt(gm, f1(X(p[0])), f1(Y(p[1]) + 3.8), p[2], "", "middle");
+    });
+
+    $$(".region", svg).forEach(function (g) {
+      g.addEventListener("click", function () { elegirElem(g.getAttribute("data-elem")); });
+      g.addEventListener("mouseenter", function () { marcarSobre(g.getAttribute("data-elem"), true); });
+      g.addEventListener("mouseleave", function () { marcarSobre(g.getAttribute("data-elem"), false); });
+    });
+    elegirElem(prefs.elem || "caso3", true);
+  }
+
+  function ajustarEstrecho() {
+    if (planoAngosto !== null && (anchoPlano() < 600) !== planoAngosto) dibujarPlano();
+  }
+  function marcarSobre(elem, si) {
+    $$(".elem-btn").forEach(function (b) { if (b.dataset.elem === elem) b.classList.toggle("sobre", si); });
+  }
+  function elegirElem(elem, inicial) {
+    if (!elem) return;
+    prefs.elem = elem;
+    if (!inicial) guardar();
+    $$(".elem-btn").forEach(function (b) { b.setAttribute("aria-pressed", String(b.dataset.elem === elem)); });
+    $$(".leyenda-elem").forEach(function (d) { d.hidden = d.dataset.elem !== elem; });
+    $$("#plano-svg .region").forEach(function (g) { g.classList.toggle("elegida", g.getAttribute("data-elem") === elem); });
+  }
+  $$(".elem-btn").forEach(function (b) {
+    b.addEventListener("click", function () { elegirElem(b.dataset.elem); });
+  });
+
+  /* ================= 2. Mapa ================= */
+  var ENLACES = [
+    ["i3B1", "i1B1"], ["i3B1", "i2B1"],
+    ["i3C1", "i1C1"], ["i3C2", "i2B2"], ["i3C3", "i1E1"], ["i3C3", "i2B3"],
+    ["i3D2", "i1D2"],
+    ["i3E1", "i2E1"], ["i3E2", "i2E2"], ["i3E5", "i2E6"],
+    ["i3F1", "i1D1"], ["i3F2", "i2C1"], ["i3F3", "i1F2"], ["i3F4", "i1F3"]
+  ];
+  var vecinos = {};
+  ENLACES.forEach(function (e) {
+    (vecinos[e[0]] = vecinos[e[0]] || []).push(e[1]);
+    (vecinos[e[1]] = vecinos[e[1]] || []).push(e[0]);
+  });
+  var mapa = $("#mapa");
+  var activos = {}, fijado = null, resalte = {};
+
+  function enEscritorio() { return window.matchMedia("(min-width: 900px)").matches; }
+
+  function dibujarEnlaces() {
+    var svg = $("#mapa-svg");
+    if (!svg || !mapa) return;
+    var ancho = mapa.clientWidth, alto = mapa.clientHeight;
+    svg.setAttribute("width", ancho);
+    svg.setAttribute("height", alto);
+    svg.setAttribute("viewBox", "0 0 " + ancho + " " + alto);
+    while (svg.firstChild) svg.removeChild(svg.firstChild);
+    if (!enEscritorio() || !$("#v-enlaces").checked) return;
+    var r0 = mapa.getBoundingClientRect();
+    var datos = ENLACES.map(function (e) {
+      var ia = document.getElementById(e[0]), ib = document.getElementById(e[1]);
+      var na = ia.closest(".nodo"), nb = ib.closest(".nodo");
+      var ra = ia.getBoundingClientRect(), rb = ib.getBoundingClientRect();
+      var rna = na.getBoundingClientRect(), rnb = nb.getBoundingClientRect();
+      var izq = rnb.left < rna.left;
+      return {
+        a: e[0], b: e[1], izq: izq, caso: nb.dataset.caso,
+        x1: (izq ? rna.left : rna.right) - r0.left,
+        x2: (izq ? rnb.right : rnb.left) - r0.left,
+        y1: ra.top - r0.top + Math.min(ra.height / 2, 15),
+        y2: rb.top - r0.top + Math.min(rb.height / 2, 15)
+      };
+    });
+    [true, false].forEach(function (lado) {
+      var grupo = datos.filter(function (d) { return d.izq === lado; });
+      var cruzan = grupo.filter(function (d) { return Math.abs(d.y2 - d.y1) > 24; })
+        .sort(function (p, q) { return Math.abs(q.y2 - q.y1) - Math.abs(p.y2 - p.y1); });
+      var desv = [-10, 10, -4, 4, -15, 15];
+      cruzan.forEach(function (d, i) { d.off = desv[i % desv.length]; });
+      grupo.forEach(function (d) { if (d.off === undefined) d.off = 0; });
+    });
+    datos.forEach(function (d) {
+      var gx = (d.x1 + d.x2) / 2 + d.off;
+      var s1 = gx > d.x1 ? 1 : -1, s2 = d.x2 > gx ? 1 : -1;
+      var dy = d.y2 - d.y1, sy = dy > 0 ? 1 : -1;
+      var xFin = d.x2 - s2 * 6;
+      var ruta;
+      if (Math.abs(dy) < 2.5) {
+        var ym = (d.y1 + d.y2) / 2;
+        d.y1 = ym; d.y2 = ym;
+        ruta = "M" + f1(d.x1) + "," + f1(ym) + " H" + f1(xFin);
+      } else {
+        var r = Math.max(0.5, Math.min(6, Math.abs(dy) / 2, Math.abs(gx - d.x1) - 1, Math.abs(d.x2 - gx) - 1));
+        ruta = "M" + f1(d.x1) + "," + f1(d.y1) + " H" + f1(gx - s1 * r) +
+          " Q" + f1(gx) + "," + f1(d.y1) + " " + f1(gx) + "," + f1(d.y1 + sy * r) +
+          " V" + f1(d.y2 - sy * r) +
+          " Q" + f1(gx) + "," + f1(d.y2) + " " + f1(gx + s2 * r) + "," + f1(d.y2) +
+          " H" + f1(xFin);
+      }
+      var comun = { "data-a": d.a, "data-b": d.b };
+      el("path", Object.assign({ d: ruta, class: "enlace hacia-" + d.caso }, comun), svg);
+      el("path", Object.assign({ d: "M" + f1(d.x2) + "," + f1(d.y2) + " L" + f1(d.x2 - s2 * 7.5) + "," + f1(d.y2 - 3.8) + " L" + f1(d.x2 - s2 * 7.5) + "," + f1(d.y2 + 3.8) + " Z", class: "punta hacia-" + d.caso }, comun), svg);
+      el("circle", Object.assign({ cx: f1(d.x1), cy: f1(d.y1), r: 2.6, class: "origen hacia-" + d.caso }, comun), svg);
+    });
+    aplicarEstadoEnlaces();
+  }
+
+  function aplicarEstadoEnlaces() {
+    $$("#mapa-svg [data-a]").forEach(function (p) {
+      var a = p.getAttribute("data-a"), b = p.getAttribute("data-b");
+      p.classList.toggle("activa", !!(activos[a] || activos[b]));
+      p.classList.toggle("en-resalte", !!(resalte[a] && resalte[b]));
+    });
+  }
+
+  function encender(ids) {
+    activos = {};
+    ids.forEach(function (id) { activos[id] = true; });
+    $$(".item.encendido, .item.destino").forEach(function (i) { i.classList.remove("encendido", "destino"); });
+    ids.forEach(function (id) {
+      var it = document.getElementById(id);
+      if (it) it.classList.add("encendido");
+      (vecinos[id] || []).forEach(function (o) {
+        if (!activos[o]) { var t = document.getElementById(o); if (t) t.classList.add("destino"); }
+      });
+    });
+    mapa.classList.toggle("hay-activo", ids.length > 0);
+    aplicarEstadoEnlaces();
+  }
+  function idsDeNodo(n) {
+    return $$(".item", n).map(function (i) { return i.id; }).filter(function (id) { return vecinos[id]; });
+  }
+  function restaurar() {
+    if (fijado) encender(idsDeNodo(fijado)); else encender([]);
+  }
+
+  mapa.addEventListener("mouseover", function (e) {
+    if (fijado) return;
+    var it = e.target.closest(".item"), nd = e.target.closest(".nodo");
+    if (it && vecinos[it.id]) encender([it.id]);
+    else if (nd) encender(idsDeNodo(nd));
+  });
+  mapa.addEventListener("mouseleave", function () { if (!fijado) encender([]); });
+  mapa.addEventListener("focusin", function (e) {
+    var nd = e.target.closest(".nodo");
+    if (nd && !fijado) encender(idsDeNodo(nd));
+  });
+  mapa.addEventListener("focusout", function () { if (!fijado) encender([]); });
+  mapa.addEventListener("click", function (e) {
+    if (e.target.closest(".salto")) return;
+    var nd = e.target.closest(".nodo");
+    if (fijado) fijado.classList.remove("fijo");
+    if (!nd || nd === fijado) { fijado = null; restaurar(); return; }
+    fijado = nd;
+    nd.classList.add("fijo");
+    encender(idsDeNodo(nd));
+  });
+  document.addEventListener("click", function (e) {
+    if (fijado && !e.target.closest("#mapa")) { fijado.classList.remove("fijo"); fijado = null; restaurar(); }
+  });
+  document.addEventListener("keydown", function (e) {
+    if (e.key === "Escape") {
+      if (fijado) { fijado.classList.remove("fijo"); fijado = null; restaurar(); }
+      else if (Object.keys(resalte).length) resaltar([], "");
+    }
+  });
+  $$(".nodo").forEach(function (n) {
+    n.addEventListener("keydown", function (e) {
+      if (e.key === "Enter" || e.key === " ") { e.preventDefault(); n.click(); }
+    });
+  });
+
+  // Resaltado de hilos y selecciones del plano
+  var nombresHilo = {};
+  $$(".chip").forEach(function (c) { nombresHilo[c.dataset.hilo] = c.textContent; });
+  function idsDeHilo(h) {
+    return $$("#mapa [data-hilo]").filter(function (i) { return (" " + i.getAttribute("data-hilo") + " ").indexOf(" " + h + " ") >= 0; })
+      .map(function (i) { return i.id; });
+  }
+  function resaltar(ids, nombre, hilo) {
+    resalte = {};
+    ids.forEach(function (id) { resalte[id] = true; });
+    $$("#mapa .item, #tierra").forEach(function (i) { i.classList.toggle("en-resalte", !!resalte[i.id]); });
+    mapa.classList.toggle("hay-resalte", ids.length > 0);
+    $("#estado").hidden = ids.length === 0;
+    $("#estado-nombre").textContent = nombre || "";
+    $$(".chip").forEach(function (c) { c.setAttribute("aria-pressed", String(!!hilo && c.dataset.hilo === hilo)); });
+    var porCaso = { "1": 0, "2": 0, "3": 0 };
+    ids.forEach(function (id) {
+      var n = document.getElementById(id), nd = n && n.closest(".nodo");
+      if (nd) porCaso[nd.dataset.caso]++;
+    });
+    $$(".seg-caso label").forEach(function (l) { l.setAttribute("data-resalte", porCaso[l.dataset.caso] ? "si" : "no"); });
+    aplicarEstadoEnlaces();
+    return porCaso;
+  }
+  $$(".chip").forEach(function (c) {
+    c.addEventListener("click", function () {
+      var activo = c.getAttribute("aria-pressed") === "true";
+      if (activo) resaltar([], "");
+      else resaltar(idsDeHilo(c.dataset.hilo), c.textContent, c.dataset.hilo);
+    });
+  });
+  $("#quitar-resalte").addEventListener("click", function () { resaltar([], ""); });
+
+  function irAlMapa(ids, nombre, hilo) {
+    var porCaso = resaltar(ids, nombre, hilo);
+    if (!enEscritorio()) {
+      var actual = mapa.dataset.caso;
+      if (!porCaso[actual]) {
+        var primero = ["1", "3", "2"].filter(function (k) { return porCaso[k]; })[0];
+        if (primero) elegirCaso(primero);
+      }
+    }
+    var destino = $("#desarrollo");
+    destino.scrollIntoView({ behavior: reducir ? "auto" : "smooth", block: "start" });
+  }
+  $$(".ver-mapa").forEach(function (b) {
+    b.addEventListener("click", function () { irAlMapa(b.dataset.items.split(/\s+/), b.dataset.nombre); });
+  });
+  $$(".ver-hilo").forEach(function (b) {
+    b.addEventListener("click", function () { irAlMapa(idsDeHilo(b.dataset.hilo), nombresHilo[b.dataset.hilo], b.dataset.hilo); });
+  });
+
+  // Casos en pantallas angostas
+  function elegirCaso(k) {
+    mapa.dataset.caso = k;
+    var r = document.getElementById("caso-movil-" + k);
+    if (r) r.checked = true;
+    prefs.caso = k;
+    guardar();
+  }
+  $$('input[name="caso-movil"]').forEach(function (r) {
+    r.addEventListener("change", function () { if (r.checked) elegirCaso(r.value); });
+  });
+  if (prefs.caso && ["1", "2", "3"].indexOf(prefs.caso) >= 0) elegirCaso(prefs.caso);
+
+  function crearSaltos() {
+    ENLACES.forEach(function (e) {
+      agregarSalto(document.getElementById(e[0]), document.getElementById(e[1]));
+      agregarSalto(document.getElementById(e[1]), document.getElementById(e[0]));
+    });
+  }
+  function agregarSalto(desde, hacia) {
+    if (!desde || !hacia) return;
+    var cont = desde.querySelector(".saltos");
+    if (!cont) { cont = document.createElement("div"); cont.className = "saltos"; desde.appendChild(cont); }
+    var nodo = hacia.closest(".nodo"), caso = nodo.dataset.caso;
+    var num = hacia.querySelector(".num");
+    var etiqueta = "Caso " + ROMANO[caso] + " · " + (num ? num.textContent.trim().split(/\s+/)[0] : nodo.querySelector(".nodo-t").textContent);
+    var b = document.createElement("button");
+    b.type = "button";
+    b.className = "salto";
+    b.dataset.destino = caso;
+    b.textContent = "→ " + etiqueta;
+    b.addEventListener("click", function () {
+      elegirCaso(caso);
+      requestAnimationFrame(function () {
+        hacia.scrollIntoView({ behavior: reducir ? "auto" : "smooth", block: "center" });
+        hacia.classList.remove("destello");
+        void hacia.offsetWidth;
+        hacia.classList.add("destello");
+      });
+    });
+    cont.appendChild(b);
+  }
+  crearSaltos();
+
+  var vEnl = $("#v-enlaces");
+  if (prefs.enlaces === false) vEnl.checked = false;
+  vEnl.addEventListener("change", function () { prefs.enlaces = vEnl.checked; guardar(); dibujarEnlaces(); });
+
+  // Dibujo y redibujo
+  var pendiente = false;
+  function programar() {
+    if (pendiente) return;
+    pendiente = true;
+    requestAnimationFrame(function () { pendiente = false; dibujarEnlaces(); ajustarEstrecho(); });
+  }
+  dibujarPlano();
+  programar();
+  if (window.ResizeObserver) {
+    var ro = new ResizeObserver(programar);
+    ro.observe(mapa);
+    ro.observe($("#plano-svg"));
+  }
+  window.addEventListener("resize", programar);
+  document.addEventListener("mathjax-listo", programar);
+  if (document.fonts && document.fonts.ready) document.fonts.ready.then(programar);
+  window.__mapa = { dibujarEnlaces: dibujarEnlaces, resaltar: resaltar, idsDeHilo: idsDeHilo, elegirElem: elegirElem, ENLACES: ENLACES };
+})();
+</script>
+
+</body></html>

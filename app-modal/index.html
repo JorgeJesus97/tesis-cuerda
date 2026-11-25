@@ -1,0 +1,1050 @@
+<!DOCTYPE html>
+<html lang="es" data-theme="auto">
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width,initial-scale=1,maximum-scale=1,user-scalable=no">
+<title>Caso III modal</title>
+<link rel="icon" href="data:,">
+<style>
+/* VOICE  herramienta de bolsillo: una sola pantalla para explorar el Caso III
+   IDEA   el plano (α, μ) como mesa de trabajo: tocas un punto y la cuerda responde en números
+   PICTURE el mapa coloreado llena el espacio libre; el anillo marca el caso elegido
+   COLOUR fondo gris claro (azul noche en modo oscuro), tinta casi negra, acento azul; escalas de color de los mapas del avance
+   TYPE   la fuente del sistema (Roboto en Android), cifras tabulares
+   LAYOUT barra, mapa, resultados y, abajo al alcance del pulgar, los mandos; en horizontal, el mapa a la izquierda */
+:root{--fondo:#EEF1F4;--panel:#FFFFFF;--hundido:#F3F5F8;--tinta:#16202B;--tinta-2:#46515E;--tinta-3:#6F7985;--linea:#D8DEE5;--acento:#1F6FD1;--acento-suave:#E2ECFA;--ok:#11784F;--ok-suave:#DFF2E8;--alerta:#B4470F;--alerta-suave:#FCE8DA;--neutro:#FFFFFF;--b1:#C9DCF6;--b2:#EFC3DC;--b3:#F8D3BF;--b4:#DCD3F0;--rayas:#C2652A;--curva:#16202B;--curva-halo:rgba(255,255,255,.8);--borde-c:#0B4AA8;--borde-halo:rgba(255,255,255,.85);--rejilla:rgba(0,0,0,.12);--sombra:0 1px 2px rgba(16,24,40,.06),0 1px 4px rgba(16,24,40,.07);color-scheme:light}
+:root[data-theme="dark"]{--fondo:#0B1016;--panel:#151C24;--hundido:#1B242E;--tinta:#E4E9EF;--tinta-2:#A9B4C0;--tinta-3:#86919D;--linea:#2A3542;--acento:#5B9DF0;--acento-suave:#1A2C44;--ok:#3CC48A;--ok-suave:#123022;--alerta:#F08A4B;--alerta-suave:#3A2416;--neutro:#1E2731;--b1:#1F3B5E;--b2:#4A2A42;--b3:#4D3426;--b4:#352F52;--rayas:#D9874F;--curva:#E4E9EF;--curva-halo:rgba(0,0,0,.6);--borde-c:#74B3FA;--borde-halo:rgba(0,0,0,.6);--rejilla:rgba(255,255,255,.09);--sombra:0 1px 2px rgba(0,0,0,.35);color-scheme:dark}
+@media (prefers-color-scheme:dark){:root[data-theme="auto"]{--fondo:#0B1016;--panel:#151C24;--hundido:#1B242E;--tinta:#E4E9EF;--tinta-2:#A9B4C0;--tinta-3:#86919D;--linea:#2A3542;--acento:#5B9DF0;--acento-suave:#1A2C44;--ok:#3CC48A;--ok-suave:#123022;--alerta:#F08A4B;--alerta-suave:#3A2416;--neutro:#1E2731;--b1:#1F3B5E;--b2:#4A2A42;--b3:#4D3426;--b4:#352F52;--rayas:#D9874F;--curva:#E4E9EF;--curva-halo:rgba(0,0,0,.6);--borde-c:#74B3FA;--borde-halo:rgba(0,0,0,.6);--rejilla:rgba(255,255,255,.09);--sombra:0 1px 2px rgba(0,0,0,.35);color-scheme:dark}}
+*,*::before,*::after{box-sizing:border-box;min-width:0}
+html,body{margin:0;height:100%}
+body{background:var(--fondo);color:var(--tinta);font:15px/1.4 system-ui,Roboto,"Segoe UI",Arial,sans-serif;-webkit-tap-highlight-color:transparent;-webkit-text-size-adjust:100%;overflow-x:hidden}
+button,input{font:inherit;color:inherit}
+.app{display:flex;flex-direction:column;gap:8px;min-height:100%;height:100%;padding:0 8px}
+.barra{display:flex;align-items:center;justify-content:space-between;gap:10px;padding:10px 4px 0;flex:none}
+.barra h1{margin:0;font-size:21px;font-weight:700;line-height:1.15;letter-spacing:-.01em}
+.barra p{margin:1px 0 0;font-size:12.5px;color:var(--tinta-2)}
+.icono{flex:none;width:42px;height:42px;border-radius:50%;border:1px solid var(--linea);background:var(--panel);font-size:18px;font-weight:700;font-style:italic;font-family:Georgia,serif;cursor:pointer}
+.tarjeta{background:var(--panel);border-radius:14px;box-shadow:var(--sombra);padding:9px}
+.mapa{flex:1 1 auto;display:flex;flex-direction:column}
+.selector{display:grid;grid-template-columns:repeat(4,minmax(0,1fr));gap:3px;padding:3px;border-radius:10px;background:var(--hundido);flex:none}
+.selector button{min-height:36px;border:0;border-radius:8px;background:transparent;color:var(--tinta-2);font-size:13.5px;font-weight:600;cursor:pointer;white-space:nowrap}
+.selector button[aria-pressed="true"]{background:var(--panel);color:var(--tinta);box-shadow:var(--sombra)}
+.fig{position:relative;flex:1 1 auto;min-height:180px;margin-top:4px;touch-action:none;user-select:none;-webkit-user-select:none}
+.fig canvas,.fig svg{position:absolute;top:0;right:0;bottom:0;left:0;width:100%;height:100%;display:block}
+.fig svg text{font-size:12px;fill:var(--tinta-2)}
+.fig svg .eje{font-size:12.5px;font-weight:600;fill:var(--tinta-2)}
+.fig svg .rot-curva{font-size:11.5px;font-weight:600;fill:var(--curva);paint-order:stroke;stroke:var(--curva-halo);stroke-width:3px;stroke-linejoin:round}
+.globo{position:absolute;left:0;top:0;z-index:2;pointer-events:none;background:var(--tinta);color:var(--panel);border-radius:7px;padding:4px 9px;font-size:13px;font-weight:600;font-variant-numeric:tabular-nums;white-space:nowrap;box-shadow:0 2px 8px rgba(0,0,0,.25)}
+.globo[hidden]{display:none}
+.escala{flex:none;margin:6px 2px 0}
+.escala-cab{display:flex;justify-content:space-between;align-items:baseline;gap:8px;font-size:12.5px;color:var(--tinta-2)}
+.escala-cab b{font-weight:600;color:var(--tinta)}
+.escala-cab .sin{display:inline-flex;align-items:center;gap:5px;white-space:nowrap}
+.escala-cab .sin i{display:inline-block;width:14px;height:10px;border-radius:2px;background:var(--neutro);box-shadow:inset 0 0 0 1px var(--linea)}
+.barra-color{position:relative;height:9px;border-radius:5px;margin-top:4px}
+.marcas{position:relative;height:16px;font-size:11.5px;color:var(--tinta-3);font-variant-numeric:tabular-nums}
+.marcas span{position:absolute;top:1px;transform:translateX(-50%);white-space:nowrap}
+.res{flex:none}
+.res-cab{display:flex;justify-content:space-between;align-items:center;gap:8px;margin:0 0 6px}
+.res-cab h2{margin:0;font-size:14px;font-weight:600}
+.vistas{display:inline-grid;grid-template-columns:repeat(3,auto);gap:2px;padding:2px;border-radius:9px;background:var(--hundido);flex:none}
+.vistas button{min-height:30px;padding:0 10px;border:0;border-radius:7px;background:transparent;color:var(--tinta-2);font-size:13.5px;font-weight:600;cursor:pointer}
+.vistas button[aria-pressed="true"]{background:var(--panel);color:var(--tinta);box-shadow:var(--sombra)}
+.vista[hidden]{display:none}
+.fig-cuerda{position:relative;height:118px;touch-action:pan-y;user-select:none;-webkit-user-select:none;transition:opacity .2s}
+.fig-cuerda svg{position:absolute;top:0;left:0;width:100%;height:100%;display:block}
+.res.calculando .fig-cuerda{opacity:.7}
+.play{position:absolute;left:0;bottom:0;width:40px;height:40px;border-radius:50%;border:1px solid var(--linea);background:var(--panel);color:var(--tinta);display:grid;place-items:center;cursor:pointer;box-shadow:var(--sombra);padding:0}
+.play svg{position:static;width:16px;height:16px}
+.tau{position:absolute;right:2px;bottom:4px;font-size:12.5px;color:var(--tinta-2);font-variant-numeric:tabular-nums;pointer-events:none}
+.tau.suelta{color:var(--alerta);font-weight:600}
+.resumen{margin:3px 2px 0;font-size:12.5px;color:var(--tinta-2);font-variant-numeric:tabular-nums;white-space:nowrap;overflow:hidden;text-overflow:ellipsis}
+.res-cab>span{font-size:12px;color:var(--tinta-3);font-variant-numeric:tabular-nums;white-space:nowrap;overflow:hidden;text-overflow:ellipsis;min-width:0}
+.tiles{display:grid;grid-template-columns:repeat(3,minmax(0,1fr));gap:6px;transition:opacity .2s}
+.res.calculando .tiles{opacity:.55}
+.tile{background:var(--hundido);border-radius:10px;padding:5px 9px 6px}
+.tile p{margin:0}
+.rot{font-size:12px;color:var(--tinta-2);white-space:nowrap;overflow:hidden;text-overflow:ellipsis}
+.val{font-size:19px;font-weight:600;line-height:1.3;font-variant-numeric:tabular-nums;white-space:nowrap}
+.val.chico{font-size:15px;font-size:clamp(13px,3.8vw,15.5px);line-height:1.55;letter-spacing:-.01em}
+.val.ok{color:var(--ok)}
+.val.alerta{color:var(--alerta)}
+.sub{font-size:12px;color:var(--tinta-3);white-space:nowrap;overflow:hidden;text-overflow:ellipsis;font-variant-numeric:tabular-nums}
+.mandos{flex:none;background:var(--panel);border-radius:16px 16px 0 0;box-shadow:0 -1px 4px rgba(16,24,40,.08);margin:0 -8px;padding:7px 14px calc(9px + env(safe-area-inset-bottom,0px))}
+.params{display:grid;grid-template-columns:repeat(2,minmax(0,1fr));gap:2px 14px}
+.param{display:grid;gap:3px;align-content:start}
+.param label{font-size:13.5px;font-weight:600;line-height:1.25}
+.param label span{font-size:12px;font-weight:400;color:var(--tinta-2);white-space:nowrap}
+.paso{display:grid;grid-template-columns:42px minmax(0,1fr) 42px;gap:5px;align-items:center}
+.pm{width:100%;height:40px;border-radius:12px;border:1px solid var(--linea);background:var(--hundido);font-size:24px;font-weight:500;line-height:1;cursor:pointer;user-select:none;-webkit-user-select:none;-webkit-touch-callout:none;touch-action:manipulation}
+.pm:active{background:var(--acento-suave);border-color:var(--acento)}
+.num{width:100%;height:40px;border-radius:12px;border:1px solid var(--linea);background:var(--panel);text-align:center;font-size:19px;font-weight:600;font-variant-numeric:tabular-nums;padding:0 4px}
+.num:focus{outline:2px solid var(--acento);outline-offset:1px;border-color:transparent}
+input[type=range]{width:100%;height:28px;margin:0;background:transparent;accent-color:var(--acento);touch-action:pan-y}
+.chips{display:flex;gap:6px;overflow-x:auto;margin:6px -14px 0;padding:2px 14px 2px;scrollbar-width:none}
+.chips::-webkit-scrollbar{display:none}
+.chips button{flex:none;display:grid;gap:0;text-align:left;padding:4px 11px;min-height:38px;border-radius:10px;border:1px solid var(--linea);background:var(--panel);cursor:pointer}
+.chips b{font-size:13px;font-weight:600;white-space:nowrap}
+.chips span{font-size:11.5px;color:var(--tinta-2);white-space:nowrap;font-variant-numeric:tabular-nums}
+.chips button[aria-pressed="true"]{background:var(--tinta);border-color:var(--tinta);color:var(--panel)}
+.chips button[aria-pressed="true"] span{color:var(--panel);opacity:.8}
+button:focus-visible{outline:2px solid var(--acento);outline-offset:2px}
+.hoja{position:fixed;top:0;right:0;bottom:0;left:0;z-index:10;display:flex;align-items:flex-end;background:rgba(5,10,15,.45)}
+.hoja[hidden]{display:none}
+.hoja-panel{width:100%;max-height:88%;overflow-y:auto;background:var(--panel);border-radius:18px 18px 0 0;padding:14px 18px 22px;box-shadow:0 -4px 20px rgba(0,0,0,.25)}
+.hoja-cab{display:flex;justify-content:space-between;align-items:center;gap:10px;margin-bottom:4px}
+.hoja h2{margin:0;font-size:18px}
+.hoja h3{margin:14px 0 4px;font-size:14.5px}
+.hoja p,.hoja li{font-size:14px;line-height:1.5;color:var(--tinta-2);margin:4px 0}
+.hoja ul{margin:4px 0;padding-left:18px}
+.hoja .cerrar{min-width:44px;height:40px;border-radius:12px;border:1px solid var(--linea);background:var(--hundido);font-weight:600;padding:0 12px;cursor:pointer}
+.hoja .version{margin-top:14px;font-size:12.5px;color:var(--tinta-3)}
+.barra>div:first-child{flex:1 1 auto;min-width:0}
+.barra p{white-space:nowrap;overflow:hidden;text-overflow:ellipsis}
+.modos{flex:none;display:grid;justify-items:center;gap:0}
+.modos-sel{display:grid;grid-template-columns:repeat(3,auto);gap:2px;padding:2px;border-radius:9px;background:var(--hundido)}
+.modos-sel button{min-width:40px;min-height:30px;padding:0 6px;border:0;border-radius:7px;background:transparent;color:var(--tinta-2);font-size:13px;font-weight:600;cursor:pointer;font-variant-numeric:tabular-nums}
+.modos-sel button[aria-pressed="true"]{background:var(--panel);color:var(--tinta);box-shadow:var(--sombra)}
+.modos>span{font-size:11.5px;color:var(--tinta-3);line-height:1.2}
+.leyenda-cat{display:flex;flex-wrap:wrap;gap:3px 12px;margin-top:5px;font-size:12px;color:var(--tinta-2)}
+.leyenda-cat span{display:inline-flex;align-items:center;gap:5px;white-space:nowrap}
+.leyenda-cat i{display:inline-block;width:14px;height:10px;border-radius:2px;box-shadow:inset 0 0 0 1px var(--linea)}
+.leyenda-cat i.rayas{background:repeating-linear-gradient(45deg,var(--rayas) 0 2px,transparent 2px 5px)}
+.leyenda-cat i.borde{height:3px;border-radius:2px;background:var(--borde-c);box-shadow:none}
+.leyenda-cat.extra{margin-top:2px;color:var(--tinta-3)}
+.fig-cuerda svg text{font-size:11px;fill:var(--tinta-3)}
+.fig-cuerda.zoom{height:140px}
+.fig-cuerda.zoom .play{top:0;left:0;bottom:auto;width:32px;height:32px}
+.fig-cuerda.zoom .play svg{width:14px;height:14px}
+.fig-cuerda.zoom .tau{top:7px;left:40px;right:auto;bottom:auto}
+@media (orientation:landscape) and (min-width:640px){
+  .app{display:grid;height:auto;grid-template-columns:minmax(0,1.25fr) minmax(330px,1fr);grid-template-rows:auto auto 1fr;grid-template-areas:"mapa barra" "mapa res" "mapa mandos";column-gap:10px;row-gap:8px;padding:8px;align-items:start}
+  .barra{grid-area:barra;padding-top:0}.res{grid-area:res}
+  .mapa{grid-area:mapa;height:calc(100vh - 16px);position:sticky;top:8px}
+  .mandos{grid-area:mandos;margin:0;border-radius:14px;box-shadow:var(--sombra)}
+}
+@media (prefers-reduced-motion:reduce){.tiles{transition:none}}
+</style>
+</head>
+<body>
+<div class="app">
+  <header class="barra">
+    <div>
+      <h1>Caso III modal</h1>
+      <p>Cuerda con carga móvil</p>
+    </div>
+    <div class="modos">
+      <div class="modos-sel" id="modos" role="group" aria-label="Número de modos">
+        <button type="button" data-n="100">100</button>
+        <button type="button" data-n="200">200</button>
+        <button type="button" data-n="400">400</button>
+      </div>
+      <span>modos</span>
+    </div>
+    <button class="icono" id="b-info" type="button" aria-label="Qué muestra la app">i</button>
+  </header>
+
+  <section class="tarjeta mapa" aria-label="Mapa">
+    <div class="selector" id="selector" role="group" aria-label="Qué colorea el mapa">
+      <button type="button" data-v="tc">Contacto</button>
+      <button type="button" data-v="basta">Basta</button>
+      <button type="button" data-v="D">D</button>
+      <button type="button" data-v="ymax">ȳ máx</button>
+    </div>
+    <div class="fig" id="fig">
+      <canvas id="cv" aria-hidden="true"></canvas>
+      <svg id="sv" role="img" aria-label="Mapa del caso III con la solución modal de 400 modos, en el plano de la velocidad α y la razón de masas μ; toca o arrastra para elegir un caso"></svg>
+      <div class="globo" id="globo" hidden></div>
+    </div>
+    <div class="escala" id="escala"></div>
+  </section>
+
+  <section class="tarjeta res" id="res" aria-label="Resultados" aria-live="polite">
+    <div class="res-cab">
+      <div class="vistas" id="vistas" role="group" aria-label="Qué mostrar del punto elegido">
+        <button type="button" data-v="cuerda">Cuerda</button>
+        <button type="button" data-v="zoom">Zoom</button>
+        <button type="button" data-v="numeros">Números</button>
+      </div>
+      <span id="estado">calculando…</span>
+    </div>
+    <div class="vista" id="v-cuerda">
+      <div class="fig-cuerda" id="fig-cuerda">
+        <svg id="sv-cuerda" role="img" aria-label="Cuerda en el instante τ, completa o ampliada cerca del apoyo de llegada; arrastra para cambiar el instante"></svg>
+        <button class="play" id="b-play" type="button" aria-label="Pausar"></button>
+        <span class="tau" id="t-tau"></span>
+      </div>
+      <p class="resumen" id="resumen">&nbsp;</p>
+    </div>
+    <div class="vista tiles" id="v-numeros">
+      <div class="tile"><p class="rot">λ = α²μ</p><p class="val" id="t-lam">–</p><p class="sub">de Smith</p></div>
+      <div class="tile"><p class="rot">τ* = 2α/(1+α)</p><p class="val" id="t-ts">–</p><p class="sub">onda reflejada</p></div>
+      <div class="tile"><p class="rot">D</p><p class="val" id="t-D">–</p><p class="sub">amplificación</p></div>
+      <div class="tile"><p class="rot">Contacto</p><p class="val chico" id="t-cont">–</p><p class="sub" id="t-cont-sub">&nbsp;</p></div>
+      <div class="tile"><p class="rot">ȳ máx</p><p class="val" id="t-ymax">–</p><p class="sub" id="t-ymax-sub">&nbsp;</p></div>
+      <div class="tile"><p class="rot">Caso que basta</p><p class="val chico" id="t-basta">–</p><p class="sub" id="t-basta-sub">&nbsp;</p></div>
+    </div>
+  </section>
+
+  <section class="mandos" aria-label="Parámetros">
+    <div class="params">
+    <div class="param">
+      <label for="v-alfa">Velocidad <span>α = v/c</span></label>
+      <div class="paso">
+        <button class="pm" type="button" data-p="a" data-d="-1" aria-label="Bajar α">−</button>
+        <input class="num" id="v-alfa" type="text" inputmode="decimal" autocomplete="off" spellcheck="false" enterkeyhint="done">
+        <button class="pm" type="button" data-p="a" data-d="1" aria-label="Subir α">+</button>
+      </div>
+      <input type="range" id="r-alfa" min="0.05" max="0.975" step="0.005" aria-label="Velocidad α">
+    </div>
+    <div class="param">
+      <label for="v-mu">Razón de masas <span>μ = m/(ρAL)</span></label>
+      <div class="paso">
+        <button class="pm" type="button" data-p="m" data-d="-1" aria-label="Bajar μ">−</button>
+        <input class="num" id="v-mu" type="text" inputmode="decimal" autocomplete="off" spellcheck="false" enterkeyhint="done">
+        <button class="pm" type="button" data-p="m" data-d="1" aria-label="Subir μ">+</button>
+      </div>
+      <input type="range" id="r-mu" min="-1.30103" max="2" step="0.005" aria-label="Razón de masas μ, en escala logarítmica">
+    </div>
+    </div>
+    <div class="chips" id="casos" role="group" aria-label="Casos de ejemplo"></div>
+  </section>
+</div>
+
+<div class="hoja" id="hoja" role="dialog" aria-modal="true" aria-labelledby="hoja-t" hidden>
+  <div class="hoja-panel">
+    <div class="hoja-cab"><h2 id="hoja-t">Qué muestra la app</h2><button class="cerrar" id="b-cerrar" type="button">Cerrar</button></div>
+    <p>Una cuerda tensa de largo L, con tensión N y masa ρA por unidad de largo, recorrida a velocidad constante v por una partícula de masa m y peso P. Es el Caso III resuelto con la solución modal: la cuerda como n osciladores, uno por modo, que la partícula acopla a través de la fuerza de contacto.</p>
+    <h3>Parámetros</h3>
+    <ul>
+      <li><b>α = v/c</b>, la velocidad de la partícula en unidades de la velocidad de las ondas, c = √(N/ρA).</li>
+      <li><b>μ = m/(ρAL)</b>, la masa de la partícula en unidades de la masa de la cuerda.</li>
+      <li><b>λ = α²μ</b>, el parámetro de la cuerda sin masa de Smith (Caso II).</li>
+      <li><b>n</b>, el número de modos (100, 200 o 400, arriba). Con más modos el resultado es más exacto, pero el cálculo tarda más.</li>
+    </ul>
+    <h3>Resultados</h3>
+    <ul>
+      <li><b>Contacto</b>: primer instante τ = vt/L en que la fuerza de contacto, promediada en un período del modo más alto, se vuelve negativa (se busca hasta τ = 0,995). Si el contacto se mantiene, se da la menor fuerza promediada, f mín, en unidades del peso.</li>
+      <li><b>Caso que basta</b>: mayor diferencia entre la trayectoria modal y la del Caso I (misma α) o la del Caso II (mismo λ), desde τ = 0 hasta τ = 0,99, en porcentaje de la deflexión máxima. Un caso límite basta si su diferencia es menor que 10 %, como en la Sección 4 del avance.</li>
+      <li><b>ȳ máx</b>: mayor deflexión de la partícula, con ȳ = Nu/(PL), y el instante en que ocurre.</li>
+      <li><b>D</b>: mayor deflexión del centro de la cuerda dividida por la deflexión estática PL/(4N).</li>
+      <li><b>τ* = 2α/(1 + α)</b>: instante en que la onda reflejada en el apoyo de llegada alcanza a la partícula.</li>
+    </ul>
+    <h3>Las vistas</h3>
+    <p><b>Cuerda</b>: la suma de los n modos en el instante τ y la trayectoria que va dejando la partícula (azul; desde que se pierde el contacto, segmentada en naranjo). Cada modo se anula en τ = 1, así que la animación termina en τ = 0,995. <b>Zoom</b>: los últimos 10 % de la cuerda (ξ = x/L de 0,9 a 1), ampliados para ver cómo llega la partícula al apoyo, entre τ = 0,9 y 0,995, cada 0,001; la escala vertical se ajusta a cada caso. En lo rayado, a menos de 4/n del apoyo (cuatro jorobas del modo más alto), la suma de n modos no alcanza a dibujar el tramo empinado junto a la partícula: ahí la forma de la cuerda no es confiable y cambia al aumentar n. Las ondulaciones cortas que se ven antes, de largo cercano a 2/n, son el mismo efecto, más débil. La posición de la partícula, en cambio, cambia mucho menos. <b>Números</b>: los resultados. El botón pausa o sigue la animación, y arrastrar sobre el gráfico cambia el instante; en el Zoom, arrastras la partícula.</p>
+    <h3>Cómo se calcula</h3>
+    <p>Cada modo cumple η<sub>j</sub>″ + (jπ/α)² η<sub>j</sub> = (2/α²) f sen(jπτ), con la fuerza de contacto explícita f = (1 − λB)/(1 + 2μS). El teléfono integra el sistema con Runge–Kutta de orden 4 y 40 pasos por período del modo más alto, como la consola modal; con 400 modos reproduce los valores del avance.</p>
+    <p>El mapa es el de la Sección 4 del avance, calculado con 400 modos en una grilla de 38 × 21 puntos, con α de 0,05 a 0,975 y μ de 0,05 a 100; entre los puntos, los colores se interpolan. Borde azul: se pierde el contacto. Rayado: con 400 modos la fuerza todavía es positiva, pero baja al aumentar el número de modos, así que ahí el contacto no está convergido. Curvas negras: λ = 1/6 (continua) y λ = 1/12 (segmentada). Los números del punto elegido usan el número de modos elegido, de modo que cerca de un borde pueden diferir del mapa.</p>
+    <h3>Casos de ejemplo</h3>
+    <ul id="lista-casos"></ul>
+    <h3>Cómo se usa</h3>
+    <p>Toca o arrastra el mapa para elegir α y μ, usa los botones − y + (si los mantienes presionados, avanzan solos), mueve las barras o toca un valor para escribirlo. El anillo se pega a los casos de ejemplo. Arriba eliges el número de modos.</p>
+    <p class="version">Versión 1.1 · 25 de noviembre de 2026</p>
+  </div>
+</div>
+
+<script type="text/plain" id="motor">
+// Motor de la consola modal del Caso III.
+// Integra eta_j'' + (j pi/alpha)^2 eta_j = (2/alpha^2) f sin(j pi tau), j = 1..n,
+// con la fuerza de contacto explícita f = (1 - lam B)/(1 + 2 mu S), lam = alpha^2 mu,
+// con Runge-Kutta clásico de orden 4 y paso fijo (PPP pasos por período del modo n).
+// Guarda F cuadros por recorrido: tau, ybar, f, wbar(1/2) y las amplitudes eta_j.
+function resolverModal(alpha, mu, n, F, PPP, avisar) {
+  const lam = alpha * alpha * mu, A = 2 / (alpha * alpha), PI = Math.PI;
+  const jp = new Float64Array(n), k2 = new Float64Array(n), Kb = new Float64Array(n);
+  for (let j = 0; j < n; j++) {
+    jp[j] = (j + 1) * PI;
+    k2[j] = (jp[j] / alpha) * (jp[j] / alpha);
+    Kb[j] = jp[j] * jp[j] * (1 + 1 / (alpha * alpha));
+  }
+  const hmax = (2 * alpha / n) / PPP;              // período del modo n en tau: 2 alpha / n
+  const m = Math.max(1, Math.ceil(1 / F / hmax));  // pasos por cuadro
+  const h = 1 / (F * m), N = F * m;
+  const eta = new Float64Array(n), deta = new Float64Array(n);
+  const te = new Float64Array(n), td = new Float64Array(n), s = new Float64Array(n);
+  const a1 = new Float64Array(n), b1 = new Float64Array(n), a2 = new Float64Array(n), b2 = new Float64Array(n);
+  const a3 = new Float64Array(n), b3 = new Float64Array(n), a4 = new Float64Array(n), b4 = new Float64Array(n);
+  // fuerza de contacto y aceleraciones de los modos (lazo de cada evaluación)
+  function rhs(t, e, d, oa, ob) {
+    const s1 = Math.sin(PI * t), c1 = Math.cos(PI * t);
+    let sj = s1, cj = c1, S = 0, B = 0;
+    for (let j = 0; j < n; j++) {
+      s[j] = sj;
+      S += sj * sj;
+      B += 2 * jp[j] * d[j] * cj - Kb[j] * e[j] * sj;
+      const sn = sj * c1 + cj * s1;                // sen((j+1)x) y cos((j+1)x) por recurrencia
+      cj = cj * c1 - sj * s1;
+      sj = sn;
+    }
+    const f = (1 - lam * B) / (1 + 2 * mu * S), Af = A * f;
+    for (let j = 0; j < n; j++) { oa[j] = d[j]; ob[j] = Af * s[j] - k2[j] * e[j]; }
+    return f;
+  }
+  const tau = new Float64Array(F + 1), y = new Float64Array(F + 1), fu = new Float64Array(F + 1);
+  const yc = new Float64Array(F + 1), etas = new Float32Array((F + 1) * n);
+  const fpaso = new Float32Array(N + 1);
+  function grabar(k, t, f) {
+    let sj = Math.sin(PI * t), cj = Math.cos(PI * t);
+    const s1 = sj, c1 = cj;
+    let yy = 0, w = 0;
+    for (let j = 0; j < n; j++) {
+      yy += eta[j] * sj;
+      if (j % 4 === 0) w += eta[j]; else if (j % 4 === 2) w -= eta[j];   // sen(j pi/2)
+      const sn = sj * c1 + cj * s1; cj = cj * c1 - sj * s1; sj = sn;
+      etas[k * n + j] = eta[j];
+    }
+    tau[k] = t; y[k] = yy; fu[k] = f; yc[k] = w;
+  }
+  let f0 = rhs(0, eta, deta, a1, b1);
+  grabar(0, 0, f0);
+  const cada = Math.max(1, Math.floor(N / 50));
+  for (let i = 0; i < N; i++) {
+    const t = i * h;
+    fpaso[i] = rhs(t, eta, deta, a1, b1);
+    for (let j = 0; j < n; j++) { te[j] = eta[j] + 0.5 * h * a1[j]; td[j] = deta[j] + 0.5 * h * b1[j]; }
+    rhs(t + 0.5 * h, te, td, a2, b2);
+    for (let j = 0; j < n; j++) { te[j] = eta[j] + 0.5 * h * a2[j]; td[j] = deta[j] + 0.5 * h * b2[j]; }
+    rhs(t + 0.5 * h, te, td, a3, b3);
+    for (let j = 0; j < n; j++) { te[j] = eta[j] + h * a3[j]; td[j] = deta[j] + h * b3[j]; }
+    rhs(t + h, te, td, a4, b4);
+    const h6 = h / 6;
+    for (let j = 0; j < n; j++) {
+      eta[j] += h6 * (a1[j] + 2 * a2[j] + 2 * a3[j] + a4[j]);
+      deta[j] += h6 * (b1[j] + 2 * b2[j] + 2 * b3[j] + b4[j]);
+    }
+    if ((i + 1) % m === 0) {
+      const k = (i + 1) / m, tk = k / F;
+      grabar(k, tk, rhs(tk, eta, deta, a1, b1));
+    }
+    if (avisar && i % cada === 0) avisar(i / N);
+  }
+  fpaso[N] = fu[F];
+  // fuerza promediada en un período del modo n (PPP pasos), como en el avance
+  const fm = new Float64Array(F + 1);
+  const pref = new Float64Array(N + 2);
+  for (let i = 0; i <= N; i++) pref[i + 1] = pref[i] + fpaso[i];
+  const med = Math.floor(PPP / 2);
+  for (let k = 0; k <= F; k++) {
+    const i = k * m, i0 = Math.max(0, i - med), i1 = Math.min(N, i + med);
+    fm[k] = (pref[i1 + 1] - pref[i0]) / (i1 - i0 + 1);
+  }
+  // primer instante con la fuerza promediada negativa (antes de tau = 0,995) y mínimo de esa fuerza
+  let tsep = -1, fmin = Infinity;
+  for (let i = med; i <= N; i++) {
+    const t = i * h; if (t > 0.995) break;
+    const i0 = Math.max(0, i - med), i1 = Math.min(N, i + med);
+    const fp = (pref[i1 + 1] - pref[i0]) / (i1 - i0 + 1);
+    if (fp < fmin) fmin = fp;
+    if (tsep < 0 && i >= PPP && fp < 0) tsep = t;
+  }
+  return { alpha, mu, n, F, h, pasos: N, tau, y, f: fu, fm, yc, etas, tsep, fmin };
+}
+// Caso II con el mismo lam (cuerda sin masa): lam y'' + y/(tau(1 - tau)) = 1, desde la
+// caída libre y = tau^2/(2 lam) (1 - tau/(6 lam)), con RK4 y paso proporcional al período
+// local de la partícula, 2 pi sqrt(lam tau (1 - tau)). Devuelve y en los cuadros k/F.
+function trayCasoII(lam, F) {
+  const out = new Float64Array(F + 1);
+  if (!(lam > 0)) { for (let k = 0; k <= F; k++) { const t = k / F; out[k] = t * (1 - t); } return out; }
+  const acel = (t, y) => (1 - y / (t * (1 - t))) / lam;
+  let t = Math.min(1e-3, 0.02 * lam);
+  let y = t * t / (2 * lam) * (1 - t / (6 * lam)), v = t / lam * (1 - t / (4 * lam));
+  let k = 0;
+  for (; k <= F && k / F <= t; k++) { const s = k / F; out[k] = s * s / (2 * lam) * (1 - s / (6 * lam)); }
+  for (; k < F; k++) {
+    const tk = k / F;
+    while (t < tk - 1e-14) {
+      const h = Math.min(0.04 * Math.sqrt(lam * t * (1 - t)), 2e-3, tk - t), m = t + 0.5 * h;
+      const a1 = acel(t, y), y1 = v;
+      const a2 = acel(m, y + 0.5 * h * y1), y2 = v + 0.5 * h * a1;
+      const a3 = acel(m, y + 0.5 * h * y2), y3 = v + 0.5 * h * a2;
+      const a4 = acel(t + h, y + h * y3), y4 = v + h * a3;
+      y += h / 6 * (y1 + 2 * y2 + 2 * y3 + y4);
+      v += h / 6 * (a1 + 2 * a2 + 2 * a3 + a4);
+      t += h;
+    }
+    out[k] = y;
+  }
+  out[F] = NaN;                                     // tau = 1: la llegada, singular
+  return out;
+}
+
+// Caso I (carga sin masa), forma cerrada de dos triángulos, en F + 1 instantes
+function Csum(th) { const p2 = 2 * Math.PI; th = ((th % p2) + p2) % p2; return Math.PI * Math.PI / 6 - Math.PI * th / 2 + th * th / 4; }
+function tri(x, x0) { return 4 / (Math.PI * Math.PI) * (Csum(Math.PI * (x - x0)) - Csum(Math.PI * (x + x0))); }
+function refCasoI(a, F) {
+  const out = new Float64Array(F + 1);
+  for (let k = 0; k <= F; k++) { const t = k / F; out[k] = (tri(t, t) - a * tri(t, t / a)) / (1 - a * a) / 4; }
+  return out;
+}
+// Análisis de un punto (alfa, mu) con n modos: lo mismo que la consola modal y el avance
+// (diferencias con los Casos I y II hasta tau = 0,99, contacto con la fuerza promediada),
+// más 200 cuadros de la cuerda (suma de los n modos en 81 puntos) y, para el zoom, la cuerda
+// entre xi = 0,9 y 1 (161 puntos) y la partícula cada 0,001 en tau, desde 0,900 hasta 0,995.
+function analizarModal(al, mu, n) {
+  const F = 1000, PPP = 40, lam = al * al * mu;
+  const r = resolverModal(al, mu, n, F, PPP);
+  const yI = refCasoI(al, F), yII = trayCasoII(lam, F);
+  let ymax = -1e9, kmax = 0, wc = 0;
+  for (let k = 0; k < F; k++) { if (r.y[k] > ymax) { ymax = r.y[k]; kmax = k; } if (r.yc[k] > wc) wc = r.yc[k]; }
+  const k99 = Math.round(0.99 * F);
+  let y99 = 0, dI = 0, dII = 0;
+  for (let k = 0; k <= k99; k++) y99 = Math.max(y99, r.y[k]);
+  for (let k = 0; k <= k99; k++) { dI = Math.max(dI, Math.abs(r.y[k] - yI[k])); dII = Math.max(dII, Math.abs(r.y[k] - yII[k])); }
+  const FC = 199, PASO = 5, NX = 81;
+  const S = new Float64Array(NX * n);
+  for (let i = 0; i < NX; i++) {
+    const x = i / (NX - 1), s1 = Math.sin(Math.PI * x), c1 = Math.cos(Math.PI * x);
+    let sj = s1, cj = c1;
+    for (let j = 0; j < n; j++) { S[i * n + j] = sj; const sn = sj * c1 + cj * s1; cj = cj * c1 - sj * s1; sj = sn; }
+  }
+  const w = new Float32Array((FC + 1) * NX), y = new Float32Array(FC + 1);
+  let lo = 0, hi = 0;
+  for (let k = 0; k <= FC; k++) {
+    const K = k * PASO, base = K * n;
+    y[k] = r.y[K];
+    for (let i = 1; i < NX - 1; i++) {
+      let v = 0;
+      for (let j = 0; j < n; j++) v += r.etas[base + j] * S[i * n + j];
+      w[k * NX + i] = v;
+      if (v < lo) lo = v;
+      if (v > hi) hi = v;
+    }
+  }
+  // zoom: los últimos 10 % de la cuerda; el último punto es el apoyo (w = 0)
+  const X0 = 0.9, NXZ = 161, K0 = 900, NZ = 96;
+  const SZ = new Float64Array(NXZ * n);
+  for (let i = 0; i < NXZ - 1; i++) {
+    const x = X0 + (1 - X0) * i / (NXZ - 1), s1 = Math.sin(Math.PI * x), c1 = Math.cos(Math.PI * x);
+    let sj = s1, cj = c1;
+    for (let j = 0; j < n; j++) { SZ[i * n + j] = sj; const sn = sj * c1 + cj * s1; cj = cj * c1 - sj * s1; sj = sn; }
+  }
+  const wz = new Float32Array(NZ * NXZ), yz = new Float32Array(NZ);
+  let zlo = 0, zhi = 0;
+  for (let q = 0; q < NZ; q++) {
+    const K = K0 + q, base = K * n;
+    yz[q] = r.y[K];
+    if (yz[q] < zlo) zlo = yz[q];
+    if (yz[q] > zhi) zhi = yz[q];
+    for (let i = 0; i < NXZ - 1; i++) {
+      let v = 0;
+      for (let j = 0; j < n; j++) v += r.etas[base + j] * SZ[i * n + j];
+      wz[q * NXZ + i] = v;
+      if (v < zlo) zlo = v;
+      if (v > zhi) zhi = v;
+    }
+  }
+  return {
+    ymax, tmax: kmax / F, D: 4 * wc, tc: r.tsep > 0 ? r.tsep : null, fmin: r.fmin,
+    eI: 100 * dI / y99, eII: 100 * dII / y99, pasos: r.pasos, n,
+    cuadros: { F: FC, NX, tmax: FC * PASO / F, w, y, lo, hi },
+    zoom: { x0: X0, NX: NXZ, t0: K0 / F, dt: 1 / F, NZ, w: wz, y: yz, lo: zlo, hi: zhi }
+  };
+}
+if (typeof module !== "undefined") module.exports = { resolverModal, trayCasoII, refCasoI, analizarModal };
+
+</script>
+<script>
+{
+const $ = id => document.getElementById(id);
+const DATOS = {"NA":38,"NM":21,"A0":0.05,"A1":0.975,"LM0":-1.3010299956639813,"LM1":2,"fmin":[0.8508,0.7169,0.5742,0.462,0.3935,0.2518,0.0912,-0.5622,-0.4005,-0.6646,-0.893,-1.4594,-1.5859,-1.6793,-2.0104,-2.8279,-3.4057,-3.9652,-4.999,-6.4895,-3.7182,-5.2799,-7.1296,-10.913,-13.928,-1.6916,-2.2659,-4.2272,-3.443,-5.9225,-11.6555,-0.4232,-0.6373,-0.4148,0.1687,0.1805,0.1823,0.1964,0.7913,0.6279,0.4802,0.3747,0.1568,-0.0873,-0.4145,-1.0506,-1.0096,-1.7814,-1.8613,-2.7458,-2.7461,-3.3484,-4.0318,-5.224,-4.7555,-5.4139,-7.5193,-10.6686,-3.4076,-4.1889,-7.1329,-11.9905,-16.3297,-1.9126,-3.1134,-5.8395,-0.6549,-3.4832,-7.3538,0.0453,0.1136,0.1201,0.1209,0.1296,0.1309,0.1414,0.716,0.532,0.3895,0.0968,-0.3259,-0.6756,-1.5914,-1.3733,-2.1703,-3.0602,-2.8265,-4.3137,-4.5014,-4.571,-6.1376,-8.0526,-8.3795,-5.4111,-9.4621,-14.5681,-4.8803,-6.1748,-9.5145,-9.2878,-14.3762,-2.5877,-3.3564,-5.8933,0.0754,0.0771,0.077,0.077,0.0803,0.0849,0.0855,0.0918,0.0927,0.1003,0.6277,0.4361,0.1201,-0.8452,-0.8613,-2.0438,-3.2315,-2.0373,-4.4242,-4.3241,-4.4004,-6.4187,-6.5195,-8.3045,-6.6915,-9.3772,-11.6663,-7.7529,-10.9904,-15.5043,-5.2397,-6.7599,-11.755,-5.5971,-4.099,-2.0598,-1.7869,-3.5677,0.0527,0.054,0.0539,0.0539,0.0562,0.0595,0.0599,0.0644,0.065,0.0704,0.532,0.3343,-0.1436,-1.8521,-1.2704,-3.795,-4.7052,-3.9715,-7.4312,-6.0279,-5.3504,-9.4089,-7.8637,-11.1586,-8.9467,-11.9847,-11.5024,-9.8548,-15.5826,-10.3952,-6.5953,-7.1406,-9.2227,-0.586,-0.3037,0.0371,0.0367,0.0364,0.0367,0.0375,0.0375,0.0375,0.0391,0.0414,0.0417,0.0448,0.0453,0.0491,0.4208,0.0666,-0.5162,-2.9872,-3.3463,-5.3273,-6.7855,-7.6502,-8.7101,-5.6045,-8.1495,-10.963,-10.9155,-15.6332,-11.5776,-18.6736,-8.4653,-11.3065,-15.0651,-4.3654,-4.4201,-2.8078,0.0265,0.0259,0.0258,0.0257,0.0254,0.0252,0.0254,0.026,0.0259,0.0259,0.0271,0.0287,0.0289,0.0311,0.0314,0.034,0.2593,-0.4022,-1.8655,-4.2379,-6.6927,-8.082,-8.572,-10.5581,-7.4207,-6.6324,-10.1721,-17.2998,-13.8748,-18.07,-13.9305,-18.3558,-8.0003,-7.0332,-4.117,0.0185,0.0189,0.0189,0.0184,0.0179,0.0179,0.0178,0.0176,0.0174,0.0175,0.018,0.0179,0.0179,0.0187,0.0198,0.0199,0.0214,0.0217,0.0235,0.0218,-0.911,-3.8736,-7.5485,-8.0778,-11.1269,-8.4642,-8.7527,-6.3279,-10.2873,-13.7568,-22.1062,-16.3319,-9.6754,-9.4222,-5.6978,-0.2402,0.0141,0.0134,0.0128,0.013,0.013,0.0127,0.0124,0.0123,0.0123,0.0121,0.012,0.0121,0.0124,0.0123,0.0123,0.0129,0.0136,0.0137,0.0148,0.0149,0.0162,-0.3713,-2.6745,-5.8725,-7.1482,-8.7308,-10.8969,-6.6389,-7.0778,-12.2108,-15.9798,-15.4842,-16.6227,-7.6903,-1.1296,0.0102,0.0094,0.0096,0.0097,0.0092,0.0088,0.009,0.009,0.0087,0.0085,0.0085,0.0084,0.0083,0.0082,0.0083,0.0085,0.0085,0.0085,0.0089,0.0094,0.0094,0.0102,0.0103,0.0111,-1.6587,-4.2993,-7.3674,-6.1133,-8.2455,-5.3032,-7.7395,-13.0115,-15.8749,-12.6397,-5.7776,0.0081,0.0078,0.0077,0.007,0.0065,0.0066,0.0067,0.0064,0.0061,0.0062,0.0062,0.006,0.0059,0.0058,0.0058,0.0057,0.0057,0.0057,0.0058,0.0058,0.0058,0.0061,0.0064,0.0065,0.007,0.007,0.0076,-3.1784,-2.8829,-3.1834,-9.5383,-2.5611,-7.5359,-14.2682,-13.2714,-6.2667,0.0073,0.0063,0.0056,0.0054,0.0053,0.0049,0.0045,0.0046,0.0046,0.0044,0.0042,0.0043,0.0043,0.0041,0.004,0.004,0.004,0.0039,0.0039,0.0039,0.004,0.004,0.004,0.0042,0.0044,0.0044,0.0048,0.0048,0.0053,-2.3956,-3.8215,-6.5292,-1.3827,-5.0086,-14.6707,-9.8304,0.0063,0.0055,0.005,0.0044,0.0039,0.0037,0.0036,0.0033,0.0031,0.0031,0.0032,0.003,0.0029,0.0029,0.0029,0.0028,0.0028,0.0027,0.0027,0.0027,0.0027,0.0027,0.0027,0.0027,0.0027,0.0029,0.003,0.0031,0.0033,0.0033,0.0036,-2.1189,-0.9797,-0.7861,-3.6646,-11.8369,-4.8214,0.0053,0.0044,0.0038,0.0034,0.003,0.0027,0.0026,0.0025,0.0023,0.0021,0.0022,0.0022,0.0021,0.002,0.002,0.002,0.0019,0.0019,0.0019,0.0019,0.0019,0.0018,0.0018,0.0019,0.0019,0.0019,0.002,0.0021,0.0021,0.0022,0.0023,0.0025,-2.6292,-3.525,-0.1926,-12.346,-0.3395,0.0045,0.0037,0.003,0.0026,0.0024,0.0021,0.0018,0.0018,0.0017,0.0016,0.0015,0.0015,0.0015,0.0014,0.0014,0.0014,0.0014,0.0013,0.0013,0.0013,0.0013,0.0013,0.0013,0.0013,0.0013,0.0013,0.0013,0.0013,0.0014,0.0014,0.0015,0.0016,0.0017,0.0273,0.0133,-9.3303,0.0054,0.004,0.0031,0.0025,0.0021,0.0018,0.0016,0.0014,0.0013,0.0012,0.0012,0.0011,0.001,0.001,0.001,0.001,0.0009,0.0009,0.0009,0.0009,0.0009,0.0009,0.0009,0.0009,0.0009,0.0009,0.0009,0.0009,0.0009,0.0009,0.001,0.001,0.001,0.0011,0.0012,-2.9824,-2.0665,-3.1291,0.0037,0.0028,0.0021,0.0017,0.0014,0.0012,0.0011,0.001,0.0009,0.0008,0.0008,0.0007,0.0007,0.0007,0.0007,0.0007,0.0006,0.0006,0.0006,0.0006,0.0006,0.0006,0.0006,0.0006,0.0006,0.0006,0.0006,0.0006,0.0006,0.0006,0.0007,0.0007,0.0007,0.0007,0.0008,0.0132,-9.1907,0.0038,0.0026,0.0019,0.0015,0.0012,0.001,0.0008,0.0008,0.0007,0.0006,0.0006,0.0006,0.0005,0.0005,0.0005,0.0005,0.0005,0.0004,0.0004,0.0004,0.0004,0.0004,0.0004,0.0004,0.0004,0.0004,0.0004,0.0004,0.0004,0.0004,0.0004,0.0005,0.0005,0.0005,0.0005,0.0005,0.0091,0.0044,0.0026,0.0018,0.0013,0.001,0.0008,0.0007,0.0006,0.0005,0.0005,0.0004,0.0004,0.0004,0.0003,0.0003,0.0003,0.0003,0.0003,0.0003,0.0003,0.0003,0.0003,0.0003,0.0003,0.0003,0.0003,0.0003,0.0003,0.0003,0.0003,0.0003,0.0003,0.0003,0.0003,0.0003,0.0003,0.0004,-9.5957,0.003,0.0018,0.0012,0.0009,0.0007,0.0006,0.0005,0.0004,0.0004,0.0003,0.0003,0.0003,0.0003,0.0002,0.0002,0.0002,0.0002,0.0002,0.0002,0.0002,0.0002,0.0002,0.0002,0.0002,0.0002,0.0002,0.0002,0.0002,0.0002,0.0002,0.0002,0.0002,0.0002,0.0002,0.0002,0.0002,0.0003,0.0043,0.0021,0.0012,0.0008,0.0006,0.0005,0.0004,0.0003,0.0003,0.0003,0.0002,0.0002,0.0002,0.0002,0.0002,0.0001,0.0001,0.0001,0.0001,0.0001,0.0001,0.0001,0.0001,0.0001,0.0001,0.0001,0.0001,0.0001,0.0001,0.0001,0.0001,0.0001,0.0001,0.0001,0.0001,0.0002,0.0002,0.0002,0.003,0.0014,0.0008,0.0006,0.0004,0.0003,0.0003,0.0002,0.0002,0.0002,0.0001,0.0001,0.0001,0.0001,0.0001,0.0001,0.0001,0.0001,0.0001,0.0001,0.0001,0.0001,0.0001,0.0001,0.0001,0.0001,0.0001,0.0001,0.0001,0.0001,0.0001,0.0001,0.0001,0.0001,0.0001,0.0001,0.0001,0.0001],"D":[1.0273,0.9375,0.989,1.0437,1.1077,0.9657,0.8587,0.9774,1.1002,1.229,1.3598,1.4891,1.482,1.4551,1.4292,1.4042,1.3801,1.3568,1.3343,1.3128,1.2919,1.2717,1.2524,1.2339,1.2159,1.1983,1.181,1.1639,1.1469,1.13,1.114,1.0984,1.083,1.0683,1.0543,1.0401,1.0275,1.0146,1.038,0.9424,0.9775,1.0564,1.0985,0.9583,0.8703,0.9906,1.1163,1.2464,1.3756,1.4966,1.4819,1.4549,1.4288,1.4038,1.3796,1.3563,1.3343,1.3135,1.2937,1.2744,1.2557,1.2374,1.2191,1.2009,1.1825,1.1647,1.1476,1.1309,1.1148,1.099,1.0838,1.0691,1.0547,1.0404,1.0277,1.0145,1.0472,0.9557,0.9597,1.0752,1.0835,0.948,0.8869,1.011,1.1403,1.2672,1.3998,1.5019,1.4811,1.4539,1.4278,1.4032,1.3804,1.3589,1.3385,1.3188,1.2994,1.2801,1.2608,1.2411,1.2213,1.2024,1.1841,1.1663,1.1489,1.132,1.1155,1.1,1.0849,1.0697,1.0547,1.0402,1.0273,1.0133,1.0348,0.98,0.9401,1.0985,1.059,0.94,0.9126,1.0422,1.1693,1.2959,1.43,1.5035,1.4792,1.4533,1.4298,1.4081,1.3876,1.3677,1.3478,1.3276,1.3067,1.2849,1.2638,1.2435,1.2237,1.2045,1.1858,1.1677,1.1504,1.1333,1.1168,1.1006,1.0846,1.0684,1.0523,1.037,1.0231,1.0073,1.0005,1.0146,0.9338,1.1135,1.0214,0.9331,0.9523,1.0812,1.2032,1.3369,1.4596,1.5047,1.4825,1.4614,1.4417,1.4222,1.402,1.3803,1.3571,1.3332,1.3104,1.2883,1.2669,1.246,1.2266,1.2063,1.188,1.1693,1.1507,1.1317,1.1135,1.0954,1.0774,1.0592,1.0408,1.0235,1.0072,0.9884,0.968,1.0588,0.9586,1.1117,0.9663,0.9435,1.003,1.1208,1.2517,1.3904,1.4918,1.5182,1.5012,1.483,1.4624,1.4387,1.4121,1.3863,1.3613,1.3371,1.3142,1.2919,1.2702,1.2489,1.2283,1.205,1.1832,1.1608,1.1383,1.1156,1.0939,1.0722,1.0507,1.0289,1.007,0.9863,0.9667,0.9442,0.9995,1.0594,1.017,1.0808,0.9594,0.9735,1.0474,1.1785,1.3305,1.4634,1.539,1.5499,1.5294,1.5025,1.4726,1.4444,1.4168,1.3892,1.3619,1.335,1.3086,1.2827,1.2575,1.233,1.2096,1.1801,1.1521,1.1239,1.0957,1.0677,1.0411,1.0149,0.9889,0.963,0.9374,0.9133,0.8905,0.8656,1.0391,1.0006,1.0574,1.042,0.9752,1.001,1.1194,1.2905,1.4481,1.5515,1.5883,1.5716,1.536,1.5004,1.4649,1.4296,1.3949,1.361,1.3279,1.2958,1.2647,1.2347,1.2058,1.1783,1.148,1.1112,1.0764,1.0419,1.0083,0.9755,0.9447,0.9148,0.8856,0.8571,0.8293,0.8034,0.7793,0.7543,0.9816,0.9865,1.067,1.0072,0.9769,1.0818,1.272,1.4514,1.5664,1.6078,1.5891,1.5419,1.4953,1.4495,1.405,1.3619,1.3204,1.2805,1.2424,1.2059,1.1711,1.138,1.1066,1.0738,1.0336,0.9917,0.9524,0.9145,0.8782,0.8434,0.8112,0.7804,0.7508,0.7223,0.695,0.6698,0.6467,0.624,1.0153,0.9957,1.082,0.9476,1.0564,1.272,1.4676,1.5809,1.6087,1.5729,1.5115,1.4524,1.3958,1.3417,1.2903,1.2416,1.1955,1.152,1.111,1.0723,1.0358,1.0018,0.964,0.9222,0.8783,0.8358,0.7964,0.7591,0.7239,0.6908,0.6604,0.6318,0.6046,0.5787,0.5542,0.5319,0.5117,0.4926,1.028,1.0661,0.9948,0.9972,1.2737,1.4892,1.5901,1.5917,1.5285,1.4528,1.3812,1.3139,1.2509,1.1921,1.1373,1.0862,1.0387,0.9944,0.9531,0.9147,0.8755,0.8342,0.7918,0.7494,0.7077,0.6688,0.6331,0.5998,0.5689,0.54,0.5138,0.4892,0.4662,0.4445,0.4242,0.4058,0.3893,0.3742,1.0066,1.0953,0.9527,1.23,1.5053,1.5947,1.5626,1.4711,1.3802,1.2961,1.2187,1.1476,1.0825,1.0229,0.9682,0.9179,0.8717,0.8292,0.7861,0.7426,0.7,0.6589,0.6192,0.5814,0.5456,0.5128,0.483,0.4555,0.4302,0.4067,0.3856,0.3659,0.3476,0.3304,0.3145,0.3001,0.2873,0.2759,1.002,0.9626,1.1435,1.4876,1.5979,1.5319,1.4162,1.3093,1.2117,1.1239,1.045,0.9743,0.9108,0.8536,0.8019,0.7537,0.7052,0.6591,0.6153,0.574,0.5354,0.4996,0.4662,0.4352,0.4065,0.3805,0.3571,0.3356,0.316,0.2979,0.2816,0.2666,0.2526,0.2397,0.2277,0.2169,0.2073,0.199,1.1174,0.9909,1.4286,1.5937,1.5118,1.3739,1.2492,1.1372,1.0373,0.9488,0.8712,0.8031,0.7432,0.6901,0.6387,0.5891,0.5428,0.5009,0.4627,0.4279,0.3961,0.3674,0.3412,0.3172,0.2953,0.2756,0.258,0.2419,0.2272,0.2137,0.2017,0.1906,0.1803,0.1708,0.162,0.1541,0.1472,0.1413,0.9995,1.2591,1.5852,1.5093,1.3426,1.1956,1.0677,0.9572,0.8613,0.7782,0.7063,0.6436,0.5857,0.5333,0.4853,0.4419,0.403,0.3686,0.338,0.3107,0.2862,0.2644,0.2447,0.2268,0.2106,0.1962,0.1833,0.1716,0.1609,0.1511,0.1424,0.1344,0.127,0.1202,0.1139,0.1083,0.1033,0.0991,0.9571,1.5179,1.5389,1.3381,1.1617,1.0118,0.886,0.7813,0.6937,0.6198,0.5538,0.494,0.4418,0.3966,0.3569,0.3221,0.2916,0.2652,0.242,0.2215,0.2033,0.1873,0.1729,0.16,0.1483,0.138,0.1287,0.1203,0.1127,0.1058,0.0996,0.0939,0.0887,0.0838,0.0794,0.0754,0.0719,0.069,1.1981,1.5857,1.3707,1.1542,0.9766,0.8325,0.7156,0.6208,0.5433,0.4748,0.4158,0.3655,0.3231,0.2872,0.2566,0.2301,0.2074,0.1878,0.1708,0.1559,0.1428,0.1312,0.121,0.1118,0.1035,0.0962,0.0896,0.0837,0.0784,0.0735,0.0691,0.0652,0.0615,0.0581,0.055,0.0522,0.0498,0.0478,1.4825,1.4626,1.1871,0.9682,0.7973,0.6651,0.5622,0.4786,0.4087,0.3507,0.3031,0.2638,0.2313,0.2043,0.1816,0.1622,0.1457,0.1315,0.1194,0.1087,0.0994,0.0913,0.084,0.0776,0.0718,0.0666,0.0621,0.0579,0.0542,0.0508,0.0478,0.045,0.0425,0.0401,0.038,0.036,0.0343,0.0329,1.5877,1.2834,0.9995,0.7884,0.6331,0.5179,0.4276,0.3553,0.2982,0.2528,0.2165,0.1871,0.1632,0.1435,0.1271,0.1132,0.1015,0.0914,0.0828,0.0754,0.0688,0.0631,0.0581,0.0536,0.0495,0.046,0.0428,0.04,0.0374,0.035,0.0329,0.031,0.0292,0.0276,0.0261,0.0248,0.0236,0.0227,1.4874,1.0956,0.8174,0.6245,0.49,0.3901,0.3142,0.2568,0.2131,0.1792,0.1525,0.1312,0.114,0.1,0.0883,0.0785,0.0703,0.0632,0.0572,0.052,0.0475,0.0435,0.04,0.0369,0.0341,0.0316,0.0295,0.0275,0.0257,0.0241,0.0226,0.0213,0.0201,0.019,0.0179,0.017,0.0162,0.0156,1.3088,0.9088,0.6498,0.4824,0.3672,0.2848,0.2256,0.1824,0.1502,0.1256,0.1065,0.0913,0.0791,0.0692,0.0611,0.0542,0.0485,0.0436,0.0394,0.0358,0.0327,0.0299,0.0275,0.0253,0.0234,0.0217,0.0202,0.0189,0.0176,0.0165,0.0155,0.0146,0.0138,0.013,0.0123,0.0117,0.0111,0.0107],"ymax":[0.2623,0.2631,0.2724,0.2816,0.2921,0.2856,0.2797,0.302,0.3222,0.3407,0.3575,0.3727,0.3866,0.3992,0.4107,0.4211,0.4304,0.439,0.4466,0.4536,0.4599,0.4656,0.4706,0.4752,0.4793,0.4829,0.4861,0.4888,0.4912,0.4932,0.4948,0.4959,0.4966,0.4969,0.4964,0.495,0.4917,0.4864,0.2621,0.2634,0.2713,0.2814,0.2912,0.2828,0.2807,0.3031,0.3234,0.3419,0.3588,0.3741,0.3879,0.4005,0.4119,0.4223,0.4316,0.4402,0.4479,0.4549,0.4613,0.4671,0.4723,0.4769,0.481,0.4846,0.4877,0.4903,0.4924,0.4941,0.4953,0.4959,0.496,0.4955,0.494,0.4916,0.4874,0.4812,0.2619,0.2639,0.2697,0.2813,0.2898,0.279,0.2822,0.3047,0.3252,0.3438,0.3606,0.3759,0.3897,0.4022,0.4137,0.4241,0.4336,0.4423,0.4502,0.4575,0.464,0.4699,0.4751,0.4798,0.4837,0.4871,0.4899,0.4921,0.4936,0.4945,0.4948,0.4944,0.4934,0.4916,0.489,0.4854,0.4804,0.4734,0.2613,0.2646,0.2667,0.2808,0.2877,0.2735,0.2845,0.3072,0.3277,0.3462,0.363,0.3782,0.3921,0.4048,0.4166,0.4274,0.4374,0.4465,0.4547,0.4621,0.4687,0.4745,0.4795,0.4837,0.4871,0.4897,0.4915,0.4927,0.493,0.4927,0.4916,0.4897,0.4872,0.4839,0.48,0.4752,0.4693,0.4615,0.26,0.2647,0.2602,0.2794,0.2837,0.2646,0.2879,0.3104,0.3306,0.3491,0.3661,0.3819,0.3966,0.4102,0.4228,0.4343,0.4446,0.454,0.4621,0.4692,0.4752,0.4802,0.4841,0.487,0.489,0.49,0.4902,0.4896,0.4882,0.486,0.4831,0.4795,0.4752,0.4704,0.4651,0.4591,0.4524,0.4439,0.2561,0.2664,0.2635,0.2781,0.2761,0.2668,0.2914,0.3138,0.3347,0.3544,0.3729,0.3903,0.4063,0.4209,0.4341,0.4456,0.4556,0.4641,0.4711,0.4766,0.4808,0.4838,0.4855,0.4862,0.4858,0.4845,0.4824,0.4794,0.4758,0.4715,0.4666,0.4611,0.4552,0.4487,0.4419,0.4348,0.4273,0.4182,0.2595,0.267,0.2701,0.2755,0.2664,0.2705,0.2961,0.3208,0.3446,0.3669,0.3876,0.4062,0.4227,0.437,0.449,0.4589,0.4668,0.4727,0.4769,0.4795,0.4805,0.4803,0.4789,0.4765,0.4731,0.4689,0.464,0.4585,0.4524,0.4459,0.439,0.4318,0.4242,0.4164,0.4082,0.4,0.3916,0.3821,0.26,0.2612,0.2703,0.2702,0.2579,0.2786,0.3089,0.338,0.3648,0.3887,0.4096,0.4273,0.4417,0.4532,0.4619,0.4681,0.472,0.4738,0.4738,0.4722,0.4693,0.4652,0.4601,0.4542,0.4475,0.4404,0.4327,0.4247,0.4163,0.4078,0.3991,0.3903,0.3814,0.3724,0.3633,0.354,0.3451,0.3354,0.255,0.251,0.2692,0.2659,0.2615,0.299,0.3342,0.3656,0.3926,0.4151,0.4331,0.447,0.457,0.4635,0.4671,0.468,0.4666,0.4633,0.4585,0.4523,0.4451,0.437,0.4282,0.4189,0.4093,0.3994,0.3894,0.3792,0.3691,0.359,0.3489,0.339,0.3292,0.3195,0.3099,0.3001,0.2907,0.2815,0.2545,0.2558,0.2757,0.2549,0.2891,0.3314,0.3681,0.3985,0.4226,0.4408,0.4536,0.4615,0.4652,0.4655,0.4627,0.4575,0.4503,0.4416,0.4317,0.4209,0.4095,0.3977,0.3857,0.3736,0.3615,0.3496,0.3378,0.3262,0.3149,0.3038,0.2931,0.2826,0.2723,0.2623,0.2526,0.2431,0.234,0.2259,0.257,0.2716,0.2672,0.2771,0.3285,0.3723,0.4074,0.4337,0.4514,0.4617,0.4658,0.4649,0.4599,0.4519,0.4415,0.4295,0.4163,0.4024,0.3881,0.3736,0.3592,0.3449,0.3309,0.3173,0.3041,0.2913,0.2791,0.2673,0.2559,0.245,0.2345,0.2244,0.2148,0.2056,0.1969,0.1886,0.1807,0.1745,0.2594,0.2801,0.2617,0.3245,0.3763,0.4149,0.4409,0.4561,0.4624,0.4616,0.4552,0.4448,0.4315,0.4163,0.3999,0.3829,0.3657,0.3486,0.3318,0.3155,0.2998,0.2848,0.2705,0.2569,0.2439,0.2316,0.2199,0.2089,0.1986,0.1888,0.1796,0.171,0.1629,0.1553,0.1481,0.1414,0.135,0.1304,0.2627,0.2626,0.309,0.3721,0.417,0.4448,0.4582,0.4602,0.4538,0.4414,0.425,0.4061,0.386,0.3654,0.3449,0.325,0.3058,0.2876,0.2703,0.2541,0.2389,0.2245,0.2111,0.1986,0.187,0.1763,0.1663,0.1571,0.1485,0.1406,0.1332,0.1263,0.1199,0.1139,0.1084,0.1032,0.0983,0.095,0.2799,0.2766,0.3592,0.4156,0.447,0.4584,0.4553,0.4425,0.4234,0.4008,0.3766,0.352,0.3279,0.3048,0.2831,0.2628,0.244,0.2265,0.2104,0.1956,0.182,0.1697,0.1584,0.148,0.1386,0.13,0.1221,0.1148,0.1082,0.1021,0.0964,0.0912,0.0863,0.0819,0.0777,0.0739,0.0703,0.0679,0.2712,0.3286,0.4055,0.446,0.4576,0.4497,0.4299,0.4038,0.3748,0.3454,0.3169,0.2901,0.2653,0.2426,0.2219,0.2031,0.1862,0.171,0.1574,0.1452,0.1342,0.1244,0.1155,0.1075,0.1002,0.0937,0.0877,0.0823,0.0773,0.0727,0.0686,0.0648,0.0612,0.058,0.055,0.0522,0.0496,0.0479,0.2654,0.3796,0.4401,0.4566,0.445,0.4182,0.3846,0.3492,0.3149,0.283,0.2541,0.2282,0.2051,0.1847,0.1668,0.1511,0.1373,0.1252,0.1145,0.1051,0.0967,0.0892,0.0826,0.0766,0.0712,0.0664,0.0621,0.0581,0.0545,0.0512,0.0482,0.0454,0.0429,0.0406,0.0385,0.0365,0.0346,0.0335,0.3181,0.4224,0.4554,0.4437,0.41,0.3684,0.3262,0.287,0.252,0.2214,0.1948,0.172,0.1525,0.1359,0.1217,0.1094,0.0989,0.0897,0.0817,0.0747,0.0685,0.0631,0.0582,0.0539,0.05,0.0466,0.0434,0.0406,0.0381,0.0357,0.0336,0.0316,0.0299,0.0282,0.0267,0.0253,0.024,0.0232,0.3708,0.4492,0.4473,0.4081,0.3576,0.3077,0.2632,0.2251,0.1929,0.1661,0.144,0.1257,0.1105,0.0977,0.087,0.0779,0.0701,0.0633,0.0575,0.0525,0.048,0.0441,0.0407,0.0376,0.0348,0.0324,0.0302,0.0282,0.0264,0.0248,0.0233,0.0219,0.0207,0.0195,0.0185,0.0175,0.0166,0.0161,0.416,0.454,0.4157,0.3553,0.2959,0.2449,0.2029,0.1692,0.1424,0.121,0.1038,0.09,0.0786,0.0692,0.0613,0.0547,0.0491,0.0443,0.0401,0.0365,0.0334,0.0306,0.0282,0.0261,0.0241,0.0224,0.0209,0.0195,0.0182,0.0171,0.0161,0.0151,0.0143,0.0135,0.0127,0.0121,0.0114,0.0111,0.446,0.4345,0.3654,0.2934,0.2335,0.1864,0.1506,0.1234,0.1025,0.0864,0.0736,0.0635,0.0552,0.0484,0.0428,0.0381,0.0341,0.0307,0.0278,0.0253,0.0231,0.0212,0.0195,0.018,0.0167,0.0155,0.0144,0.0134,0.0126,0.0118,0.0111,0.0104,0.0098,0.0092,0.0088,0.0083,0.0079,0.0076,0.4544,0.3931,0.3045,0.2311,0.1764,0.1371,0.1088,0.0881,0.0727,0.0608,0.0516,0.0443,0.0384,0.0337,0.0297,0.0264,0.0236,0.0212,0.0192,0.0175,0.0159,0.0146,0.0134,0.0124,0.0115,0.0106,0.0099,0.0092,0.0086,0.0081,0.0076,0.0071,0.0067,0.0063,0.006,0.0057,0.0054,0.0052],"eI":[6.08,7.09,5.97,6.75,5.79,6.17,3.81,4.07,4.9,5,4.72,3.22,3.47,3.74,4.03,4.36,4.71,5.1,5.54,6.03,6.57,7.17,7.86,8.65,9.56,10.62,11.86,13.35,15.13,17.29,19.99,23.33,27.38,32.23,37.54,41.06,38.85,16.9732,7.35,8.31,8.18,8.43,8.34,8.45,5.57,5.89,7.17,7.02,6.68,4.73,5.09,5.48,5.9,6.37,6.89,7.45,8.08,8.76,9.54,10.42,11.43,12.58,13.92,15.49,17.31,19.47,22.01,25.02,28.61,32.84,37.48,42.43,47.08,48.87,44.42,16.8369,8.5,10.34,11.58,9.6,12.06,11.18,8.13,8.53,10.18,9.92,9.3,6.91,7.43,7.98,8.59,9.25,9.95,10.74,11.62,12.63,13.77,15.08,16.59,18.31,20.28,22.54,25.11,28.04,31.37,35.14,39.4,44.06,48.55,52.76,55.95,55.67,48.74,15.9648,8.83,11.81,15,13.41,16.53,13.71,11.77,12.03,13.94,13.79,12.11,10.04,10.73,11.45,12.23,13.12,14.13,15.3,16.65,18.19,19.95,21.92,24.12,26.57,29.27,32.23,35.47,38.99,42.81,46.93,51.35,55.68,59.28,62.09,63.43,61.01,51.59,14.1423,8.64,12.17,14.27,17.56,19.09,15.48,16,16.13,18.31,18.65,14.59,14.06,14.88,15.86,17.05,18.47,20.13,22.02,24.13,26.44,28.95,31.64,34.51,37.54,40.75,44.11,47.63,51.31,55.13,59.1,63.17,66.33,68.53,69.69,69.09,64.67,52.86,13.1223,8.1,12.74,15.63,18.44,18.12,19.72,19.95,20.36,21.74,22.44,17.79,18.92,20.4,22.23,24.39,26.75,29.3,32.02,34.85,37.78,40.8,43.89,47.04,50.26,53.54,56.88,60.28,63.75,67.28,70.67,73.38,74.99,75.64,75.14,72.75,66.5,52.31,19.8262,7.85,11.18,16.62,18.67,22.54,22.4,23.3,23.54,22.96,23.05,24.25,26.85,29.58,32.46,35.51,38.61,41.72,44.82,47.91,50.97,54.02,57.07,60.12,63.19,66.27,69.4,72.56,75.65,78.13,79.92,80.99,81.09,80.26,78.23,74.24,66.24,49.44,31.0895,7.28,10.83,15.33,17.49,24.15,23.56,24.54,25.73,28.7,31.99,35.4,38.93,42.42,45.8,49.06,52.2,55.24,58.21,61.12,63.99,66.85,69.73,72.63,75.58,78.58,81.19,83.23,84.71,85.6,85.89,85.52,84.32,82.2,78.8,73.27,63.42,45.66,49.5068,7.17,11.32,13.76,17.6,23.59,28.26,32.76,37.11,41.37,45.41,49.19,52.7,55.96,59.04,61.97,64.81,67.6,70.38,73.18,76.03,78.93,81.69,84.27,86.43,87.94,88.94,89.48,89.56,89.17,88.27,86.77,84.5,81.27,76.61,69.47,68.83,73.23,78.5023,6.06,10.07,12.15,23.26,31.16,37.25,43.08,48.86,54.58,58.28,61.46,64.43,67.26,70.04,72.83,75.68,78.49,81.16,83.69,86.08,88.29,89.97,91.09,91.7,91.87,91.68,91.15,90.26,88.98,87.22,84.87,84.96,90.57,96.4,102.45,108.8,115.35,122.9172,6.07,13.61,21.78,29.18,34.99,40.53,46.42,53.05,60.58,67.35,71.28,74.31,77.19,79.91,82.51,85,87.4,89.61,91.46,92.65,93.35,93.62,93.53,93.12,92.41,91.43,94.16,101.24,108.6,116.26,124.25,132.59,141.15,150.04,159.22,168.78,178.59,189.5926,8.38,13.73,23.52,27.95,32.26,37.18,43.12,50.2,58.54,68.46,78.51,83.26,85.83,88.2,90.37,92.33,93.77,94.59,94.91,94.85,94.5,96.25,104.94,114.05,123.61,133.63,144.13,155.03,166.36,178.1,190.3,203,215.99,229.45,243.31,257.69,272.36,288.4544,11.62,19.02,25.49,36.76,45.29,52.81,59.75,66.13,72.12,77.65,82.61,90.16,92.36,94.16,95.32,95.82,95.88,97.54,108.14,119.4,131.32,143.95,157.28,171.27,185.94,201.28,217.29,233.9,251.1,268.91,287.34,306.51,326.06,346.3,367.09,388.58,410.44,434.0411,14.82,25.06,36.77,47.6,58.46,67.12,73.22,78.82,83.85,88.2,91.52,93.27,96.33,96.64,100.32,113.39,127.39,142.5,158.64,175.87,194.08,213.33,233.61,254.81,276.99,300.2,324.34,349.34,375.21,401.95,429.57,458.25,487.47,517.67,548.65,580.61,613.05,647.6753,17.71,28.22,41.07,52.56,62.73,75.06,83.76,88.37,92.12,94.24,94.92,94.72,109.03,125.57,143.71,163.49,184.8,207.74,232.16,258.19,285.63,314.6,345.06,376.86,410.08,444.82,480.9,518.23,556.82,596.66,637.77,680.42,723.8,768.63,814.56,861.88,909.81,960.6051,21.35,38.44,53.8,67.68,76.51,84.11,91.5,94.58,95.7,95.6,111.39,131.7,154.39,179.42,206.79,236.56,268.55,302.93,339.48,378.38,419.34,462.55,507.94,555.26,604.66,656.29,709.85,765.25,822.48,881.51,942.38,1005.48,1069.61,1135.87,1203.69,1273.49,1344.13,1418.5837,26.98,47.81,63.24,75.23,86.84,92.45,96.03,96.42,105.42,129.06,156.2,186.73,220.72,258.13,298.97,343.31,390.9,442.02,496.3,554.03,614.77,678.81,746.05,816.08,889.15,965.52,1044.68,1126.52,1211.01,1298.13,1387.91,1480.95,1575.45,1673.06,1772.92,1875.63,1979.49,2088.563,35.06,56.98,75.79,86.41,93.84,95.72,96.8,115.67,146.19,181.52,221.93,267.3,317.75,373.21,433.71,499.33,569.73,645.31,725.53,810.81,900.48,994.99,1094.19,1197.45,1305.15,1417.72,1534.31,1654.83,1779.22,1907.43,2039.51,2176.34,2315.27,2458.74,2605.47,2756.32,2908.77,3068.483,44.9,67.67,84.61,93.7,96.41,95.59,122.79,160.97,206.2,258.49,318.19,385.19,459.66,541.49,630.72,727.45,831.2,942.55,1060.68,1186.25,1318.24,1457.31,1603.25,1755.12,1913.47,2078.97,2250.33,2427.43,2610.16,2798.47,2992.42,3193.29,3397.21,3607.76,3823.03,4044.29,4267.82,4501.5905,55.75,80.1,92.74,96.1,96.07,124.93,171.31,227.6,294.22,371.2,459.05,557.64,667.2,787.57,918.79,1061.01,1213.51,1377.17,1550.76,1735.24,1929.1,2133.36,2347.66,2570.61,2803.04,3045.95,3297.39,3557.23,3825.31,4101.51,4385.93,4680.48,4979.43,5288.07,5603.58,5927.82,6255.29,6597.3793,67.38,89.32,95.97,96.43,133.96,174.54,242.66,325.3,423.09,536.13,665.11,809.86,970.71,1147.42,1340.04,1548.76,1772.56,2012.71,2267.39,2538.02,2822.38,3121.95,3436.22,3763.13,4103.89,4460,4828.57,5209.41,5602.29,6007.03,6423.76,6855.29,7293.22,7745.32,8207.43,8682.24,9161.72,9662.2141],"eII":[4.61,7.2,9.22,12.57,13.97,16.99,21.06,22.48,23.2,26.09,30.38,34.22,36.76,38.17,39.06,40.09,41.74,44.17,47.3,50.9,54.72,58.55,62.23,65.66,68.79,71.61,74.13,76.4,78.46,80.34,82.1,83.8,85.52,87.32,89.25,91.38,93.74,96.4541,4.82,7.11,8.97,10.96,15.33,15.52,19.43,23.98,26.3,26.89,27.48,29.34,32.61,36.72,41.01,44.98,48.39,51.17,53.37,55.09,56.45,57.6,58.65,59.72,60.92,62.29,63.89,65.73,67.81,70.11,72.58,75.21,78.01,80.92,83.91,86.92,89.92,92.9161,4.75,7.27,10.02,10.35,15.41,17.15,18.39,19.49,23.22,28.04,32.43,35.72,37.88,39.16,39.89,40.43,41.08,42.08,43.58,45.63,48.2,51.23,54.62,58.27,62.09,66.01,69.96,73.89,77.77,81.56,85.23,88.77,92.17,95.46,98.62,101.67,104.58,107.232,4.59,6.59,9.34,9.68,14.9,17.05,21.43,25.41,27.29,27.72,27.62,27.79,28.81,30.9,33.97,37.78,42.07,46.59,51.16,55.67,60.01,64.15,68.04,71.68,75.07,78.2,81.09,83.75,86.19,88.43,90.47,92.34,94.04,95.51,96.67,97.81,99.35,101.2464,4.23,6.66,9.43,10.42,14.39,19.41,19.08,18.28,18.88,21.44,25.54,30.45,35.63,40.7,45.46,49.81,53.73,57.22,60.3,63.02,65.4,67.49,69.3,70.86,72.19,73.29,74.19,74.89,75.41,75.76,75.94,75.97,75.87,75.37,74.3,72.21,70.18,68.6576,4.53,6.79,8.97,11.56,14.02,16.19,14.77,19.93,25.71,31.24,36.14,40.33,43.83,46.74,49.19,51.28,53.13,54.83,56.46,58.08,59.71,61.23,62.2,62.61,62.52,62,61.11,59.91,58.43,56.72,54.6,51.79,48.7,45.54,42.3,38.64,35.35,34.3369,4.38,6,10.11,10.01,10.44,17.73,23.7,28.59,32.34,35.16,37.34,39.16,40.98,43.32,46.6,49.33,51.04,51.89,52.02,51.57,50.66,49.41,47.93,46.45,44.58,42.21,39.57,36.73,33.78,30.74,27.69,24.8,25.39,26,26.64,27.32,28.09,29.294,4.32,7.42,5.68,10.34,18.18,23.2,25.94,27.7,29.08,30.96,34.9,38.13,40.1,41.06,41.27,41.03,40.91,40.15,38.76,36.92,34.8,32.45,29.76,26.87,23.86,20.93,18.39,18.79,19.19,19.59,19.98,20.37,20.77,21.18,21.61,22.1,22.64,23.5857,5.31,5.17,10.4,16.72,20.01,20.11,20.99,24.04,27.33,29.27,30.29,31.4,32.33,32.11,31.12,29.86,28.11,25.97,23.48,20.72,17.97,15.34,13.35,13.63,13.92,14.19,14.47,14.74,15,15.26,15.53,15.79,16.06,16.33,16.62,16.97,17.37,18.1246,2.83,7.96,11.03,16.49,13.94,16.7,18.78,19.9,21.57,22.98,23.4,23.58,22.73,21.35,19.5,17.23,14.75,12.35,10.06,9.36,9.56,9.77,9.97,10.16,10.36,10.55,10.74,10.93,11.12,11.3,11.49,11.68,11.88,12.08,12.3,12.55,12.86,13.4468,4.89,7.81,10.71,10.9,12.09,13.18,14.87,15.74,16.43,16.48,15.94,14.85,13.19,11.13,9.06,7.1,6.26,6.41,6.56,6.71,6.86,7.01,7.16,7.3,7.44,7.58,7.72,7.86,8,8.14,8.28,8.43,8.58,8.73,8.89,9.07,9.29,9.7263,5.15,6.45,8.2,7.88,9.41,10.56,11.38,11.7,11.31,10.34,8.94,7.27,5.61,4.09,4.12,4.23,4.34,4.46,4.57,4.68,4.79,4.9,5.01,5.12,5.23,5.34,5.45,5.56,5.67,5.78,5.88,5.99,6.09,6.2,6.31,6.44,6.6,6.9111,4.11,5.45,5.35,6.43,7.39,7.99,8.02,7.46,6.3,4.9,3.59,2.72,2.82,2.92,3,3.07,3.14,3.2,3.25,3.3,3.35,3.4,3.48,3.57,3.65,3.73,3.82,3.9,3.98,4.05,4.13,4.21,4.28,4.35,4.43,4.52,4.63,4.8506,2.84,3.45,4.13,5.02,5.51,5.43,4.71,3.62,2.5,1.91,1.98,2.05,2.11,2.17,2.22,2.26,2.31,2.34,2.38,2.41,2.44,2.47,2.49,2.51,2.54,2.6,2.65,2.71,2.77,2.82,2.88,2.93,2.98,3.03,3.09,3.15,3.22,3.3756,2.29,2.57,3.31,3.75,3.62,2.92,1.99,1.27,1.33,1.38,1.43,1.47,1.52,1.55,1.59,1.63,1.66,1.68,1.71,1.73,1.75,1.76,1.78,1.79,1.8,1.81,1.84,1.88,1.92,1.96,1.99,2.03,2.06,2.1,2.14,2.18,2.23,2.3354,1.6,2.03,2.49,2.43,1.82,1.09,0.9,0.94,0.98,1.01,1.04,1.06,1.08,1.1,1.13,1.15,1.17,1.19,1.21,1.22,1.23,1.24,1.25,1.26,1.26,1.27,1.27,1.3,1.32,1.35,1.37,1.4,1.42,1.45,1.47,1.5,1.54,1.6091,1.09,1.57,1.65,1.17,0.6,0.63,0.66,0.68,0.71,0.73,0.75,0.77,0.78,0.8,0.81,0.81,0.82,0.83,0.84,0.85,0.86,0.87,0.87,0.88,0.88,0.88,0.88,0.89,0.91,0.93,0.95,0.96,0.98,1,1.01,1.03,1.06,1.1053,0.87,1.1,0.81,0.42,0.44,0.46,0.48,0.5,0.51,0.53,0.53,0.55,0.56,0.56,0.57,0.57,0.58,0.58,0.59,0.59,0.6,0.6,0.61,0.61,0.61,0.61,0.61,0.61,0.63,0.64,0.65,0.66,0.67,0.68,0.7,0.71,0.73,0.7574,0.65,0.6,0.29,0.31,0.33,0.34,0.35,0.36,0.37,0.38,0.38,0.39,0.39,0.39,0.4,0.4,0.4,0.4,0.41,0.41,0.41,0.42,0.42,0.42,0.42,0.42,0.42,0.42,0.43,0.44,0.45,0.45,0.46,0.47,0.48,0.49,0.5,0.518,0.42,0.2,0.22,0.23,0.24,0.25,0.25,0.26,0.26,0.27,0.27,0.27,0.27,0.27,0.28,0.28,0.28,0.28,0.28,0.28,0.28,0.29,0.29,0.29,0.29,0.29,0.29,0.29,0.29,0.3,0.31,0.31,0.32,0.32,0.33,0.33,0.34,0.3535,0.18,0.16,0.16,0.17,0.17,0.18,0.18,0.18,0.19,0.19,0.19,0.19,0.19,0.19,0.19,0.19,0.19,0.19,0.19,0.19,0.2,0.2,0.2,0.2,0.2,0.2,0.2,0.2,0.2,0.21,0.21,0.21,0.22,0.22,0.22,0.23,0.23,0.2407],"tc":[null,null,null,null,null,null,null,0.89989,0.92328,0.89756,0.91768,0.93416,0.89231,0.9096,0.9246,0.9374,0.9482,0.95721,0.96506,0.91554,0.92804,0.93591,0.94607,0.95555,0.96397,0.97168,0.97886,0.97882,0.98336,0.98754,0.9911,0.98753,0.98995,0.99202,0.9936,0.99468,null,null,null,null,null,null,null,null,0.91328,0.90056,0.92366,0.89849,0.91835,0.93485,0.89406,0.9111,0.92575,0.93851,0.94944,0.95875,0.96644,0.92125,0.93024,0.94129,0.95169,0.95789,0.96583,0.97345,0.98052,0.98652,0.98542,0.98889,0.9923,null,null,null,null,0.9948,null,null,null,null,null,null,0.93473,0.88216,0.9136,0.90163,0.92425,0.90027,0.9194,0.93578,0.89655,0.9133,0.92795,0.94037,0.9509,0.96006,0.96794,0.97443,0.93759,0.94781,0.95566,0.96445,0.97336,0.97731,0.98288,0.9886,0.99364,0.99459,0.9947,null,null,null,null,null,null,null,null,null,null,0.897,0.9122,0.88282,0.87305,0.90301,0.92522,0.9434,0.92097,0.93732,0.90009,0.91658,0.93095,0.94308,0.95365,0.96231,0.96963,0.94348,0.94749,0.95613,0.96509,0.97313,0.97992,0.98555,0.99135,0.99258,null,null,null,null,null,null,null,null,null,null,null,null,0.95104,0.8975,0.91297,0.88404,0.91578,0.90469,0.92694,0.90564,0.92333,0.88819,0.90528,0.92126,0.9351,0.9469,0.95702,0.96546,0.97281,0.95567,0.96234,0.97039,0.97805,0.98492,0.98777,null,null,null,null,null,null,null,null,null,null,null,null,null,null,0.95073,0.9406,0.92069,0.91372,0.88625,0.91785,0.90817,0.92997,0.90904,0.92678,0.89582,0.91214,0.92735,0.94065,0.9521,0.9618,0.97003,0.977,0.98269,0.9879,0.99183,0.99356,null,null,null,null,null,null,null,null,null,null,null,null,null,null,null,null,0.95774,0.92771,0.92194,0.88598,0.92109,0.92087,0.94295,0.93456,0.91344,0.93097,0.90438,0.92057,0.93536,0.9484,0.95963,0.96921,0.97727,0.98388,null,null,null,null,null,null,null,null,null,null,null,null,null,null,null,null,null,null,null,null,0.94336,0.91273,0.92312,0.8902,0.92551,0.94923,0.9477,0.90144,0.91794,0.89888,0.91663,0.93332,0.94834,0.96145,0.98573,0.99028,null,null,null,null,null,null,null,null,null,null,null,null,null,null,null,null,null,null,null,null,null,0.96348,0.92414,0.92953,0.92559,0.92172,0.95062,0.95325,0.92278,0.90416,0.92443,0.94273,0.95793,0.97009,0.98932,null,null,null,null,null,null,null,null,null,null,null,null,null,null,null,null,null,null,null,null,null,null,null,null,0.95094,0.93585,0.95401,0.92858,0.95861,0.96728,0.90188,0.8932,0.91653,0.93897,0.97292,null,null,null,null,null,null,null,null,null,null,null,null,null,null,null,null,null,null,null,null,null,null,null,null,null,null,null,0.94644,0.94603,0.9638,0.95808,0.97241,0.90883,0.90768,0.93463,0.97022,null,null,null,null,null,null,null,null,null,null,null,null,null,null,null,null,null,null,null,null,null,null,null,null,null,null,null,null,null,0.96083,0.97094,0.9487,0.98127,0.90731,0.93576,0.95943,null,null,null,null,null,null,null,null,null,null,null,null,null,null,null,null,null,null,null,null,null,null,null,null,null,null,null,null,null,null,null,0.98083,0.96236,0.98454,0.91745,0.93276,0.97856,null,null,null,null,null,null,null,null,null,null,null,null,null,null,null,null,null,null,null,null,null,null,null,null,null,null,null,null,null,null,null,null,0.97183,0.9679,0.97239,0.93642,0.99147,null,null,null,null,null,null,null,null,null,null,null,null,null,null,null,null,null,null,null,null,null,null,null,null,null,null,null,null,null,null,null,null,null,null,null,0.93824,null,null,null,null,null,null,null,null,null,null,null,null,null,null,null,null,null,null,null,null,null,null,null,null,null,null,null,null,null,null,null,null,null,null,null,0.96948,0.94163,0.98474,null,null,null,null,null,null,null,null,null,null,null,null,null,null,null,null,null,null,null,null,null,null,null,null,null,null,null,null,null,null,null,null,null,null,null,null,0.96237,null,null,null,null,null,null,null,null,null,null,null,null,null,null,null,null,null,null,null,null,null,null,null,null,null,null,null,null,null,null,null,null,null,null,null,null,null,null,null,null,null,null,null,null,null,null,null,null,null,null,null,null,null,null,null,null,null,null,null,null,null,null,null,null,null,null,null,null,null,null,null,null,null,null,0.95842,null,null,null,null,null,null,null,null,null,null,null,null,null,null,null,null,null,null,null,null,null,null,null,null,null,null,null,null,null,null,null,null,null,null,null,null,null,null,null,null,null,null,null,null,null,null,null,null,null,null,null,null,null,null,null,null,null,null,null,null,null,null,null,null,null,null,null,null,null,null,null,null,null,null,null,null,null,null,null,null,null,null,null,null,null,null,null,null,null,null,null,null,null,null,null,null,null,null,null,null,null,null,null,null,null,null,null,null,null,null,null,null,null]};
+const CASOS = [
+  { t: "D máximo", a: 0.25, m: 1.53, d: "la mayor amplificación de la solución modal, D = 1,61; pierde el contacto en τ = 0,92." },
+  { t: "Dyniewicz–Bajer", a: 0.2, m: 2, d: "la curva más pesada de la Figura 4 de Dyniewicz y Bajer (v = 0,2c, m = 2ρAL), de cuya formulación modal parte la tesis; se despega en τ = 0,904." },
+  { t: "Basta el Caso I", a: 0.2, m: 0.05, d: "carga liviana: la trayectoria difiere solo 3,8 % de la del Caso I, y 21 % de la del Caso II." },
+  { t: "Hace falta el III", a: 0.5, m: 0.5, d: "masas comparables: el Caso I difiere 49 % y el Caso II 51 %; además pierde el contacto en τ = 0,985." },
+  { t: "Basta el Caso II", a: 0.5, m: 10, d: "carga pesada: la trayectoria difiere 1,7 % de la cuerda sin masa de Smith, y 227 % del Caso I." },
+  { t: "Sin convergencia", a: 0.1, m: 0.07, d: "zona rayada: la fuerza mínima baja de 0,79 a 0,64 y a 0,48 con 100, 200 y 400 modos; compara cambiando n arriba." },
+  { t: "Casi Caso II", a: 0.05, m: 100, d: "λ = 0,25 con α pequeño: difiere 0,2 % de la ecuación de Smith; es el punto que más tarda en calcularse." },
+  { t: "Pesada y rápida", a: 0.8, m: 30, d: "casi caída libre: D = 0,05, y basta el Caso II, con 0,7 %; en la vista Zoom llega al apoyo casi en su deflexión máxima." },
+  { t: "Casi crítica", a: 0.95, m: 1, d: "cerca de v = c la partícula se hunde hasta casi el final (ȳ máx ≈ 0,30 en τ ≈ 0,99), y la fuerza mínima, casi cero, baja al aumentar n." }
+];
+const BORDES = {"contacto":[[0.05,41.3474],[0.0585,35.2738],[0.0692,29.0956],[0.0777,25.0599],[0.0862,21.673],[0.0969,18.1783],[0.1054,15.863],[0.1139,13.8961],[0.1246,11.8392],[0.1331,10.4584],[0.1416,9.27189],[0.1501,8.24886],[0.1608,7.16171],[0.1693,6.42014],[0.1778,5.77408],[0.1885,5.07967],[0.197,4.60065],[0.2055,4.17925],[0.2162,3.72151],[0.2247,3.40242],[0.2332,3.11918],[0.2439,2.80844],[0.2524,2.5897],[0.2609,2.39389],[0.2716,2.17706],[0.2801,2.02303],[0.2886,1.88403],[0.2971,1.7583],[0.3078,1.61749],[0.3163,1.51631],[0.3248,1.4241],[0.3355,1.31997],[0.344,1.24452],[0.3525,1.17526],[0.3632,1.0964],[0.3717,1.03879],[0.3802,0.98553],[0.3908,0.92438],[0.3994,0.87936],[0.4079,0.83742],[0.4185,0.78888],[0.4271,0.75285],[0.4356,0.71904],[0.4462,0.67959],[0.4548,0.65006],[0.4633,0.62215],[0.4718,0.59572],[0.4825,0.56455],[0.491,0.54098],[0.4995,0.51853],[0.5101,0.49192],[0.5187,0.47169],[0.5272,0.45233],[0.5378,0.42927],[0.5464,0.41165],[0.5549,0.39473],[0.5655,0.37449],[0.5741,0.35896],[0.5826,0.34399],[0.5932,0.32602],[0.6018,0.31219],[0.6103,0.29883],[0.6209,0.28274],[0.6294,0.27033],[0.638,0.25832],[0.6465,0.24668],[0.6571,0.23264],[0.6657,0.2218],[0.6742,0.2113],[0.6848,0.19863],[0.6934,0.18884],[0.7019,0.17937],[0.7125,0.16794],[0.721,0.15914],[0.7296,0.15062],[0.7402,0.14038],[0.7488,0.1325],[0.7573,0.1249],[0.7679,0.11579],[0.7764,0.10881],[0.785,0.1021],[0.7935,0.09566],[0.8041,0.08797],[0.8127,0.08212],[0.8212,0.07653],[0.8318,0.0699],[0.8404,0.06488],[0.8489,0.06011],[0.8595,0.05449],[0.868,0.05026]],"rayada":[[0.05,0.82456],[0.0522,0.77009],[0.0544,0.71981],[0.0566,0.67336],[0.0589,0.63042],[0.0611,0.5907],[0.0633,0.55393],[0.0655,0.51988],[0.0677,0.48832],[0.0699,0.45905],[0.0722,0.43189],[0.0744,0.40667],[0.0766,0.38323],[0.0788,0.36144],[0.081,0.34117],[0.0832,0.3223],[0.0854,0.30472],[0.0877,0.28833],[0.0899,0.27305],[0.0921,0.25879],[0.0943,0.24548],[0.0965,0.23304],[0.0987,0.22141],[0.1009,0.21053],[0.1032,0.20035],[0.1054,0.19082],[0.1076,0.18189],[0.1098,0.17353],[0.112,0.16568],[0.1142,0.15831],[0.1165,0.1514],[0.1187,0.14491],[0.1209,0.13881],[0.1231,0.13307],[0.1253,0.12767],[0.1275,0.1226],[0.1297,0.11782],[0.132,0.11332],[0.1342,0.10908],[0.1364,0.10509],[0.1386,0.10133],[0.1408,0.09778],[0.143,0.09443],[0.1453,0.09127],[0.1475,0.08829],[0.1497,0.08547],[0.1519,0.08282],[0.1541,0.08031],[0.1563,0.07794],[0.1585,0.0757],[0.1608,0.07359],[0.163,0.07159],[0.1652,0.06971],[0.1674,0.06793],[0.1696,0.06625],[0.1718,0.06466],[0.1741,0.06317],[0.1763,0.06175],[0.1785,0.06042],[0.1807,0.05917],[0.1829,0.05799],[0.1851,0.05688],[0.1873,0.05584],[0.1896,0.05486],[0.1918,0.05394],[0.194,0.05308],[0.1962,0.05228],[0.1984,0.05153],[0.2006,0.05083],[0.2028,0.05019]]};
+const A_MIN = 0.05, A_MAX = 0.975, M_MIN = 0.05, M_MAX = 100;
+const LM0 = Math.log10(M_MIN), LM1 = Math.log10(M_MAX);
+const E = { a: CASOS[0].a, m: CASOS[0].m, mapa: "tc", vista: "cuerda", r: null, n: 200 };
+try {
+  const g = JSON.parse(localStorage.getItem("caso3modal") || "null");
+  if (g && g.a >= A_MIN && g.a <= A_MAX && g.m >= M_MIN && g.m <= M_MAX) { E.a = g.a; E.m = g.m; }
+  if (g && ["tc", "basta", "D", "ymax"].indexOf(g.mapa) >= 0) E.mapa = g.mapa;
+  if (g && ["cuerda", "zoom", "numeros"].indexOf(g.vista) >= 0) E.vista = g.vista;
+  if (g && g.vista === "modos") E.vista = "zoom";                 // la vista Modos de la versión 1.0
+  if (g && [100, 200, 400].indexOf(g.n) >= 0) E.n = g.n;
+} catch (err) { /* sin almacenamiento */ }
+let guardarT = 0;
+function guardar() {
+  clearTimeout(guardarT);
+  guardarT = setTimeout(() => { try { localStorage.setItem("caso3modal", JSON.stringify({ a: E.a, m: E.m, mapa: E.mapa, vista: E.vista, n: E.n })); } catch (err) { /* sin almacenamiento */ } }, 300);
+}
+
+// ---------- formato ----------
+function num(v, d) {
+  if (Math.abs(v) < 0.5 * Math.pow(10, -d)) v = 0;
+  return (v < 0 ? "−" : "") + Math.abs(v).toFixed(d).replace(".", ",");
+}
+const fmtA = a => { const s = a.toFixed(3); return (s.charAt(s.length - 1) === "0" ? a.toFixed(2) : s).replace(".", ","); };
+const fmtM = m => m < 0.1 ? num(m, 3) : m < 10 ? num(m, 2) : m < 100 ? num(m, 1) : num(m, 0);
+const leer = s => parseFloat(String(s).replace(/\s/g, "").replace("−", "-").replace(",", "."));
+const acot = (v, a, b) => Math.max(a, Math.min(b, v));
+const redA = a => +(Math.round(a * 200) / 200).toFixed(3);
+const redM = m => +(+m).toPrecision(3);
+
+// ---------- escalas de color ----------
+const hex = h => [parseInt(h.slice(1, 3), 16), parseInt(h.slice(3, 5), 16), parseInt(h.slice(5, 7), 16)];
+const PAL = {
+  viridis: ["#440154", "#482878", "#3E4A89", "#31688E", "#26828E", "#1F9E89", "#35B779", "#6DCD59", "#B4DE2C", "#FDE725"].map(hex),
+  rdbu: ["#2166AC", "#4393C3", "#92C5DE", "#D1E5F0", "#F7F7F7", "#FDDBC7", "#F4A582", "#D6604D", "#B2182B", "#67001F"].map(hex),
+  magma: ["#FCFDBF", "#FEC287", "#FB8761", "#E55064", "#B5367A", "#812581", "#4F127B", "#1C1044", "#000004"].map(hex),
+  blues: ["#F7FBFF", "#DEEBF7", "#C6DBEF", "#9ECAE1", "#6BAED6", "#4292C6", "#2171B5", "#08519C", "#08306B"].map(hex)
+};
+function color(p, t) {
+  t = acot(t, 0, 1);
+  const x = t * (p.length - 1), i = Math.min(p.length - 2, Math.floor(x)), f = x - i, c0 = p[i], c1 = p[i + 1];
+  return [c0[0] + (c1[0] - c0[0]) * f, c0[1] + (c1[1] - c0[1]) * f, c0[2] + (c1[2] - c0[2]) * f];
+}
+const MAPAS = {
+  tc: { pal: "viridis", t: v => (v - 0.86) / 0.14, titulo: "τ en que se pierde el contacto (400 modos)", marcas: [[0.88, "0,88"], [0.92, "0,92"], [0.96, "0,96"], [1, "1"]], nulo: true },
+  basta: { cat: true, titulo: "Caso que basta: diferencia menor que 10 %" },
+  D: { pal: "magma", t: v => v / 1.7, titulo: "Amplificación dinámica D", marcas: [[0, "0"], [0.5, "0,5"], [1, "1"], [1.5, "1,5"]] },
+  ymax: { pal: "blues", t: v => v / 0.5, titulo: "Deflexión máxima ȳ máx", marcas: [[0, "0"], [0.1, "0,1"], [0.2, "0,2"], [0.3, "0,3"], [0.4, "0,4"], [0.5, "0,5"]] }
+};
+// 0: basta el Caso I, 1: hace falta el Caso III, 2: basta el Caso II, 3: bastan los dos
+const CATS = [["--b1", "Caso I"], ["--b3", "Caso III"], ["--b2", "Caso II"], ["--b4", "los dos"]];
+const categoria = (eI, eII) => eI < 10 && eII < 10 ? 3 : eI < 10 ? 0 : eII < 10 ? 2 : 1;
+const css = n => getComputedStyle(document.documentElement).getPropertyValue(n).trim();
+
+// imagen de NA × NM píxeles con el valor de cada nodo de la grilla (fila 0 = mu máximo)
+const cacheImg = {};
+function imagen(tipo) {
+  if (cacheImg[tipo]) return cacheImg[tipo];
+  if (MAPAS[tipo].cat) return (cacheImg[tipo] = imagenCategorias());
+  const NA = DATOS.NA, NM = DATOS.NM, c = document.createElement("canvas");
+  c.medio = 0.5;
+  c.width = NA; c.height = NM;
+  const g = c.getContext("2d"), img = g.createImageData(NA, NM), M = MAPAS[tipo], p = PAL[M.pal], v = DATOS[tipo];
+  const neutro = hex(css("--neutro") || "#FFFFFF");
+  for (let j = 0; j < NM; j++) for (let i = 0; i < NA; i++) {
+    const q = j * NA + i, val = v[q], col = val === null ? neutro : color(p, M.t(val)), o = ((NM - 1 - j) * NA + i) * 4;
+    img.data[o] = col[0]; img.data[o + 1] = col[1]; img.data[o + 2] = col[2]; img.data[o + 3] = 255;
+  }
+  g.putImageData(img, 0, 0);
+  return (cacheImg[tipo] = c);
+}
+
+// caso que basta: log10 de eI y eII interpolados en una grilla K veces más fina, y clasificados
+function imagenCategorias() {
+  const NA = DATOS.NA, NM = DATOS.NM, K = 8, W = (NA - 1) * K + 1, H = (NM - 1) * K + 1;
+  const c = document.createElement("canvas"); c.width = W; c.height = H; c.medio = 0.5 / K;
+  const g = c.getContext("2d"), img = g.createImageData(W, H), cols = CATS.map(x => hex(css(x[0]) || "#CCCCCC"));
+  const LI = DATOS.eI.map(v => Math.log10(Math.max(v, 1e-3))), LII = DATOS.eII.map(v => Math.log10(Math.max(v, 1e-3)));
+  const bil = (L, gi, gj) => {
+    const i = Math.min(NA - 2, Math.floor(gi)), j = Math.min(NM - 2, Math.floor(gj)), fi = gi - i, fj = gj - j;
+    return (L[j * NA + i] * (1 - fi) + L[j * NA + i + 1] * fi) * (1 - fj) + (L[(j + 1) * NA + i] * (1 - fi) + L[(j + 1) * NA + i + 1] * fi) * fj;
+  };
+  for (let py = 0; py < H; py++) for (let px = 0; px < W; px++) {
+    const gi = px / K, gj = (H - 1 - py) / K;
+    const col = cols[categoria(Math.pow(10, bil(LI, gi, gj)), Math.pow(10, bil(LII, gi, gj)))], o = (py * W + px) * 4;
+    img.data[o] = col[0]; img.data[o + 1] = col[1]; img.data[o + 2] = col[2]; img.data[o + 3] = 255;
+  }
+  g.putImageData(img, 0, 0);
+  return c;
+}
+
+// ---------- el mapa ----------
+const G = {};
+function dibujarMapa() {
+  const fig = $("fig"), cv = $("cv"), sv = $("sv"), W = fig.clientWidth, H = fig.clientHeight;
+  if (!W || !H) return;
+  const angosto = W < 360;
+  const M = { l: angosto ? 38 : 42, r: 8, t: 6, b: 32 }, pw = W - M.l - M.r, ph = H - M.t - M.b;
+  const X = a => M.l + (a - A_MIN) / (A_MAX - A_MIN) * pw, Y = m => M.t + (LM1 - Math.log10(m)) / (LM1 - LM0) * ph;
+  Object.assign(G, { W, H, M, pw, ph, X, Y });
+  // mapa de calor: los centros de los píxeles caen en los nodos de la grilla
+  const dpr = window.devicePixelRatio || 1;
+  cv.width = Math.round(W * dpr); cv.height = Math.round(H * dpr);
+  const g = cv.getContext("2d");
+  g.setTransform(dpr, 0, 0, dpr, 0, 0);
+  g.clearRect(0, 0, W, H);
+  g.save();
+  g.beginPath(); g.rect(M.l, M.t, pw, ph); g.clip();
+  g.imageSmoothingEnabled = true;
+  if ("imageSmoothingQuality" in g) g.imageSmoothingQuality = "high";
+  const dA = (A_MAX - A_MIN) / (DATOS.NA - 1), dL = (LM1 - LM0) / (DATOS.NM - 1);
+  const im = imagen(E.mapa), md = im.medio;
+  const x0 = X(A_MIN - dA * md), x1 = X(A_MAX + dA * md), y0 = M.t + (-dL * md) / (LM1 - LM0) * ph, y1 = M.t + (LM1 - LM0 + dL * md) / (LM1 - LM0) * ph;
+  g.drawImage(im, x0, y0, x1 - x0, y1 - y0);
+  g.restore();
+  // capas vectoriales
+  const gx = gi => X(A_MIN + dA * gi), gy = gj => M.t + (LM1 - (LM0 + dL * gj)) / (LM1 - LM0) * ph;
+  let s = `<defs><clipPath id="clip"><rect x="${M.l}" y="${M.t}" width="${pw}" height="${ph}"/></clipPath><pattern id="rayas" width="6" height="6" patternUnits="userSpaceOnUse" patternTransform="rotate(45)"><rect width="2.2" height="6" style="fill:var(--rayas)"/></pattern></defs>`;
+  let z = "";
+  for (const m of [0.1, 1, 10]) z += `<line x1="${M.l}" y1="${Y(m)}" x2="${M.l + pw}" y2="${Y(m)}" style="stroke:var(--rejilla)"/>`;
+  for (const a of [0.2, 0.4, 0.6, 0.8]) z += `<line x1="${X(a)}" y1="${M.t}" x2="${X(a)}" y2="${M.t + ph}" style="stroke:var(--rejilla)"/>`;
+  // curvas de Smith, lambda = 1/6 y 1/12
+  for (const [l0, dash] of [[1 / 6, ""], [1 / 12, ' stroke-dasharray="5 4"']]) {
+    let d = "";
+    for (let k = 0; k <= 120; k++) { const a = A_MIN + (A_MAX - A_MIN) * k / 120, m = Math.min(1e4, l0 / (a * a)); d += (k ? "L" : "M") + X(a).toFixed(1) + " " + Y(m).toFixed(1); }
+    z += `<path d="${d}" fill="none" style="stroke:var(--curva-halo)" stroke-width="3.4"/><path d="${d}" fill="none" style="stroke:var(--curva)" stroke-width="1.9"${dash}/>`;
+  }
+  // zona rayada (contacto sin convergencia), bordes de 10 % en el mapa del caso que basta y borde de contacto
+  const P = pts => pts.map((p, i) => (i ? "L" : "M") + X(p[0]).toFixed(1) + " " + Y(p[1]).toFixed(1)).join("");
+  const ry = BORDES.rayada;
+  z += `<path d="${P(ry.concat([[ry[ry.length - 1][0], M_MIN], [A_MIN, M_MIN]]))}Z" fill="url(#rayas)" style="stroke:var(--rayas)" stroke-width="1.2"/>`;
+  if (E.mapa === "basta") for (const campo of ["eI", "eII"]) {
+    const d = contorno(gx, gy, q => Math.log10(Math.max(DATOS[campo][q], 1e-3)) - 1);
+    z += `<path d="${d}" fill="none" style="stroke:var(--curva-halo)" stroke-width="3" stroke-linecap="round"/><path d="${d}" fill="none" style="stroke:var(--curva)" stroke-width="1.2" stroke-linecap="round"/>`;
+  }
+  const borde = P(BORDES.contacto);
+  z += `<path d="${borde}" fill="none" style="stroke:var(--borde-halo)" stroke-width="5.4" stroke-linecap="round"/>`;
+  z += `<path d="${borde}" fill="none" style="stroke:var(--borde-c)" stroke-width="3" stroke-linecap="round"/>`;
+  if (!angosto) z += `<text class="rot-curva" x="${X(0.78)}" y="${Y(1 / (6 * 0.78 * 0.78)) - 6}" text-anchor="middle">λ = 1/6</text><text class="rot-curva" x="${X(0.86)}" y="${Y(1 / (12 * 0.86 * 0.86)) + 15}" text-anchor="middle">λ = 1/12</text>`;
+  s += `<g clip-path="url(#clip)">${z}</g><rect x="${M.l}" y="${M.t}" width="${pw}" height="${ph}" fill="none" stroke="var(--linea)"/>`;
+  for (const a of [0.2, 0.4, 0.6, 0.8]) s += `<text x="${X(a)}" y="${M.t + ph + 15}" text-anchor="middle">${num(a, 1)}</text>`;
+  for (const [m, t] of [[0.1, "0,1"], [1, "1"], [10, "10"], [100, "100"]]) s += `<text x="${M.l - 5}" y="${Y(m) + 4}" text-anchor="end">${t}</text>`;
+  s += `<text class="eje" x="${M.l + pw}" y="${H - 2}" text-anchor="end">velocidad, α = v/c</text>`;
+  s += `<text class="eje" transform="translate(11 ${M.t + ph / 2}) rotate(-90)" text-anchor="middle">razón de masas, μ</text>`;
+  s += `<g id="cursor"></g>`;
+  sv.innerHTML = s;
+  dibujarCursor();
+}
+// curva de nivel 0 de valor(q) por cuadrados que marchan
+function contorno(gx, gy, valor) {
+  const NA = DATOS.NA, NM = DATOS.NM;
+  const val = (i, j) => valor(j * NA + i);
+  const segs = [];
+  for (let j = 0; j < NM - 1; j++) for (let i = 0; i < NA - 1; i++) {
+    const c = [val(i, j), val(i + 1, j), val(i + 1, j + 1), val(i, j + 1)];
+    const k = (c[0] < 0 ? 1 : 0) | (c[1] < 0 ? 2 : 0) | (c[2] < 0 ? 4 : 0) | (c[3] < 0 ? 8 : 0);
+    if (k === 0 || k === 15) continue;
+    const corte = (p, q) => p / (p - q);
+    const P = [
+      [i + corte(c[0], c[1]), j], [i + 1, j + corte(c[1], c[2])],
+      [i + corte(c[3], c[2]), j + 1], [i, j + corte(c[0], c[3])]
+    ];
+    const T = { 1: [[3, 0]], 2: [[0, 1]], 3: [[3, 1]], 4: [[1, 2]], 5: [[3, 2], [0, 1]], 6: [[0, 2]], 7: [[3, 2]], 8: [[2, 3]], 9: [[0, 2]], 10: [[0, 3], [1, 2]], 11: [[1, 2]], 12: [[1, 3]], 13: [[0, 1]], 14: [[0, 3]] }[k];
+    for (const [e0, e1] of T) segs.push([P[e0], P[e1]]);
+  }
+  let d = "";
+  for (const [p, q] of segs) d += "M" + gx(p[0]).toFixed(1) + " " + gy(p[1]).toFixed(1) + "L" + gx(q[0]).toFixed(1) + " " + gy(q[1]).toFixed(1);
+  return d;
+}
+function dibujarCursor() {
+  const c = $("cursor"); if (!c || !G.X) return;
+  const x = G.X(E.a), y = G.Y(E.m), M = G.M;
+  let s = "";
+  if (x - 11 > M.l) s += `<line x1="${M.l}" y1="${y}" x2="${x - 11}" y2="${y}" style="stroke:var(--curva)" stroke-width="1.2" stroke-dasharray="3 3" opacity=".8"/>`;
+  if (y + 11 < M.t + G.ph) s += `<line x1="${x}" y1="${y + 11}" x2="${x}" y2="${M.t + G.ph}" style="stroke:var(--curva)" stroke-width="1.2" stroke-dasharray="3 3" opacity=".8"/>`;
+  s += `<circle cx="${x}" cy="${y}" r="10" fill="none" stroke="#FFFFFF" stroke-width="6"/><circle cx="${x}" cy="${y}" r="10" fill="none" stroke="#16202B" stroke-width="2.8"/><circle cx="${x}" cy="${y}" r="2.6" fill="#16202B"/>`;
+  c.innerHTML = s;
+  if (arr.activo) globo(x, y);
+}
+function globo(x, y) {
+  const b = $("globo");
+  const c = casoEn(E.a, E.m);
+  b.textContent = (c ? c.t + " · " : "") + "α = " + fmtA(E.a) + " · μ = " + fmtM(E.m);
+  b.hidden = false;
+  const w = b.offsetWidth, h = b.offsetHeight;
+  let top = y - 22 - h; if (top < 0) top = y + 22;
+  b.style.left = acot(x - w / 2, 0, G.W - w) + "px"; b.style.top = top + "px";
+}
+function escala() {
+  const M = MAPAS[E.mapa];
+  let h = `<div class="escala-cab"><b>${M.titulo}</b></div>`;
+  if (M.cat) h += '<div class="leyenda-cat">' + CATS.map(c => `<span><i style="background:var(${c[0]})"></i>${c[1]}</span>`).join("") + "</div>";
+  else {
+    const p = PAL[M.pal], pasos = [];
+    for (let k = 0; k <= 20; k++) { const c = color(p, k / 20); pasos.push(`rgb(${c.map(Math.round).join(",")}) ${k * 5}%`); }
+    h += `<div class="barra-color" style="background:linear-gradient(90deg,${pasos.join(",")})"></div><div class="marcas">`;
+    for (const [v, t] of M.marcas) h += `<span style="left:${(100 * acot(M.t(v), 0, 1)).toFixed(1)}%">${t}</span>`;
+    h += "</div>";
+  }
+  h += '<div class="leyenda-cat extra">' + (M.nulo ? '<span><i style="background:var(--neutro)"></i>no lo pierde</span>' : "") +
+    '<span><i class="borde"></i>se pierde el contacto</span><span><i class="rayas"></i>sin convergencia</span></div>';
+  $("escala").innerHTML = h;
+}
+
+// ---------- cálculo del punto en un hilo aparte (el último pedido manda) ----------
+const fuente = $("motor").textContent;
+let trabajador = null, ocupado = false, pendiente = null, ultimo = null, idPed = 0, local = null;
+function calcularLocal(p) {
+  if (!local) local = new Function(fuente + "\nreturn analizarModal;")();
+  const t0 = performance.now();
+  let r;
+  try { r = local(p.a, p.m, p.n); } catch (err) { r = { error: String(err) }; }
+  r.a = p.a; r.m = p.m; r.id = p.id; r.ms = performance.now() - t0;
+  return r;
+}
+try {
+  const url = URL.createObjectURL(new Blob([fuente + "\nself.onmessage = function (e) { var p = e.data, t0 = Date.now(), r; try { r = analizarModal(p.a, p.m, p.n); } catch (err) { r = { error: String(err) }; } r.a = p.a; r.m = p.m; r.id = p.id; r.ms = Date.now() - t0; self.postMessage(r, r.cuadros ? [r.cuadros.w.buffer, r.cuadros.y.buffer, r.zoom.w.buffer, r.zoom.y.buffer] : []); };"], { type: "text/javascript" }));
+  trabajador = new Worker(url);
+  trabajador.onmessage = e => recibir(e.data);
+  trabajador.onerror = ev => {
+    if (ev && ev.preventDefault) ev.preventDefault();
+    trabajador = null; ocupado = false;
+    if (!pendiente && ultimo) pendiente = ultimo;
+    lanzar();
+  };
+} catch (err) { trabajador = null; }
+function pedir() {
+  pendiente = { a: E.a, m: E.m, n: E.n, id: ++idPed };
+  $("res").classList.add("calculando"); $("estado").textContent = "calculando…";
+  if (!ocupado) lanzar();
+}
+function lanzar() {
+  if (!pendiente) return;
+  const p = pendiente; pendiente = null; ultimo = p; ocupado = true;
+  if (trabajador) trabajador.postMessage(p);
+  else setTimeout(() => recibir(calcularLocal(p)), 16);
+}
+function recibir(r) {
+  ocupado = false;
+  if (pendiente) lanzar();
+  mostrar(r);
+  if (!pendiente && !ocupado) $("res").classList.remove("calculando");
+}
+function mostrar(r) {
+  if (r.error) { $("estado").textContent = "no se pudo calcular este punto"; return; }
+  const lam = r.a * r.a * r.m, ts = 2 * r.a / (1 + r.a);
+  $("t-lam").textContent = num(lam, lam < 0.01 ? 4 : lam < 1 ? 3 : lam < 10 ? 2 : 1);
+  $("t-ts").textContent = num(ts, 3);
+  $("t-D").textContent = num(r.D, 2);
+  $("t-ymax").textContent = num(r.ymax, 3);
+  $("t-ymax-sub").textContent = "en τ = " + num(r.tmax, 2);
+  const c = $("t-cont");
+  if (r.tc === null) { c.textContent = "se mantiene"; c.className = "val chico ok"; $("t-cont-sub").textContent = "f mín = " + num(r.fmin, 2); }
+  else { c.textContent = "se pierde"; c.className = "val chico alerta"; $("t-cont-sub").textContent = "en τ = " + num(r.tc, 3); }
+  const cat = categoria(r.eI, r.eII), pc = v => v < 10 ? num(v, 1) : v < 1000 ? num(v, 0) : ">999";
+  $("t-basta").textContent = CATS[cat][1];
+  $("t-basta").className = "val chico" + (cat === 1 ? " alerta" : " ok");
+  $("t-basta-sub").textContent = "I " + pc(r.eI) + " % · II " + pc(r.eII) + " %";
+  const ms = Math.max(1, Math.round(r.ms)), caso = casoEn(r.a, r.m);
+  $("estado").textContent = (caso ? caso.t : "α " + fmtA(r.a) + " · μ " + fmtM(r.m)) + " · " + (ms < 1000 ? ms + " ms" : num(ms / 1000, 1) + " s");
+  E.r = r;
+  resumen();
+  if (E.vista !== "numeros") { fondoAnim(); animar(); }
+}
+
+// ---------- la cuerda en el instante tau ----------
+const A = { tau: 0, play: true, ult: 0, espera: 0, raf: 0, arr: false, id: null };
+const GC = {};
+const ICONO = { pausa: '<svg viewBox="0 0 16 16" aria-hidden="true"><rect x="3" y="2" width="3.6" height="12" rx="1" fill="currentColor"/><rect x="9.4" y="2" width="3.6" height="12" rx="1" fill="currentColor"/></svg>',
+  seguir: '<svg viewBox="0 0 16 16" aria-hidden="true"><path d="M4 2.2 L13.5 8 L4 13.8 Z" fill="currentColor"/></svg>' };
+function iconoPlay() { $("b-play").innerHTML = A.play ? ICONO.pausa : ICONO.seguir; $("b-play").setAttribute("aria-label", A.play ? "Pausar" : "Seguir"); }
+function fondoCuerda() {
+  const fig = $("fig-cuerda"), W = fig.clientWidth, H = fig.clientHeight;
+  if (!W || !H) return;
+  const c = E.r && E.r.cuadros;
+  const lo = Math.min(-0.12, c ? c.lo - 0.02 : 0), hi = Math.max(0.52, c ? c.hi + 0.02 : 0);
+  const M = { l: 12, r: 12, t: 12, b: 6 }, pw = W - M.l - M.r, ph = H - M.t - M.b;
+  Object.assign(GC, { W, H, M, pw, ph, X: x => M.l + x * pw, Y: w => M.t + (w - lo) / (hi - lo) * ph });
+  const X = GC.X, Y = GC.Y;
+  let s = `<line x1="${X(0)}" y1="${Y(0)}" x2="${X(1)}" y2="${Y(0)}" style="stroke:var(--tinta-3)" stroke-dasharray="3 4"/>`;
+  for (const x of [0, 1]) s += `<path d="M${X(x)} ${Y(0)} l-6 9 h12 z" style="fill:var(--tinta-3)"/>`;
+  $("sv-cuerda").innerHTML = s + '<g id="cuerda-din"></g>';
+  dibujarCuerda();
+}
+function dibujarCuerda() {
+  const g = $("cuerda-din"), r = E.r;
+  if (!g || !r || !r.cuadros || !GC.X) return;
+  const c = r.cuadros, X = GC.X, Y = GC.Y, F = c.F, NX = c.NX;
+  const tau = Math.max(0, Math.min(A.tau, c.tmax)), kf = tau / c.tmax * F, k0 = Math.min(F - 1, Math.floor(kf)), f = kf - k0;
+  const yp = c.y[k0] * (1 - f) + c.y[k0 + 1] * f;
+  // la cuerda, con la partícula como vértice
+  let d = "", puesto = false;
+  const P = (x, w) => (d ? "L" : "M") + X(x).toFixed(1) + " " + Y(w).toFixed(1);
+  for (let i = 0; i < NX; i++) {
+    const x = i / (NX - 1);
+    if (!puesto && x >= tau) { d += P(tau, yp); puesto = true; if (x === tau) continue; }
+    d += P(x, c.w[k0 * NX + i] * (1 - f) + c.w[(k0 + 1) * NX + i] * f);
+  }
+  // trayectoria recorrida; tras perder el contacto, segmentada en naranjo
+  const pts = [];
+  for (let k = 0; k <= k0; k++) pts.push([c.tmax * k / F, c.y[k]]);
+  pts.push([tau, yp]);
+  let d1 = "", d2 = "";
+  for (let j = 0; j < pts.length; j++) {
+    const p = X(pts[j][0]).toFixed(1) + " " + Y(pts[j][1]).toFixed(1);
+    if (r.tc === null || pts[j][0] <= r.tc) d1 += (d1 ? "L" : "M") + p;
+    else { if (!d2) { const q = pts[Math.max(0, j - 1)]; d2 = "M" + X(q[0]).toFixed(1) + " " + Y(q[1]).toFixed(1); } d2 += "L" + p; }
+  }
+  const suelta = r.tc !== null && tau > r.tc;
+  g.innerHTML = (d1 ? `<path d="${d1}" fill="none" style="stroke:var(--acento)" stroke-width="2"/>` : "") +
+    (d2 ? `<path d="${d2}" fill="none" style="stroke:var(--alerta)" stroke-width="2" stroke-dasharray="4 3"/>` : "") +
+    `<path d="${d}" fill="none" style="stroke:var(--tinta)" stroke-width="2.4" stroke-linejoin="round" stroke-linecap="round"/>` +
+    `<circle cx="${X(tau).toFixed(1)}" cy="${Y(yp).toFixed(1)}" r="5.5" fill="#EB6834" style="stroke:var(--panel)" stroke-width="2"/>`;
+  const t = $("t-tau");
+  t.textContent = "τ = " + num(tau, 3) + (suelta ? " · sin contacto" : "");
+  t.className = suelta ? "tau suelta" : "tau";
+}
+// ---------- zoom: los últimos 10 % de la cuerda, cuadro a cuadro (cada 0,001 en tau) ----------
+const Z0 = 0.9, GZ = {};
+// marcas redondas entre lo y hi (unas nmax), con los decimales que necesitan
+function lindas(lo, hi, nmax) {
+  const crudo = (hi - lo) / nmax, p = Math.pow(10, Math.floor(Math.log10(crudo))), q = crudo / p;
+  const k = q <= 1 ? 1 : q <= 2 ? 2 : q <= 2.5 ? 2.5 : q <= 5 ? 5 : 10, paso = k * p;
+  const dec = Math.max(0, -Math.floor(Math.log10(paso) + 1e-9)) + (k === 2.5 ? 1 : 0), v = [];
+  for (let x = Math.ceil(lo / paso - 1e-9) * paso; x <= hi + paso * 1e-9; x += paso) v.push(Math.abs(x) < paso * 1e-6 ? 0 : x);
+  return { v, dec };
+}
+function fondoZoom() {
+  const fig = $("fig-cuerda"), W = fig.clientWidth, H = fig.clientHeight;
+  if (!W || !H) return;
+  const z = E.r && E.r.zoom, n = E.r ? E.r.n : E.n;
+  let lo = z ? Math.min(0, z.lo) : 0, hi = z ? Math.max(0, z.hi) : 0.1;
+  const sp = Math.max(hi - lo, 1e-4); lo -= 0.08 * sp; hi += 0.06 * sp;
+  const M = { l: 40, r: 10, t: 30, b: 16 }, pw = W - M.l - M.r, ph = H - M.t - M.b;
+  const X = x => M.l + (x - Z0) / (1 - Z0) * pw, Y = w => M.t + (w - lo) / (hi - lo) * ph;
+  Object.assign(GZ, { W, H, M, pw, ph, X, Y });
+  const xb = Math.max(Z0, 1 - 4 / n), mk = lindas(lo, hi, 3);
+  let s = `<defs><clipPath id="clip-zoom"><rect x="${M.l}" y="${M.t}" width="${pw}" height="${ph}"/></clipPath><pattern id="rayas-z" width="6" height="6" patternUnits="userSpaceOnUse" patternTransform="rotate(45)"><rect width="2" height="6" style="fill:var(--rayas)" opacity=".4"/></pattern></defs>`;
+  // zona que n modos no alcanzan a dibujar: los últimos 4/n del largo
+  s += `<rect x="${X(xb).toFixed(1)}" y="${M.t}" width="${(X(1) - X(xb)).toFixed(1)}" height="${ph}" fill="url(#rayas-z)"/>`;
+  for (const x of [0.92, 0.94, 0.96, 0.98]) s += `<line x1="${X(x)}" y1="${M.t}" x2="${X(x)}" y2="${M.t + ph}" style="stroke:var(--rejilla)"/>`;
+  for (const x of [0.9, 0.92, 0.94, 0.96, 0.98, 1]) s += `<text x="${X(x)}" y="${H - 3}" text-anchor="middle">${num(x, 2)}</text>`;
+  for (const v of mk.v) s += `<line x1="${M.l}" y1="${Y(v)}" x2="${M.l + pw}" y2="${Y(v)}" style="stroke:var(--rejilla)"/><text x="${M.l - 4}" y="${Y(v) + 4}" text-anchor="end">${v === 0 ? "0" : num(v, mk.dec)}</text>`;
+  s += `<line x1="${M.l}" y1="${Y(0)}" x2="${X(1)}" y2="${Y(0)}" style="stroke:var(--tinta-3)" stroke-dasharray="3 4"/>`;
+  s += `<rect x="${M.l}" y="${M.t}" width="${pw}" height="${ph}" fill="none" style="stroke:var(--linea)"/>`;
+  // el apoyo: un muro con achurado hacia afuera
+  let ach = "";
+  for (let k = -1; k <= 2; k++) ach += `M${X(1).toFixed(1)} ${(Y(0) + 6 * k - 3).toFixed(1)}l6 -6`;
+  s += `<path d="M${X(1).toFixed(1)} ${(Y(0) - 10).toFixed(1)}V${(Y(0) + 10).toFixed(1)}" style="stroke:var(--tinta-2)" stroke-width="2"/><path d="${ach}" fill="none" style="stroke:var(--tinta-3)" stroke-width="1.2"/>`;
+  $("sv-cuerda").innerHTML = s + '<g id="zoom-din" clip-path="url(#clip-zoom)"></g>';
+  dibujarZoom();
+}
+function dibujarZoom() {
+  const g = $("zoom-din"), r = E.r;
+  if (!g || !r || !r.zoom || !GZ.X) return;
+  const z = r.zoom, X = GZ.X, Y = GZ.Y, NX = z.NX, t1 = z.t0 + (z.NZ - 1) * z.dt;
+  const q = Math.round((acot(A.tau, z.t0, t1) - z.t0) / z.dt), tau = z.t0 + q * z.dt, yp = z.y[q];
+  // la cuerda, con la partícula como vértice
+  let d = "", puesto = false;
+  const P = (x, w) => (d ? "L" : "M") + X(x).toFixed(1) + " " + Y(w).toFixed(1);
+  for (let i = 0; i < NX; i++) {
+    const x = z.x0 + (1 - z.x0) * i / (NX - 1);
+    if (!puesto && x >= tau - 1e-9) { d += P(tau, yp); puesto = true; if (Math.abs(x - tau) < 1e-9) continue; }
+    d += P(x, z.w[q * NX + i]);
+  }
+  // trayectoria desde tau = 0,9; tras perder el contacto, segmentada en naranjo
+  let d1 = "", d2 = "";
+  for (let k = 0; k <= q; k++) {
+    const t = z.t0 + k * z.dt, p = X(t).toFixed(1) + " " + Y(z.y[k]).toFixed(1);
+    if (r.tc === null || t <= r.tc) d1 += (d1 ? "L" : "M") + p;
+    else { if (!d2) { const k0 = Math.max(0, k - 1); d2 = "M" + X(z.t0 + k0 * z.dt).toFixed(1) + " " + Y(z.y[k0]).toFixed(1); } d2 += "L" + p; }
+  }
+  const suelta = r.tc !== null && tau > r.tc;
+  g.innerHTML = (d1 ? `<path d="${d1}" fill="none" style="stroke:var(--acento)" stroke-width="2"/>` : "") +
+    (d2 ? `<path d="${d2}" fill="none" style="stroke:var(--alerta)" stroke-width="2" stroke-dasharray="4 3"/>` : "") +
+    `<path d="${d}" fill="none" style="stroke:var(--tinta)" stroke-width="2.4" stroke-linejoin="round" stroke-linecap="round"/>` +
+    `<circle cx="${X(tau).toFixed(1)}" cy="${Y(yp).toFixed(1)}" r="5.5" fill="#EB6834" style="stroke:var(--panel)" stroke-width="2"/>`;
+  const t = $("t-tau");
+  t.textContent = "τ = " + num(tau, 3) + " · ȳ = " + num(yp, Math.abs(yp) < 0.01 ? 4 : 3) + (suelta ? " · sin contacto" : "");
+  t.className = suelta ? "tau suelta" : "tau";
+}
+function resumen() {
+  const r = E.r; if (!r) return;
+  $("resumen").textContent = E.vista === "zoom" ? "Últimos 10 % de la cuerda · rayado: faltan modos"
+    : "D = " + num(r.D, 2) + " · ȳ máx = " + num(r.ymax, 3) + " · " + (r.tc === null ? "contacto se mantiene" : "se pierde en τ = " + num(r.tc, 3));
+}
+function fondoAnim() {
+  const zoom = E.vista === "zoom";
+  $("fig-cuerda").classList.toggle("zoom", zoom);
+  if (zoom) { if (A.tau < Z0) A.tau = Z0; fondoZoom(); } else fondoCuerda();
+}
+function dibujarAnim() { if (E.vista === "zoom") dibujarZoom(); else dibujarCuerda(); }
+function bucle(ts) {
+  A.raf = 0;
+  if (E.vista === "numeros" || !A.play || document.hidden) { A.ult = 0; return; }
+  const dt = A.ult ? Math.min(0.1, (ts - A.ult) / 1000) : 0;
+  A.ult = ts;
+  const tmax = E.r && E.r.cuadros ? E.r.cuadros.tmax : 0.995, zoom = E.vista === "zoom";
+  // la cuerda completa en 6 s; el zoom, de 0,9 a 0,995, en 5 s
+  const t0 = zoom ? Z0 : 0, vel = zoom ? (tmax - Z0) / 5 : 1 / 6;
+  if (zoom && A.tau < Z0 && A.espera <= 0) A.tau = Z0;
+  if (A.espera > 0) { A.espera -= dt; if (A.espera <= 0) A.tau = t0; }
+  else { A.tau += dt * vel; if (A.tau >= tmax) { A.tau = tmax; A.espera = 0.9; } }
+  dibujarAnim();
+  A.raf = requestAnimationFrame(bucle);
+}
+function animar() { if (!A.raf && A.play && E.vista !== "numeros") { A.ult = 0; A.raf = requestAnimationFrame(bucle); } }
+$("b-play").addEventListener("click", () => { A.play = !A.play; A.espera = 0; if (A.play && E.r && E.r.cuadros && A.tau >= E.r.cuadros.tmax) A.tau = E.vista === "zoom" ? Z0 : 0; iconoPlay(); animar(); });
+function tauDesde(ev) {
+  const R = $("fig-cuerda").getBoundingClientRect(), x = ev.clientX - R.left;
+  if (E.vista === "zoom" && GZ.X) A.tau = acot(Z0 + (x - GZ.M.l) / GZ.pw * (1 - Z0), Z0, 0.995);
+  else A.tau = acot((x - 12) / (R.width - 24), 0, 0.995);
+  A.espera = 0; dibujarAnim();
+}
+$("fig-cuerda").addEventListener("pointerdown", ev => {
+  if (ev.target.closest(".play") || !E.r || (ev.pointerType === "mouse" && ev.button !== 0)) return;
+  A.arr = true; A.id = ev.pointerId; A.play = false; iconoPlay();
+  try { $("fig-cuerda").setPointerCapture(ev.pointerId); } catch (err) { /* sin captura */ }
+  tauDesde(ev);
+});
+window.addEventListener("pointermove", ev => { if (A.arr && ev.pointerId === A.id) tauDesde(ev); });
+window.addEventListener("pointerup", ev => { if (A.arr && ev.pointerId === A.id) A.arr = false; });
+window.addEventListener("pointercancel", ev => { if (A.arr && ev.pointerId === A.id) A.arr = false; });
+document.addEventListener("visibilitychange", () => { if (!document.hidden) animar(); });
+
+// número de modos
+function marcarModos() { for (const b of $("modos").children) b.setAttribute("aria-pressed", String(+b.dataset.n === E.n)); }
+$("modos").addEventListener("click", ev => {
+  const b = ev.target.closest("button"); if (!b || +b.dataset.n === E.n) return;
+  E.n = +b.dataset.n; marcarModos(); guardar(); pedir();
+});
+
+// Cuerda, zoom o números
+function marcarVista() {
+  for (const b of $("vistas").children) b.setAttribute("aria-pressed", String(b.dataset.v === E.vista));
+  $("v-cuerda").hidden = E.vista === "numeros";
+  $("v-numeros").hidden = E.vista !== "numeros";
+}
+$("vistas").addEventListener("click", ev => {
+  const b = ev.target.closest("button"); if (!b || b.dataset.v === E.vista) return;
+  E.vista = b.dataset.v; marcarVista(); resumen(); guardar();
+  if (E.vista !== "numeros") { fondoAnim(); animar(); }
+});
+
+// aviso breve en la línea de estado
+let avisoT = 0;
+function aviso(t) {
+  const e = $("estado"), antes = e.textContent;
+  e.textContent = t; e.style.color = "var(--alerta)";
+  clearTimeout(avisoT);
+  avisoT = setTimeout(() => { e.style.color = ""; if (e.textContent === t) e.textContent = antes; }, 2500);
+}
+
+// ---------- elegir el punto ----------
+function fijar(a, m, desde) {
+  a = acot(a, A_MIN, A_MAX); m = acot(m, M_MIN, M_MAX);
+  const cambio = a !== E.a || m !== E.m;
+  E.a = a; E.m = m;
+  if (desde !== "va" && document.activeElement !== $("v-alfa")) $("v-alfa").value = fmtA(a);
+  if (desde !== "vm" && document.activeElement !== $("v-mu")) $("v-mu").value = fmtM(m);
+  if (desde !== "ra") $("r-alfa").value = a;
+  if (desde !== "rm") $("r-mu").value = Math.log10(m);
+  for (const b of $("casos").children) b.setAttribute("aria-pressed", String(+b.dataset.a === a && +b.dataset.m === m));
+  dibujarCursor();
+  if (cambio || desde === "inicio") { pedir(); guardar(); }
+}
+
+function casoEn(a, m) { for (const c of CASOS) if (c.a === a && c.m === m) return c; return null; }
+
+// arrastre sobre el mapa
+const arr = { activo: false, id: null, raf: 0, pt: null };
+function enMapa(ev) { const R = $("fig").getBoundingClientRect(); return [ev.clientX - R.left, ev.clientY - R.top]; }
+function moverA(x, y) {
+  const M = G.M;
+  let a = A_MIN + (x - M.l) / G.pw * (A_MAX - A_MIN);
+  let lm = LM1 - (y - M.t) / G.ph * (LM1 - LM0);
+  a = acot(a, A_MIN, A_MAX); lm = acot(lm, LM0, LM1);
+  const xc = G.X(a), yc = G.Y(Math.pow(10, lm));
+  let mejor = null, dmin = 13;
+  for (const c of CASOS) { const d = Math.hypot(G.X(c.a) - xc, G.Y(c.m) - yc); if (d < dmin) { dmin = d; mejor = c; } }
+  if (mejor) fijar(mejor.a, mejor.m, "mapa");
+  else fijar(redA(a), redM(Math.pow(10, lm)), "mapa");
+}
+$("fig").addEventListener("pointerdown", ev => {
+  if (!G.X || (ev.pointerType === "mouse" && ev.button !== 0)) return;
+  const [x, y] = enMapa(ev), M = G.M;
+  if (x < M.l - 14 || x > M.l + G.pw + 14 || y < M.t - 14 || y > M.t + G.ph + 14) return;
+  arr.activo = true; arr.id = ev.pointerId;
+  try { $("fig").setPointerCapture(ev.pointerId); } catch (err) { /* sin captura */ }
+  ev.preventDefault();
+  moverA(x, y);
+});
+window.addEventListener("pointermove", ev => {
+  if (!arr.activo || ev.pointerId !== arr.id) return;
+  arr.pt = enMapa(ev);
+  if (!arr.raf) arr.raf = requestAnimationFrame(() => { arr.raf = 0; if (arr.activo && arr.pt) moverA(arr.pt[0], arr.pt[1]); });
+});
+function soltar(ev, mover) {
+  if (!arr.activo || ev.pointerId !== arr.id) return;
+  if (arr.raf) { cancelAnimationFrame(arr.raf); arr.raf = 0; }
+  if (mover) { const p = enMapa(ev); moverA(p[0], p[1]); }
+  arr.activo = false; arr.id = null; $("globo").hidden = true;
+}
+window.addEventListener("pointerup", ev => soltar(ev, true));
+window.addEventListener("pointercancel", ev => soltar(ev, false));
+
+// botones − y +: un toque da un paso; mantenidos, avanzan solos
+const ESCALERA = [];
+for (let e = -2; e <= 2; e++) for (const k of [1, 1.2, 1.5, 2, 2.5, 3, 4, 5, 6, 8]) { const v = +(k * Math.pow(10, e)).toPrecision(3); if (v >= M_MIN - 1e-12 && v <= M_MAX + 1e-12) ESCALERA.push(v); }
+function paso(p, d) {
+  if (p === "a") fijar(+(Math.round((E.a + 0.01 * d) * 1000) / 1000).toFixed(3), E.m, "boton");
+  else {
+    let v = E.m;
+    if (d > 0) { for (const x of ESCALERA) if (x > E.m * (1 + 1e-9)) { v = x; break; } }
+    else { for (let k = ESCALERA.length - 1; k >= 0; k--) if (ESCALERA[k] < E.m * (1 - 1e-9)) { v = ESCALERA[k]; break; } }
+    fijar(E.a, v, "boton");
+  }
+}
+for (const b of document.querySelectorAll(".pm")) {
+  let t = 0, porPuntero = false;
+  const parar = () => { clearTimeout(t); t = 0; };
+  const repetir = () => { paso(b.dataset.p, +b.dataset.d); t = setTimeout(repetir, 85); };
+  b.addEventListener("pointerdown", ev => {
+    if (ev.pointerType === "mouse" && ev.button !== 0) return;
+    ev.preventDefault(); porPuntero = true; parar();
+    paso(b.dataset.p, +b.dataset.d);
+    t = setTimeout(repetir, 450);
+  });
+  for (const tipo of ["pointerup", "pointerleave", "pointercancel"]) b.addEventListener(tipo, parar);
+  b.addEventListener("contextmenu", ev => ev.preventDefault());
+  b.addEventListener("click", ev => { if (porPuntero) { porPuntero = false; return; } paso(b.dataset.p, +b.dataset.d); });
+}
+
+// valores escritos
+for (const [id, p] of [["v-alfa", "a"], ["v-mu", "m"]]) {
+  const inp = $(id);
+  // al tocar el campo se selecciona el valor, salvo que ya se haya empezado a escribir
+  inp.addEventListener("focus", () => { const v0 = inp.value; setTimeout(() => { if (document.activeElement === inp && inp.value === v0) inp.select(); }, 0); });
+  inp.addEventListener("keydown", ev => { if (ev.key === "Enter") inp.blur(); });
+  inp.addEventListener("blur", () => {
+    const v = leer(inp.value), lo = p === "a" ? A_MIN : M_MIN, hi = p === "a" ? A_MAX : M_MAX;
+    if (isFinite(v) && v >= lo - 1e-9 && v <= hi + 1e-9) {
+      if (p === "a") fijar(redA(acot(v, lo, hi)), E.m, "texto"); else fijar(E.a, redM(acot(v, lo, hi)), "texto");
+    } else if (inp.value.trim() !== "") {
+      aviso(p === "a" ? "α va de 0,05 a 0,975" : "μ va de 0,05 a 100");
+    }
+    inp.value = p === "a" ? fmtA(E.a) : fmtM(E.m);
+  });
+}
+
+// barras
+$("r-alfa").addEventListener("input", e => fijar(redA(+e.target.value), E.m, "ra"));
+$("r-mu").addEventListener("input", e => fijar(E.a, redM(Math.pow(10, +e.target.value)), "rm"));
+
+// casos de ejemplo
+const corto = v => num(v, 3).replace(/0+$/, "").replace(/,$/, "");
+$("casos").innerHTML = CASOS.map(c => `<button type="button" data-a="${c.a}" data-m="${c.m}"><b>${c.t}</b><span>α ${corto(c.a)} · μ ${corto(c.m)}</span></button>`).join("");
+$("lista-casos").innerHTML = CASOS.map(c => `<li><b>${c.t}</b> (α = ${corto(c.a)}; μ = ${corto(c.m)}): ${c.d}</li>`).join("");
+$("casos").addEventListener("click", ev => { const b = ev.target.closest("button"); if (b) fijar(+b.dataset.a, +b.dataset.m, "caso"); });
+
+// qué colorea el mapa
+function marcarSelector() { for (const b of $("selector").children) b.setAttribute("aria-pressed", String(b.dataset.v === E.mapa)); }
+$("selector").addEventListener("click", ev => {
+  const b = ev.target.closest("button"); if (!b || b.dataset.v === E.mapa) return;
+  E.mapa = b.dataset.v; marcarSelector(); escala(); dibujarMapa(); guardar();
+});
+
+// hoja de información; la flecha atrás de Android la cierra
+const hoja = $("hoja");
+$("b-info").addEventListener("click", () => { hoja.hidden = false; $("b-cerrar").focus(); });
+$("b-cerrar").addEventListener("click", () => { hoja.hidden = true; $("b-info").focus(); });
+hoja.addEventListener("click", ev => { if (ev.target === hoja) hoja.hidden = true; });
+window.atras = () => { if (!hoja.hidden) { hoja.hidden = true; return true; } return false; };
+document.addEventListener("keydown", ev => { if (ev.key === "Escape" && !hoja.hidden) hoja.hidden = true; });
+
+// tema claro u oscuro: la app de Android fija data-theme; en un navegador sigue al sistema
+function cambioTema() { for (const k in cacheImg) delete cacheImg[k]; escala(); dibujarMapa(); }
+new MutationObserver(cambioTema).observe(document.documentElement, { attributes: true, attributeFilter: ["data-theme"] });
+if (window.matchMedia) { const mq = window.matchMedia("(prefers-color-scheme: dark)"); if (mq.addEventListener) mq.addEventListener("change", cambioTema); }
+
+const obs = new ResizeObserver(() => dibujarMapa());
+obs.observe($("fig"));
+const obsCuerda = new ResizeObserver(() => fondoAnim());
+obsCuerda.observe($("fig-cuerda"));
+marcarSelector(); escala(); marcarVista(); marcarModos(); iconoPlay();
+fijar(E.a, E.m, "inicio");
+}
+</script>
+</body>
+</html>

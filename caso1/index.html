@@ -1,0 +1,2128 @@
+<!doctype html><html><head><meta charset=utf8><meta name=viewport content="width=device-width,initial-scale=1,viewport-fit=cover"><style>:root{color-scheme:light;box-sizing:border-box;padding-top:env(safe-area-inset-top,0px);padding-bottom:env(safe-area-inset-bottom,0px)}html{scroll-padding-top:env(safe-area-inset-top,0px)}body{margin:0;padding:0;font:14px -apple-system,BlinkMacSystemFont,sans-serif;background:#fff;color:#000}img{max-width:100%}[hidden]:not([hidden=until-found i]){display:none!important}</style><style>.ceja a{color:inherit;text-decoration:underline;text-decoration-thickness:1px;text-underline-offset:3px}.ceja a:hover{color:var(--tinta)}</style>
+</head><body>
+<title>Consola del Caso I</title>
+<meta name="claude:viewport-fit-sides" content="cover">
+<link rel="preconnect" href="https://fonts.googleapis.com">
+<link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+<link rel="stylesheet" href="https://fonts.googleapis.com/css2?family=Barlow:ital,wght@0,400;0,500;0,600;1,400&family=Barlow+Semi+Condensed:wght@500;600;700&family=IBM+Plex+Mono:wght@400;500&display=swap">
+<style>
+/* Diseño: consola de banco de ensayo. A la izquierda, una columna de mandos sobria;
+   a la derecha, los instrumentos sobre papel milimetrado, con los colores de las
+   figuras de la tesis: cuerda naranja, trayectoria azul y frente de onda aqua. */
+:root {
+  --papel: #EDF0F3;
+  --panel: #FBFCFD;
+  --tinta: #17202A;
+  --tinta-2: #46515E;
+  --tinta-3: #76808C;
+  --linea: #D4DAE1;
+  --mm: #E6EBF1;
+  --mm-mayor: #CFD8E2;
+  --reposo: #E8ECF0;
+  --cuerda: #EB6834;
+  --tray: #2A78D6;
+  --tray-tenue: #B7D3F6;
+  --frente: #1BAF7A;
+  --region-1: #DCE9FB;
+  --region-2: #BCD6F7;
+  --region-3: #93BEF1;
+  --mando: #17202A;
+  --mando-texto: #F6F8FA;
+  --chip: #E6EAEF;
+  --foco: #2A78D6;
+  --f-display: "Barlow Semi Condensed", "Barlow", "Arial Narrow", system-ui, -apple-system, "Segoe UI", Roboto, Arial, sans-serif;
+  --f-texto: "Barlow", system-ui, -apple-system, "Segoe UI", Roboto, Helvetica, Arial, sans-serif;
+  --f-datos: "IBM Plex Mono", ui-monospace, SFMono-Regular, Menlo, Consolas, "Liberation Mono", monospace;
+}
+@media (prefers-color-scheme: dark) {
+  :root:not([data-theme="light"]) {
+    --papel: #0C1117;
+    --panel: #131A22;
+    --tinta: #E3E8EE;
+    --tinta-2: #A8B3BF;
+    --tinta-3: #7B8693;
+    --linea: #263240;
+    --mm: #19222C;
+    --mm-mayor: #24303D;
+    --reposo: #1A242E;
+    --cuerda: #D95926;
+    --tray: #3987E5;
+    --tray-tenue: #1E4E87;
+    --frente: #199E70;
+    --region-1: #15273B;
+    --region-2: #1A3656;
+    --region-3: #214874;
+    --mando: #E3E8EE;
+    --mando-texto: #0C1117;
+    --chip: #1C2631;
+    --foco: #3987E5;
+    color-scheme: dark;
+  }
+}
+:root[data-theme="dark"] {
+  --papel: #0C1117;
+  --panel: #131A22;
+  --tinta: #E3E8EE;
+  --tinta-2: #A8B3BF;
+  --tinta-3: #7B8693;
+  --linea: #263240;
+  --mm: #19222C;
+  --mm-mayor: #24303D;
+  --reposo: #1A242E;
+  --cuerda: #D95926;
+  --tray: #3987E5;
+  --tray-tenue: #1E4E87;
+  --frente: #199E70;
+  --region-1: #15273B;
+  --region-2: #1A3656;
+  --region-3: #214874;
+  --mando: #E3E8EE;
+  --mando-texto: #0C1117;
+  --chip: #1C2631;
+  --foco: #3987E5;
+  color-scheme: dark;
+}
+
+*, *::before, *::after { box-sizing: border-box; }
+body {
+  margin: 0;
+  background: var(--papel);
+  color: var(--tinta);
+  font-family: var(--f-texto);
+  font-size: 15px;
+  line-height: 1.5;
+  -webkit-font-smoothing: antialiased;
+}
+.pagina {
+  max-width: 1380px;
+  margin: 0 auto;
+  padding-left: max(16px, env(safe-area-inset-left, 0px));
+  padding-right: max(16px, env(safe-area-inset-right, 0px));
+  padding-block: 22px 48px;
+}
+
+/* ---------- Cabecera ---------- */
+.cabecera { display: grid; gap: 4px; margin-bottom: 18px; }
+.cab-fila { display: flex; flex-wrap: wrap; justify-content: space-between; align-items: center; gap: 6px 16px; }
+.nav-casos { display: inline-flex; border: 1px solid var(--linea); border-radius: 5px; overflow: hidden; }
+.nav-casos a, .nav-casos span {
+  font: 600 13px/1 var(--f-display);
+  letter-spacing: .06em;
+  text-transform: uppercase;
+  padding: 7px 12px;
+  color: var(--tinta-2);
+  text-decoration: none;
+  border-left: 1px solid var(--linea);
+}
+.nav-casos > :first-child { border-left: 0; }
+.nav-casos a:hover { color: var(--tinta); background: var(--chip); }
+.nav-casos [aria-current="page"] { background: var(--mando); color: var(--mando-texto); }
+.bajada a { color: var(--tinta); }
+.nw { white-space: nowrap; }
+.ceja {
+  margin: 0;
+  font: 600 12px/1.2 var(--f-display);
+  letter-spacing: .12em;
+  text-transform: uppercase;
+  color: var(--tinta-3);
+}
+h1 {
+  margin: 0;
+  font: 700 clamp(26px, 3.4vw, 36px)/1.08 var(--f-display);
+  letter-spacing: -.005em;
+  text-wrap: balance;
+}
+.bajada { margin: 6px 0 0; max-width: 70ch; color: var(--tinta-2); }
+
+/* ---------- Distribución ---------- */
+.consola {
+  display: grid;
+  grid-template-columns: 296px minmax(0, 1fr);
+  grid-template-areas:
+    "mandos lecturas"
+    "mandos cuerda"
+    "mandos diagrama"
+    "mandos dalfa"
+    "mandos ecuaciones";
+  gap: 14px 20px;
+  align-items: start;
+}
+.lecturas { grid-area: lecturas; }
+#panel-cuerda { grid-area: cuerda; }
+.mandos { grid-area: mandos; }
+#panel-diagrama { grid-area: diagrama; }
+#panel-dalfa { grid-area: dalfa; }
+#panel-ecuaciones { grid-area: ecuaciones; }
+@media (min-width: 1041px) and (min-height: 820px) {
+  .mandos { position: sticky; top: calc(env(safe-area-inset-top, 0px) + 12px); }
+}
+@media (max-width: 1040px) {
+  .consola {
+    grid-template-columns: minmax(0, 1fr);
+    grid-template-areas: "lecturas" "cuerda" "mandos" "diagrama" "dalfa" "ecuaciones";
+  }
+  .mandos { display: grid; grid-template-columns: repeat(2, minmax(0, 1fr)); column-gap: 24px; }
+  .mandos > .grupo:nth-child(-n+2) { border-top: 0; }
+  .mandos > .ayuda { grid-column: 1 / -1; }
+}
+@media (max-width: 660px) {
+  .mandos { grid-template-columns: minmax(0, 1fr); }
+  .mandos > .grupo:nth-child(2) { border-top: 1px solid var(--linea); }
+}
+
+/* ---------- Lecturas ---------- */
+.lecturas {
+  display: grid;
+  grid-template-columns: repeat(4, minmax(0, 1fr));
+  gap: 10px;
+  margin: 0;
+}
+@media (max-width: 860px) { .lecturas { grid-template-columns: repeat(2, minmax(0, 1fr)); } }
+@media (max-width: 480px) { .dato { font-size: 16px; } }
+.lectura {
+  background: var(--panel);
+  border: 1px solid var(--linea);
+  border-radius: 6px;
+  padding: 9px 12px 10px;
+  min-width: 0;
+  display: grid;
+  gap: 2px;
+  align-content: start;
+}
+.lectura p { margin: 0; }
+.dato {
+  font: 500 19px/1.3 var(--f-datos);
+  font-variant-numeric: tabular-nums;
+  white-space: nowrap;
+  overflow: hidden;
+  text-overflow: ellipsis;
+}
+.dato sub { font-size: .62em; }
+.sub { font-size: 12.5px; line-height: 1.35; color: var(--tinta-2); }
+.pastilla {
+  display: inline-block;
+  padding: 2px 9px 1px;
+  border-radius: 999px;
+  border: 1px solid var(--tinta-3);
+  font: 600 13px/1.5 var(--f-display);
+  letter-spacing: .07em;
+  text-transform: uppercase;
+  vertical-align: middle;
+}
+.pastilla.critico { background: var(--mando); color: var(--mando-texto); border-color: var(--mando); }
+
+/* ---------- Instrumentos ---------- */
+.instrumento {
+  background: var(--panel);
+  border: 1px solid var(--linea);
+  border-radius: 6px;
+  padding: 12px 14px 12px;
+  min-width: 0;
+}
+.instr-cab {
+  display: flex;
+  flex-wrap: wrap;
+  align-items: baseline;
+  justify-content: space-between;
+  gap: 2px 16px;
+  margin-bottom: 4px;
+}
+.instr-cab h2, .ecuaciones summary h2 {
+  margin: 0;
+  font: 600 15px/1.25 var(--f-display);
+  letter-spacing: .07em;
+  text-transform: uppercase;
+}
+.instr-nota { font-size: 13px; color: var(--tinta-2); }
+.insignia {
+  font: 500 12px/1.4 var(--f-datos);
+  color: var(--tinta-2);
+  border: 1px solid var(--linea);
+  border-radius: 4px;
+  padding: 1px 7px;
+  white-space: nowrap;
+}
+.leyenda {
+  display: flex;
+  flex-wrap: wrap;
+  gap: 3px 14px;
+  margin: 2px 0 6px;
+  padding: 0;
+  list-style: none;
+  font-size: 12.5px;
+  color: var(--tinta-2);
+}
+.leyenda li { display: inline-flex; align-items: center; gap: 6px; }
+.sw { width: 24px; height: 10px; flex: none; overflow: visible; }
+.lienzo { position: relative; width: 100%; }
+.lienzo svg {
+  display: block;
+  width: 100%;
+  height: auto;
+  touch-action: pan-y;
+  user-select: none;
+  -webkit-user-select: none;
+  cursor: crosshair;
+}
+.aviso {
+  margin: 6px 0 0;
+  font-size: 13px;
+  color: var(--tinta-2);
+  border-left: 3px solid var(--tinta-3);
+  padding: 2px 0 2px 10px;
+}
+.pie { margin: 6px 0 0; font-size: 13px; color: var(--tinta-2); }
+.pie b { font-weight: 600; color: var(--tinta); }
+
+/* ---------- Mandos ---------- */
+.mandos {
+  background: var(--panel);
+  border: 1px solid var(--linea);
+  border-radius: 6px;
+  padding: 2px 16px 6px;
+  min-width: 0;
+}
+.grupo {
+  margin: 0;
+  padding: 14px 0 14px;
+  border: 0;
+  border-top: 1px solid var(--linea);
+  min-width: 0;
+  min-inline-size: 0;
+}
+.grupo:first-child { border-top: 0; }
+.grupo-cab {
+  display: flex;
+  justify-content: space-between;
+  align-items: baseline;
+  gap: 8px;
+  margin-bottom: 4px;
+}
+.etiqueta {
+  margin: 0;
+  padding: 0;
+  font: 600 12px/1.3 var(--f-display);
+  letter-spacing: .1em;
+  text-transform: uppercase;
+  color: var(--tinta-2);
+}
+legend.etiqueta { margin-bottom: 6px; }
+.sin-borde { border: 0; margin: 0; padding: 0; min-width: 0; min-inline-size: 0; }
+.valor { font: 500 16px/1.2 var(--f-datos); font-variant-numeric: tabular-nums; white-space: nowrap; }
+input[type="range"] { width: 100%; margin: 6px 0 4px; accent-color: var(--mando); height: 24px; }
+.fila { display: flex; flex-wrap: wrap; align-items: center; gap: 8px; margin-top: 6px; }
+.campo {
+  width: 84px;
+  font: 500 14px/1 var(--f-datos);
+  font-variant-numeric: tabular-nums;
+  color: var(--tinta);
+  background: var(--papel);
+  border: 1px solid var(--linea);
+  border-radius: 4px;
+  padding: 7px 8px;
+}
+.chips { display: flex; flex-wrap: wrap; gap: 6px; }
+.chip {
+  font: 500 12.5px/1 var(--f-datos);
+  padding: 7px 8px;
+  border-radius: 4px;
+  border: 1px solid var(--linea);
+  background: var(--chip);
+  color: var(--tinta);
+  cursor: pointer;
+}
+.chip:hover { border-color: var(--tinta-3); }
+.chip[aria-pressed="true"] { background: var(--mando); color: var(--mando-texto); border-color: var(--mando); }
+.nota { margin: 8px 0 0; font-size: 13px; line-height: 1.4; color: var(--tinta-2); }
+.btn-principal, .btn {
+  display: inline-flex;
+  align-items: center;
+  gap: 8px;
+  font: 600 14px/1 var(--f-display);
+  letter-spacing: .05em;
+  text-transform: uppercase;
+  border-radius: 4px;
+  padding: 9px 13px;
+  cursor: pointer;
+}
+.btn-principal { background: var(--mando); color: var(--mando-texto); border: 1px solid var(--mando); min-width: 132px; justify-content: center; }
+.btn { background: transparent; color: var(--tinta); border: 1px solid var(--linea); }
+.btn:hover { border-color: var(--tinta-3); }
+.btn svg, .btn-principal svg { width: 14px; height: 14px; fill: currentColor; flex: none; }
+.selector { display: inline-flex; align-items: center; gap: 6px; font-size: 13.5px; color: var(--tinta-2); }
+.selector select {
+  font: 500 13.5px/1 var(--f-datos);
+  color: var(--tinta);
+  background: var(--papel);
+  border: 1px solid var(--linea);
+  border-radius: 4px;
+  padding: 6px 6px;
+}
+.casilla { display: inline-flex; align-items: center; gap: 6px; font-size: 13.5px; color: var(--tinta-2); cursor: pointer; }
+.casilla input { accent-color: var(--mando); width: 16px; height: 16px; margin: 0; }
+
+.interruptor {
+  display: grid;
+  grid-template-columns: auto 26px minmax(0, 1fr);
+  align-items: center;
+  gap: 10px;
+  padding: 6px 0;
+  cursor: pointer;
+}
+.interruptor input {
+  appearance: none;
+  -webkit-appearance: none;
+  width: 34px;
+  height: 20px;
+  margin: 0;
+  border-radius: 999px;
+  background: var(--chip);
+  border: 1px solid var(--linea);
+  position: relative;
+  cursor: pointer;
+  transition: background .15s, border-color .15s;
+}
+.interruptor input::after {
+  content: "";
+  position: absolute;
+  top: 2px;
+  left: 2px;
+  width: 14px;
+  height: 14px;
+  border-radius: 50%;
+  background: var(--tinta-3);
+  transition: transform .15s;
+}
+.interruptor input:checked { background: var(--mando); border-color: var(--mando); }
+.interruptor input:checked::after { transform: translateX(14px); background: var(--mando-texto); }
+.interruptor .sw { width: 26px; height: 14px; }
+.interruptor b { display: block; font-weight: 600; font-size: 14.5px; line-height: 1.25; }
+.interruptor small { display: block; font-size: 12.5px; line-height: 1.35; color: var(--tinta-2); }
+
+.segmentado {
+  display: grid;
+  grid-template-columns: 1fr 1fr;
+  border: 1px solid var(--linea);
+  border-radius: 5px;
+  overflow: hidden;
+}
+.segmentado label {
+  position: relative;
+  text-align: center;
+  padding: 8px 6px;
+  font: 600 13px/1 var(--f-display);
+  letter-spacing: .05em;
+  text-transform: uppercase;
+  cursor: pointer;
+  color: var(--tinta-2);
+}
+.segmentado label + label { border-left: 1px solid var(--linea); }
+.segmentado input { position: absolute; opacity: 0; pointer-events: none; }
+.segmentado label.activo { background: var(--mando); color: var(--mando-texto); }
+.segmentado label:focus-within { outline: 2px solid var(--foco); outline-offset: -3px; }
+.ayuda { margin: 4px 0 10px; font-size: 13px; line-height: 1.45; color: var(--tinta-2); }
+.ayuda kbd {
+  font: 500 11.5px/1 var(--f-datos);
+  border: 1px solid var(--linea);
+  border-bottom-width: 2px;
+  border-radius: 3px;
+  padding: 2px 5px;
+  background: var(--papel);
+}
+
+button:focus-visible, select:focus-visible, input:focus-visible, summary:focus-visible, .lienzo svg:focus-visible {
+  outline: 2px solid var(--foco);
+  outline-offset: 2px;
+}
+
+/* ---------- Ecuaciones ---------- */
+.ecuaciones details > summary {
+  display: flex;
+  flex-wrap: wrap;
+  align-items: baseline;
+  justify-content: space-between;
+  gap: 2px 16px;
+  cursor: pointer;
+  list-style: none;
+}
+.ecuaciones details > summary::-webkit-details-marker { display: none; }
+.ecuaciones summary h2::before {
+  content: "";
+  display: inline-block;
+  width: 0;
+  height: 0;
+  margin-right: 8px;
+  border-left: 5px solid currentColor;
+  border-top: 4px solid transparent;
+  border-bottom: 4px solid transparent;
+  vertical-align: middle;
+  transition: transform .15s;
+}
+.ecuaciones details[open] summary h2::before { transform: rotate(90deg); }
+.ec-grid {
+  display: grid;
+  grid-template-columns: repeat(2, minmax(0, 1fr));
+  gap: 6px 28px;
+  margin-top: 10px;
+}
+@media (max-width: 760px) { .ec-grid { grid-template-columns: minmax(0, 1fr); } }
+.ec-grid article { min-width: 0; padding: 8px 0; border-top: 1px solid var(--linea); }
+.ec-grid h3 { margin: 0 0 4px; font: 600 14px/1.3 var(--f-display); letter-spacing: .05em; text-transform: uppercase; color: var(--tinta-2); }
+.ec-grid p { margin: 4px 0; max-width: 62ch; font-size: 14px; }
+.ec { overflow-x: auto; overflow-y: hidden; padding: 2px 0; font-size: 15px; }
+.ec-grid article { container-type: inline-size; }
+.solo-angosto { display: none; }
+@container (max-width: 430px) {
+  .solo-ancho { display: none; }
+  .solo-angosto { display: block; }
+  .ec { font-size: 13.5px; }
+}
+.ec-grid code { font: 500 12.5px var(--f-datos); }
+.pie-pagina { margin-top: 18px; font-size: 12.5px; color: var(--tinta-3); max-width: 90ch; }
+
+/* ---------- Gráficos (SVG) ---------- */
+:where(.grafico) text { font-family: var(--f-datos); }
+.sin-mayus { text-transform: none; letter-spacing: 0; }
+.g-tick { font-size: 11px; fill: var(--tinta-3); }
+.g-titulo-eje { font: 600 12px var(--f-display); letter-spacing: .06em; fill: var(--tinta-2); }
+.g-rotulo { font: 600 13px var(--f-display); letter-spacing: .03em; fill: var(--tinta); }
+.g-rotulo-suave { font: 500 12px var(--f-texto); fill: var(--tinta-2); }
+.g-mm { stroke: var(--mm); stroke-width: 1; }
+.g-mm-mayor { stroke: var(--mm-mayor); stroke-width: 1; }
+.g-eje { stroke: var(--tinta-3); stroke-width: 1; }
+.g-cero { stroke: var(--tinta-3); stroke-width: 1; }
+.g-reposo { fill: var(--reposo); stroke: none; }
+.g-cuerda { fill: none; stroke: var(--cuerda); stroke-width: 2.8; stroke-linejoin: round; stroke-linecap: round; }
+.g-tray { fill: none; stroke: var(--tray); stroke-width: 2.2; stroke-linejoin: round; stroke-linecap: round; }
+.g-tray-tenue { fill: none; stroke: var(--tray-tenue); stroke-width: 1.8; stroke-dasharray: 5 4; }
+.g-cuasi { fill: none; stroke: var(--tinta-3); stroke-width: 1.3; stroke-dasharray: 1.5 4; stroke-linecap: round; }
+.g-forzada { fill: none; stroke: var(--tinta-2); stroke-width: 1.6; stroke-dasharray: 7 5; }
+.g-libre { fill: none; stroke: var(--frente); stroke-width: 1.9; stroke-dasharray: 9 4 2 4; }
+.g-frente-linea { stroke: var(--frente); stroke-width: 1.5; stroke-dasharray: 2 3; fill: none; }
+.g-frente-punto { fill: var(--frente); stroke: var(--panel); stroke-width: 2; }
+.g-carga { stroke: var(--tinta); stroke-width: 1.8; fill: none; }
+.g-flecha { fill: var(--tinta); stroke: none; }
+.g-punto-tray { fill: var(--tray); stroke: var(--panel); stroke-width: 2; }
+.g-cruce { fill: var(--tinta); stroke: var(--panel); stroke-width: 2; }
+.g-cruce-futuro { fill: var(--panel); stroke: var(--tinta); stroke-width: 1.6; }
+.g-guia { stroke: var(--tinta-3); stroke-width: 1; stroke-dasharray: 3 4; opacity: .6; fill: none; }
+.g-camino-carga { stroke: var(--tinta); stroke-width: 1.8; fill: none; }
+.g-camino-frente { stroke: var(--frente); stroke-width: 2.2; fill: none; stroke-linejoin: round; }
+.g-ahora { stroke: var(--tinta-2); stroke-width: 1.2; stroke-dasharray: 4 3; fill: none; }
+.g-punto-carga { fill: var(--tinta); stroke: var(--panel); stroke-width: 2; }
+.g-curva-d { fill: none; stroke: var(--tinta); stroke-width: 2; stroke-linejoin: round; }
+.g-ref { stroke: var(--tinta-3); stroke-width: 1; stroke-dasharray: 2 4; fill: none; }
+.g-apoyo { fill: var(--panel); stroke: var(--tinta-2); stroke-width: 1.2; }
+.g-marca-alfa { stroke: var(--tinta-2); stroke-width: 1.2; stroke-dasharray: 4 3; fill: none; }
+.g-tip rect { fill: var(--panel); stroke: var(--linea); }
+.g-tip text { font-size: 11.5px; fill: var(--tinta); }
+.g-cruz { stroke: var(--tinta-3); stroke-width: 1; fill: none; }
+.g-region { stroke: none; }
+.g-region.t0, .sw-region.t0 { fill: var(--reposo); background: var(--reposo); }
+.g-region.t1, .sw-region.t1 { fill: var(--region-1); background: var(--region-1); }
+.g-region.t2, .sw-region.t2 { fill: var(--region-2); background: var(--region-2); }
+.g-region.t3, .sw-region.t3 { fill: var(--region-3); background: var(--region-3); }
+.g-region-foco { fill: none; stroke: var(--tinta); stroke-width: 2; stroke-linejoin: round; }
+.g-numeral { font: 700 14px var(--f-display); letter-spacing: .04em; fill: var(--tinta); }
+.g-numeral-suave { font: 600 12.5px var(--f-display); letter-spacing: .04em; fill: var(--tinta-2); }
+.g-halo { paint-order: stroke; stroke: var(--panel); stroke-width: 4px; stroke-linejoin: round; }
+.sw-ancho { width: 40px; }
+
+/* ---------- Tabla de regiones ---------- */
+.regiones { margin-top: 12px; padding-top: 10px; border-top: 1px solid var(--linea); }
+.regiones-cab { display: flex; flex-wrap: wrap; align-items: baseline; justify-content: space-between; gap: 2px 16px; margin-bottom: 4px; }
+.regiones-cab h3 { margin: 0; font: 600 14px/1.3 var(--f-display); letter-spacing: .07em; text-transform: uppercase; }
+.tabla-desliza { overflow: auto; max-height: 26rem; }
+.tabla-regiones thead th { position: sticky; top: 0; background: var(--panel); z-index: 1; }
+.tabla-regiones { width: 100%; border-collapse: collapse; font-size: 13.5px; line-height: 1.35; }
+.tabla-regiones th {
+  text-align: left;
+  font: 600 12px/1.3 var(--f-display);
+  letter-spacing: .08em;
+  text-transform: uppercase;
+  color: var(--tinta-2);
+  padding: 6px 10px 6px 0;
+  border-bottom: 1px solid var(--linea);
+  white-space: nowrap;
+}
+.tabla-regiones td { padding: 5px 10px 5px 0; border-bottom: 1px solid var(--linea); vertical-align: middle; }
+.tabla-regiones th:first-child, .tabla-regiones td:first-child { padding-left: 8px; }
+.tabla-regiones td.lineal { font: 500 12.5px/1.4 var(--f-datos); font-variant-numeric: tabular-nums; }
+.tabla-regiones tr.ahora td { background: var(--chip); }
+.tabla-regiones tr.foco td:first-child { box-shadow: inset 3px 0 0 var(--tinta); }
+.romano { display: inline-flex; align-items: center; gap: 8px; font: 700 14px/1 var(--f-display); letter-spacing: .04em; white-space: nowrap; }
+.donde-mini { display: none; margin-top: 3px; font-size: 12px; line-height: 1.25; color: var(--tinta-2); white-space: nowrap; }
+.sw-region { display: inline-block; width: 14px; height: 14px; border-radius: 3px; border: 1px solid var(--linea); flex: none; }
+@media (max-width: 560px) {
+  .tabla-regiones { font-size: 13px; }
+  .tabla-regiones th, .tabla-regiones td { padding-right: 8px; }
+  .tabla-regiones .col-donde { display: none; }
+  .donde-mini { display: block; }
+}
+
+@media (prefers-reduced-motion: reduce) {
+  *, *::before, *::after { transition: none !important; }
+}
+</style>
+<script>
+  window.MathJax = {
+    tex: { inlineMath: [["\\(", "\\)"]], displayMath: [["\\[", "\\]"]] },
+    svg: { fontCache: "global" },
+    options: { enableMenu: false }
+  };
+</script>
+<script src="https://cdn.jsdelivr.net/npm/mathjax@3.2.2/es5/tex-svg.js" defer></script>
+
+<div class="pagina">
+  <header class="cabecera">
+    <div class="cab-fila">
+      <p class="ceja"><a href="../">Trabajo de título</a> · Caso I</p>
+      <nav class="nav-casos" aria-label="Mapa y consolas de los tres casos">
+        <a href="../mapa/">Mapa</a>
+        <span aria-current="page">Caso I</span>
+        <a href="../caso2/">Caso II</a>
+        <a href="../caso3/">Caso III</a>
+      </nav>
+    </div>
+    <h1>Consola del Caso I</h1>
+    <p class="bajada">Cuerda tensa con masa, simplemente apoyada, bajo una fuerza <i>P</i> sin masa que la recorre con velocidad constante <i>v</i>. Mueve la velocidad <span class="nw">α = <i>v</i>/<i>c</i></span> y la posición <span class="nw">τ = <i>vt</i>/<i>L</i></span>, o arrastra sobre los gráficos, y sigue el frente de onda que la carga genera al entrar y las regiones que sus rebotes van formando. En el <a href="../caso3/">plano del caso III</a> este caso es el borde inferior, μ = 0.</p>
+  </header>
+
+  <div class="consola">
+
+    <section class="lecturas" aria-label="Lecturas del instante">
+      <div class="lectura">
+        <p class="etiqueta">Régimen</p>
+        <p class="dato"><span id="l-regimen" class="pastilla">Subcrítico</span></p>
+        <p class="sub" id="l-regimen-sub">Las ondas viajan 4,0 veces más rápido que la carga</p>
+      </div>
+      <div class="lectura">
+        <p class="etiqueta">Bajo la carga</p>
+        <p class="dato" id="l-carga">0,480 w<sub>0</sub></p>
+        <p class="sub" id="l-carga-sub">Máximo 1,280 w<sub>0</sub> en τ = 0,400</p>
+      </div>
+      <div class="lectura">
+        <p class="etiqueta">Frente de onda</p>
+        <p class="dato" id="l-frente">x = 0,600 L →</p>
+        <p class="sub" id="l-frente-sub">Todavía no rebota</p>
+      </div>
+      <div class="lectura">
+        <p class="etiqueta">Próximo cruce</p>
+        <p class="dato" id="l-cruce">τ = 0,400</p>
+        <p class="sub" id="l-cruce-sub">De frente · 3 cruces en el recorrido</p>
+      </div>
+    </section>
+
+    <section class="instrumento" id="panel-cuerda" aria-labelledby="t-cuerda">
+      <div class="instr-cab">
+        <h2 id="t-cuerda">Cuerda y trayectoria</h2>
+        <span class="insignia" id="insignia-calculo">Suma exacta</span>
+      </div>
+      <ul class="leyenda" id="leyenda-cuerda">
+        <li><svg class="sw" viewBox="0 0 24 10" aria-hidden="true"><line x1="2" y1="5" x2="22" y2="5" class="g-cuerda"/></svg>Cuerda</li>
+        <li><svg class="sw" viewBox="0 0 24 10" aria-hidden="true"><line x1="2" y1="5" x2="22" y2="5" class="g-tray"/></svg>Trayectoria bajo la carga</li>
+        <li><svg class="sw" viewBox="0 0 24 10" aria-hidden="true"><line x1="1" y1="5" x2="23" y2="5" class="g-tray-tenue"/></svg>Recorrido completo</li>
+        <li><svg class="sw" viewBox="0 0 24 10" aria-hidden="true"><line x1="2" y1="5" x2="22" y2="5" class="g-cuasi"/></svg>Cuasiestática 4τ(1 − τ)</li>
+        <li data-vista="frente"><svg class="sw" viewBox="0 0 24 10" aria-hidden="true"><circle cx="12" cy="5" r="4.5" class="g-frente-punto"/></svg>Frente de onda</li>
+        <li data-vista="partes"><svg class="sw" viewBox="0 0 24 10" aria-hidden="true"><line x1="1" y1="5" x2="23" y2="5" class="g-forzada"/></svg>Parte forzada</li>
+        <li data-vista="partes"><svg class="sw" viewBox="0 0 24 10" aria-hidden="true"><line x1="1" y1="5" x2="23" y2="5" class="g-libre"/></svg>Parte libre</li>
+        <li data-vista="cruces"><svg class="sw" viewBox="0 0 24 10" aria-hidden="true"><circle cx="12" cy="5" r="4" class="g-cruce"/></svg>Cruce del frente con la carga</li>
+      </ul>
+      <div class="lienzo" id="lienzo-cuerda"></div>
+      <p class="aviso" id="aviso-cuerda" hidden></p>
+    </section>
+
+    <aside class="mandos" aria-label="Controles">
+      <div class="grupo">
+        <div class="grupo-cab">
+          <label class="etiqueta" for="alfa-rango">Velocidad de la carga</label>
+          <span class="valor" id="alfa-valor">α = 0,250</span>
+        </div>
+        <input type="range" id="alfa-rango" min="0.05" max="2" step="0.005" value="0.25">
+        <div class="fila">
+          <input class="campo" id="alfa-texto" type="text" inputmode="decimal" autocomplete="off" spellcheck="false" aria-label="Valor exacto de α (acepta fracciones como 1/3)" value="0,25">
+          <div class="chips" role="group" aria-label="Valores de α usados en la tesis" id="chips-alfa">
+            <button type="button" class="chip" data-alfa="0.1">0,1</button>
+            <button type="button" class="chip" data-alfa="0.25">0,25</button>
+            <button type="button" class="chip" data-alfa="0.3333333333333333">1/3</button>
+            <button type="button" class="chip" data-alfa="0.4">0,4</button>
+            <button type="button" class="chip" data-alfa="0.5">0,5</button>
+            <button type="button" class="chip" data-alfa="0.9">0,9</button>
+            <button type="button" class="chip" data-alfa="1">1</button>
+            <button type="button" class="chip" data-alfa="1.5">1,5</button>
+          </div>
+        </div>
+      </div>
+
+      <div class="grupo">
+        <div class="grupo-cab">
+          <label class="etiqueta" for="tau-rango">Posición de la carga</label>
+          <span class="valor" id="tau-valor">τ = 0,150</span>
+        </div>
+        <input type="range" id="tau-rango" min="0" max="1" step="0.001" value="0.15">
+        <div class="fila">
+          <button type="button" class="btn-principal" id="btn-play" aria-pressed="false">
+            <svg viewBox="0 0 14 14" aria-hidden="true" id="icono-play"><path d="M3 1.5v11l9-5.5z"/></svg>
+            <span id="txt-play">Reproducir</span>
+          </button>
+          <button type="button" class="btn" id="btn-inicio" aria-label="Volver al inicio del recorrido" title="Volver al inicio">
+            <svg viewBox="0 0 14 14" aria-hidden="true"><path d="M2 1.5h2v11H2zM12 1.5v11L5 7z"/></svg>
+          </button>
+        </div>
+        <div class="fila">
+          <label class="selector">Cruce en
+            <select id="duracion">
+              <option value="3">3 s</option>
+              <option value="6" selected>6 s</option>
+              <option value="12">12 s</option>
+              <option value="24">24 s</option>
+            </select>
+          </label>
+          <label class="casilla"><input type="checkbox" id="repetir" checked> Repetir</label>
+        </div>
+      </div>
+
+      <div class="grupo"><fieldset class="sin-borde">
+        <legend class="etiqueta">Vistas del frente de onda</legend>
+        <label class="interruptor">
+          <input type="checkbox" id="v-frente" checked>
+          <svg class="sw" viewBox="0 0 26 14" aria-hidden="true"><rect x="13" y="1" width="12" height="12" class="g-reposo"/><circle cx="12" cy="7" r="4.5" class="g-frente-punto"/></svg>
+          <span><b>Frente y zona en reposo</b><small>Dónde va la señal de la carga</small></span>
+        </label>
+        <label class="interruptor">
+          <input type="checkbox" id="v-partes">
+          <svg class="sw" viewBox="0 0 26 14" aria-hidden="true"><line x1="1" y1="4" x2="25" y2="4" class="g-forzada"/><line x1="1" y1="10.5" x2="25" y2="10.5" class="g-libre"/></svg>
+          <span><b>Parte forzada y parte libre</b><small>La cuerda como suma de dos carpas</small></span>
+        </label>
+        <label class="interruptor">
+          <input type="checkbox" id="v-diagrama" checked>
+          <svg class="sw" viewBox="0 0 26 14" aria-hidden="true"><line x1="2" y1="1" x2="24" y2="13" class="g-camino-carga"/><polyline points="2,1 24,5 2,9 24,13" class="g-camino-frente"/></svg>
+          <span><b>Diagrama posición–tiempo</b><small>Caminos de la carga y del frente</small></span>
+        </label>
+        <label class="interruptor">
+          <input type="checkbox" id="v-regiones" checked>
+          <svg class="sw" viewBox="0 0 26 14" aria-hidden="true"><polygon points="1,1 25,1 25,6" class="g-region t0"/><polygon points="1,1 25,6 13,13 1,13" class="g-region t1"/><polygon points="13,13 25,6 25,13" class="g-region t2"/></svg>
+          <span><b>Regiones de Smith</b><small>Dónde la cuerda está quieta o se traslada</small></span>
+        </label>
+        <label class="interruptor">
+          <input type="checkbox" id="v-cruces" checked>
+          <svg class="sw" viewBox="0 0 26 14" aria-hidden="true"><circle cx="13" cy="7" r="4.5" class="g-cruce"/></svg>
+          <span><b>Cruces con la carga</b><small>Un quiebre de la trayectoria por cruce</small></span>
+        </label>
+      </fieldset></div>
+
+      <div class="grupo"><fieldset class="sin-borde">
+        <legend class="etiqueta">Cálculo</legend>
+        <div class="segmentado" role="radiogroup" aria-label="Forma de calcular la solución">
+          <label class="activo"><input type="radio" name="modo" value="exacta" checked>Suma exacta</label>
+          <label><input type="radio" name="modo" value="serie">Serie truncada</label>
+        </div>
+        <div id="serie-ajustes" hidden>
+          <div class="grupo-cab" style="margin-top:12px">
+            <label class="etiqueta" for="n-rango">Modos de la serie</label>
+            <span class="valor" id="n-valor">n = 20</span>
+          </div>
+          <input type="range" id="n-rango" min="0" max="23" step="1" value="9">
+        </div>
+        <p class="nota" id="nota-calculo">La serie de la tesis sumada en forma cerrada: sin truncamiento y al instante.</p>
+      </fieldset></div>
+
+      <p class="ayuda">Arrastra sobre la cuerda para mover la carga, sobre el diagrama para elegir el instante y sobre D(α) para cambiar la velocidad. En el diagrama, el puntero también indica la región. <kbd>Espacio</kbd> reproduce o pausa.</p>
+    </aside>
+
+    <section class="instrumento" id="panel-diagrama" aria-labelledby="t-diagrama">
+      <div class="instr-cab">
+        <h2 id="t-diagrama">Posición–tiempo</h2>
+        <span class="instr-nota">El tiempo crece hacia abajo; la línea discontinua es el instante actual</span>
+      </div>
+      <ul class="leyenda">
+        <li><svg class="sw" viewBox="0 0 24 10" aria-hidden="true"><line x1="2" y1="5" x2="22" y2="5" class="g-camino-carga"/></svg>Carga, velocidad v</li>
+        <li><svg class="sw" viewBox="0 0 24 10" aria-hidden="true"><line x1="2" y1="5" x2="22" y2="5" class="g-camino-frente"/></svg>Frente, velocidad c</li>
+        <li data-vista="frente" data-sin="regiones"><svg class="sw" viewBox="0 0 24 10" aria-hidden="true"><rect x="2" y="0" width="20" height="10" class="g-reposo"/></svg>Cuerda en reposo</li>
+        <li data-vista="regiones"><svg class="sw sw-ancho" viewBox="0 0 40 10" aria-hidden="true"><rect x="0" y="0" width="10" height="10" class="g-region t0"/><rect x="10" y="0" width="10" height="10" class="g-region t1"/><rect x="20" y="0" width="10" height="10" class="g-region t2"/><rect x="30" y="0" width="10" height="10" class="g-region t3"/></svg>Pasos del frente: 0, 1, 2, 3 o más</li>
+        <li data-vista="cruces"><svg class="sw" viewBox="0 0 24 10" aria-hidden="true"><circle cx="12" cy="5" r="4" class="g-cruce"/></svg>Cruce</li>
+      </ul>
+      <div class="lienzo" id="lienzo-diagrama"></div>
+      <p class="pie" id="pie-diagrama"></p>
+      <div class="regiones" data-vista="regiones">
+        <div class="regiones-cab">
+          <h3>Regiones de Smith</h3>
+          <span class="instr-nota">Resaltadas, las que forman la cuerda en este instante</span>
+        </div>
+        <div class="tabla-desliza">
+          <table class="tabla-regiones">
+            <thead><tr><th scope="col">Región</th><th scope="col" class="col-donde">Dónde</th><th scope="col">w/w₀</th><th scope="col">La cuerda</th></tr></thead>
+            <tbody id="filas-regiones"></tbody>
+          </table>
+        </div>
+        <p class="pie" id="pie-regiones"></p>
+      </div>
+    </section>
+
+    <section class="instrumento" id="panel-dalfa" aria-labelledby="t-dalfa">
+      <div class="instr-cab">
+        <h2 id="t-dalfa">Factor de amplificación <span class="sin-mayus">D(α)</span></h2>
+        <span class="instr-nota">Máxima deflexión del centro mientras la carga cruza</span>
+      </div>
+      <div class="lienzo" id="lienzo-dalfa"></div>
+    </section>
+
+    <section class="instrumento ecuaciones" id="panel-ecuaciones">
+      <details open>
+        <summary><h2>Ecuaciones del modelo</h2><span class="instr-nota">Lo que calcula la consola</span></summary>
+        <div class="ec-grid">
+          <article>
+            <h3>Ecuación de movimiento</h3>
+            <p>Ecuación (14.1) de Frýba, con apoyos fijos y la cuerda en reposo al comienzo:</p>
+            <div class="ec">\[ -N\,\frac{\partial^2 w}{\partial x^2}+\rho A\,\frac{\partial^2 w}{\partial t^2}=\delta(x-vt)\,P \]</div>
+            <div class="ec">\[ w(0,t)=w(L,t)=0 \]</div>
+            <div class="ec">\[ w(x,0)=\frac{\partial w}{\partial t}(x,0)=0 \]</div>
+            <p>Vale mientras la carga está sobre la cuerda, y se escribe con</p>
+            <div class="ec">\[ c=\sqrt{\frac{N}{\rho A}},\qquad \alpha=\frac{v}{c} \]</div>
+            <div class="ec">\[ w_0=\frac{PL}{4N},\qquad \tau=\frac{vt}{L} \]</div>
+          </article>
+          <article>
+            <h3>Solución en serie</h3>
+            <p>Es la que evalúa <code>cap3_figuras.py</code> con 3000 modos. La consola la usa en el modo «Serie truncada».</p>
+            <div class="ec solo-ancho">\[ \frac{w}{w_0}=\frac{8}{\pi^2}\sum_{j=1}^{\infty}\frac{\sin(j\pi\tau)-\alpha\,\sin(j\pi\tau/\alpha)}{j^2\,(1-\alpha^2)}\,\sin\frac{j\pi x}{L} \]</div>
+            <div class="ec solo-angosto">\[ \frac{w}{w_0}=\frac{8}{\pi^2}\sum_{j=1}^{\infty}C_j\,\sin\frac{j\pi x}{L} \]</div>
+            <div class="ec solo-angosto">\[ C_j=\frac{\sin(j\pi\tau)-\alpha\,\sin(j\pi\tau/\alpha)}{j^2\,(1-\alpha^2)} \]</div>
+          </article>
+          <article>
+            <h3>Suma exacta</h3>
+            <p>La misma serie sumada en forma cerrada. Dentro del corchete, el primer término es la parte forzada: la forma estática con tensión efectiva N(1 − α²), que viaja con la carga. El segundo es la parte libre, cuyo vértice es el frente de onda.</p>
+            <div class="ec">\[ \frac{w}{w_0}=\frac{4}{1-\alpha^2}\Bigl[G\Bigl(\frac{x}{L},\tau\Bigr)-\alpha\,\tilde G\Bigl(\frac{x}{L},\frac{\tau}{\alpha}\Bigr)\Bigr] \]</div>
+            <div class="ec">\[ G(p,q)=\min(p,q)\,\bigl(1-\max(p,q)\bigr) \]</div>
+            <div class="ec">\[ \tilde G(p,q)=\operatorname{sgn}(\bar q)\,G\bigl(p,|\bar q|\bigr) \]</div>
+            <p>La barra indica el valor llevado al intervalo [−1, 1) restando múltiplos de 2. Por eso la parte libre se repite cada dos recorridos del frente y cambia de signo en cada rebote.</p>
+          </article>
+          <article>
+            <h3>Frente de onda y cruces</h3>
+            <p>El frente sale del apoyo izquierdo junto con la carga, viaja con velocidad c y rebota en los apoyos:</p>
+            <div class="ec">\[ \frac{x_f}{L}=\Bigl|\,\overline{\tau/\alpha}\,\Bigr| \]</div>
+            <p>Cruza la carga, para k = 1, 2, … mientras τ ≤ 1, cuando el frente vuelve de un rebote y la encuentra de frente, o cuando da la vuelta completa y la alcanza por detrás (solo si α &lt; 1):</p>
+            <div class="ec">\[ \tau=\frac{2k\,\alpha}{1+\alpha}\qquad\qquad \tau=\frac{2k\,\alpha}{1-\alpha} \]</div>
+            <p>Entre dos cruces, la deflexión bajo la carga es una recta.</p>
+          </article>
+          <article>
+            <h3>Regiones de Smith</h3>
+            <p>La recta de la carga y el camino del frente dividen el plano posición–tiempo en regiones. Smith (1964) escribió su ecuación (14) región por región para <span class="nw">1/3 &lt; α &lt; 1/2</span>, donde son seis. Con la fuerza constante, en cada región la cuerda es una recta. Con <span class="nw">ξ = x/L</span> y k el número de veces que el frente ya pasó por el punto:</p>
+            <div class="ec">\[ \frac{w}{w_0}=\frac{4}{1-\alpha^2}\begin{cases} k\alpha\,(1-\xi) & \xi>\tau,\ k\ \text{par}\\ \tau-k\alpha\,\xi & \xi>\tau,\ k\ \text{impar}\\ \xi-\tau+k\alpha\,(1-\xi) & \xi<\tau,\ k\ \text{par}\\ (1-k\alpha)\,\xi & \xi<\tau,\ k\ \text{impar}\end{cases} \]</div>
+            <p>Como la carga está en ξ = τ, los puntos con ξ &gt; τ están delante de ella y los con ξ &lt; τ, detrás. Cada paso del frente cambia la velocidad de la cuerda en <span class="nw">4/(1 − α²)</span>, en unidades de w₀ por unidad de τ. Con α &lt; 1, delante de la carga la cuerda alterna entre quieta y bajando, y detrás, entre quieta y subiendo.</p>
+          </article>
+          <article>
+            <h3>Velocidad crítica</h3>
+            <div class="ec">\[ \frac{w}{w_0}=\begin{cases}2x/L, & x\lt vt\\[2pt] 0, & x\gt vt\end{cases}\qquad(\alpha=1) \]</div>
+            <p>La deflexión bajo la carga no está definida, porque la carga queda sobre el escalón. La serie truncada converge a la mitad de su altura.</p>
+          </article>
+          <article>
+            <h3>Factor de amplificación</h3>
+            <div class="ec">\[ D(\alpha)=\max_{0\le t\le L/v}\frac{w(L/2,t)}{w_0} \]</div>
+            <p>Su máximo es D = 3/2, en α = 1/3. Para α ≥ 1/3 vale 2/(1 + α).</p>
+          </article>
+        </div>
+      </details>
+    </section>
+  </div>
+
+  <p class="pie-pagina">Cálculo hecho en el navegador con la suma exacta de la serie de Frýba (ec. 14.8). Coincide con <code>cap3_figuras.py</code> dentro del error de truncar en 3000 modos, entre 10⁻⁴ y 2·10⁻³ según α.</p>
+</div>
+
+<script>
+(() => {
+"use strict";
+
+/* =====================================================================
+   Modelo del Caso I. Longitudes en unidades de L y deflexión en unidades
+   de w0 = PL/(4N); x es x/L, t es tau = vt/L y a es alpha = v/c.
+   ===================================================================== */
+const PI = Math.PI;
+const K8 = 8 / (PI * PI);
+const TOL_CRIT = 5e-4;
+
+const esCritico = a => Math.abs(a - 1) < TOL_CRIT;
+const G = (p, q) => Math.min(p, q) * (1 - Math.max(p, q));
+
+function reducir(s) {                 // s llevado a [-1, 1) restando múltiplos de 2
+  let r = (s + 1) % 2;
+  if (r < 0) r += 2;
+  return r - 1;
+}
+function Gext(p, q) {                 // extensión impar y de período 2 de G en q
+  const r = reducir(q);
+  return r > 0 ? G(p, r) : (r < 0 ? -G(p, -r) : 0);
+}
+const forzada = (a, x, t) => 4 / (1 - a * a) * G(x, t);
+const libre = (a, x, t) => -4 * a / (1 - a * a) * Gext(x, t / a);
+
+function wExacta(a, x, t) {
+  if (esCritico(a)) return x < t ? 2 * x : 0;
+  return forzada(a, x, t) + libre(a, x, t);
+}
+const posFrente = (a, t) => esCritico(a) ? t : Math.abs(reducir(t / a));
+const sentidoFrente = (a, t) => (esCritico(a) || reducir(t / a) >= 0) ? 1 : -1;
+const nRebotes = (a, t) => esCritico(a) ? 0 : Math.floor(t / a + 1e-12);
+
+function cruces(a) {
+  const out = [];
+  if (esCritico(a)) return out;
+  for (let k = 1; k < 2000; k++) {
+    const t = 2 * k * a / (1 + a);
+    if (t > 1 - 1e-9) break;
+    out.push({ t, tipo: "de frente" });
+  }
+  if (a < 1) {
+    for (let k = 1; k < 2000; k++) {
+      const t = 2 * k * a / (1 - a);
+      if (t > 1 - 1e-9) break;
+      out.push({ t, tipo: "por detrás" });
+    }
+  }
+  return out.sort((p, q) => p.t - q.t);
+}
+
+function cuerdaExacta(a, t) {         // vértices exactos: la cuerda es una poligonal
+  if (esCritico(a)) return [[0, 0], [t, 2 * t], [t, 0], [1, 0]];
+  const xf = posFrente(a, t);
+  return [0, Math.min(t, xf), Math.max(t, xf), 1].map(x => [x, wExacta(a, x, t)]);
+}
+function partesExactas(a, t) {
+  const xf = posFrente(a, t);
+  return {
+    f: [[0, 0], [t, forzada(a, t, t)], [1, 0]],
+    l: [[0, 0], [xf, libre(a, xf, t)], [1, 0]]
+  };
+}
+function trayectoriaExacta(a) {
+  const ts = [];
+  for (let i = 0; i <= 800; i++) ts.push(i / 800);
+  for (const c of cruces(a)) ts.push(c.t);
+  ts.sort((p, q) => p - q);
+  const T = [], W = [];
+  for (const t of ts) {
+    if (T.length && t - T[T.length - 1] < 1e-9) continue;
+    T.push(t);
+    W.push(wExacta(a, t, t));
+  }
+  return { T, W };
+}
+
+/* Serie truncada en n modos, la misma de cap3_figuras.py. Los senos de los
+   múltiplos de un ángulo se obtienen girando (sen, cos), sin llamar a sin(). */
+function coeficientes(a, n, t) {
+  const cf = new Float64Array(n + 1), cl = new Float64Array(n + 1);
+  const crit = esCritico(a);
+  const d1s = Math.sin(PI * t), d1c = Math.cos(PI * t);
+  const th2 = crit ? 0 : PI * t / a;
+  const d2s = Math.sin(th2), d2c = Math.cos(th2);
+  const k = crit ? 0 : 1 / (1 - a * a);
+  let s1 = 0, c1 = 1, s2 = 0, c2 = 1;
+  for (let j = 1; j <= n; j++) {
+    const ns1 = s1 * d1c + c1 * d1s;
+    c1 = c1 * d1c - s1 * d1s;
+    s1 = ns1;
+    const jj = j * j;
+    if (crit) {
+      cf[j] = (s1 - j * PI * t * c1) / (2 * jj);      // resonancia, alpha = 1
+    } else {
+      const ns2 = s2 * d2c + c2 * d2s;
+      c2 = c2 * d2c - s2 * d2s;
+      s2 = ns2;
+      cf[j] = k * s1 / jj;
+      cl[j] = -a * k * s2 / jj;
+    }
+  }
+  return { cf, cl };
+}
+function sumaSenos(coef, n, x) {
+  const ds = Math.sin(PI * x), dc = Math.cos(PI * x);
+  let s = 0, c = 1, acc = 0;
+  for (let j = 1; j <= n; j++) {
+    const ns = s * dc + c * ds;
+    c = c * dc - s * ds;
+    s = ns;
+    acc += coef[j] * s;
+  }
+  return K8 * acc;
+}
+function wSerie(a, n, x, t) {
+  const { cf, cl } = coeficientes(a, n, t);
+  return sumaSenos(cf, n, x) + sumaSenos(cl, n, x);
+}
+function cuerdaSerie(a, n, t) {
+  const { cf, cl } = coeficientes(a, n, t);
+  const m = 500, tot = [], f = [], l = [];
+  for (let i = 0; i <= m; i++) {
+    const x = i / m;
+    const vf = sumaSenos(cf, n, x), vl = sumaSenos(cl, n, x);
+    tot.push([x, vf + vl]); f.push([x, vf]); l.push([x, vl]);
+  }
+  return { tot, f, l };
+}
+function trayectoriaSerie(a, n) {
+  const T = [], W = [];
+  for (let i = 0; i <= 400; i++) {
+    const t = i / 400;
+    T.push(t);
+    W.push(wSerie(a, n, t, t));
+  }
+  return { T, W };
+}
+
+/* Factor de amplificación: w(1/2, tau) es una poligonal en tau, así que su
+   máximo está en un quiebre: la carga en el centro, el frente en el centro o
+   el final del recorrido. */
+function Dalfa(a) {
+  if (esCritico(a)) return 1;
+  const cand = [0.5, 1];
+  for (let k = 0; k < 4000; k++) {
+    const t = a * (k + 0.5);
+    if (t > 1) break;
+    cand.push(t);
+  }
+  let m = -Infinity;
+  for (const t of cand) m = Math.max(m, wExacta(a, 0.5, t));
+  return m;
+}
+function limiteVertical(a) {          // escala fija para todo el recorrido
+  if (esCritico(a)) return 2.2;
+  let m = 1;
+  for (let i = 0; i <= 1000; i++) {
+    const t = i / 1000;
+    m = Math.max(m, Math.abs(wExacta(a, t, t)), Math.abs(wExacta(a, posFrente(a, t), t)));
+  }
+  for (const c of cruces(a)) m = Math.max(m, Math.abs(wExacta(a, c.t, c.t)));
+  return 1.1 * m;
+}
+
+/* Regiones de Smith. El frente pasa por x en tau/alfa = x, 2 - x, 2 + x,
+   4 - x, ... Cada región reúne los puntos con el mismo número k de pasos y del
+   mismo lado de la carga; es el cuadrado unitario recortado por tres
+   semiplanos, y dentro de ella w/w0 = A x + B tau + C. */
+function pasesFrente(a, x, t) {
+  if (esCritico(a)) return x < t ? 1 : 0;
+  const s = t / a;
+  let n = 0;
+  for (let j = 0; 2 * j - x < s; j++) {
+    if (2 * j + x < s) n++;
+    if (j >= 1 && 2 * j - x < s) n++;
+  }
+  return n;
+}
+function recortar(poli, h) {          // semiplano h[0] x + h[1] t + h[2] >= 0
+  const out = [], f = p => h[0] * p[0] + h[1] * p[1] + h[2];
+  for (let i = 0; i < poli.length; i++) {
+    const p = poli[i], q = poli[(i + 1) % poli.length], fp = f(p), fq = f(q);
+    if (fp >= 0) out.push(p);
+    if ((fp >= 0) !== (fq >= 0)) {
+      const s = fp / (fp - fq);
+      out.push([p[0] + s * (q[0] - p[0]), p[1] + s * (q[1] - p[1])]);
+    }
+  }
+  return out.filter((p, i) => {
+    const q = out[(i + out.length - 1) % out.length];
+    return out.length < 2 || Math.hypot(p[0] - q[0], p[1] - q[1]) > 1e-12;
+  });
+}
+function areaCentro(poli) {
+  let A = 0, cx = 0, cy = 0;
+  for (let i = 0; i < poli.length; i++) {
+    const [x0, y0] = poli[i], [x1, y1] = poli[(i + 1) % poli.length], c = x0 * y1 - x1 * y0;
+    A += c; cx += (x0 + x1) * c; cy += (y0 + y1) * c;
+  }
+  A /= 2;
+  return Math.abs(A) < 1e-14 ? { area: 0, cx: NaN, cy: NaN } : { area: Math.abs(A), cx: cx / (6 * A), cy: cy / (6 * A) };
+}
+function romano(n) {
+  let s = "";
+  for (const [v, r] of [[50, "L"], [40, "XL"], [10, "X"], [9, "IX"], [5, "V"], [4, "IV"], [1, "I"]]) {
+    while (n >= v) { s += r; n -= v; }
+  }
+  return s;
+}
+function coefRegion(a, k, detras) {   // w/w0 = A x + B tau + C
+  const D = 1 - a * a;
+  if (detras && k === 1) return { A: 4 / (1 + a), B: 0, C: 0 };
+  if (!detras && k === 0) return { A: 0, B: 0, C: 0 };
+  if (!detras) return k % 2 === 0 ? { A: -4 * k * a / D, B: 0, C: 4 * k * a / D } : { A: -4 * k * a / D, B: 4 / D, C: 0 };
+  return k % 2 === 0 ? { A: 4 * (1 - k * a) / D, B: -4 / D, C: 4 * k * a / D } : { A: 4 * (1 - k * a) / D, B: 0, C: 0 };
+}
+function numeroSmith(k, detras) {     // la numeración de Smith; 0 si es una región extra
+  if (k === 0) return detras ? 2 : 1;  // detrás con k = 0 solo existe si alfa > 1
+  if (k === 1) return detras ? 3 : 2;
+  if (k === 2) return detras ? 5 : 4;
+  if (k === 3 && detras) return 6;
+  return 0;
+}
+function regionesDe(a) {
+  const lista = [];
+  const kMax = Math.ceil(1 / a) + 2;
+  for (let k = 0; k <= kMax; k++) {
+    for (const detras of [false, true]) {
+      let p = [[0, 0], [1, 0], [1, 1], [0, 1]];
+      if (k >= 1) p = recortar(p, k % 2 ? [-a, 1, -a * (k - 1)] : [a, 1, -a * k]);
+      p = recortar(p, k % 2 ? [-a, -1, a * (k + 1)] : [a, -1, a * k]);
+      p = recortar(p, detras ? [-1, 1, 0] : [1, -1, 0]);
+      if (p.length < 3) continue;
+      const ac = areaCentro(p);
+      if (ac.area < 1e-7) continue;
+      lista.push(Object.assign({ k, detras, poli: p, n: numeroSmith(k, detras) }, ac, coefRegion(a, k, detras)));
+    }
+  }
+  let siguiente = 7;
+  for (const r of lista) if (!r.n) r.n = siguiente++;
+  lista.sort((p, q) => p.n - q.n);
+  for (const r of lista) r.romano = romano(r.n);
+  return lista;
+}
+
+/* =====================================================================
+   Estado de la consola
+   ===================================================================== */
+const N_MODOS = [1, 2, 3, 4, 5, 6, 8, 10, 15, 20, 30, 40, 50, 75, 100, 150, 200, 300, 500, 750, 1000, 1500, 2000, 3000];
+const ALFA_MIN = 0.05, ALFA_MAX = 2;
+const CLAVE = "consola-caso1-v1";
+
+const estado = {
+  alfa: 0.25,
+  tau: 0.15,
+  vistas: { frente: true, partes: false, diagrama: true, cruces: true, regiones: true },
+  modo: "exacta",
+  nIdx: 9,
+  duracion: 6,
+  repetir: true
+};
+const nModos = () => N_MODOS[estado.nIdx];
+let calc = {};                        // resultados que dependen de alfa y del modo
+
+function recalcular() {
+  const a = estado.alfa;
+  const crit = esCritico(a);
+  calc.crit = crit;
+  calc.cruces = cruces(a);
+  calc.lim = limiteVertical(a);
+  calc.D = Dalfa(a);
+  calc.regiones = regionesDe(a);
+  calc.mapaRegiones = new Map(calc.regiones.map(r => [r.k + (r.detras ? "d" : "a"), r]));
+  if (crit) calc.tray = null;
+  else calc.tray = estado.modo === "exacta" ? trayectoriaExacta(a) : trayectoriaSerie(a, nModos());
+  calc.trayMax = null;
+  if (calc.tray) {
+    let im = 0;
+    for (let i = 1; i < calc.tray.W.length; i++) if (calc.tray.W[i] > calc.tray.W[im]) im = i;
+    calc.trayMax = { t: calc.tray.T[im], w: calc.tray.W[im] };
+  }
+}
+function wBajoCarga(t) {
+  const a = estado.alfa;
+  if (calc.crit) return NaN;
+  return estado.modo === "exacta" ? wExacta(a, t, t) : wSerie(a, nModos(), t, t);
+}
+function regionEn(x, t) {
+  if (!calc.mapaRegiones) return null;
+  return calc.mapaRegiones.get(pasesFrente(estado.alfa, x, t) + (x < t ? "d" : "a")) || null;
+}
+function tramosCuerda(t) {            // tramos rectos de la cuerda en el instante t y su región
+  const a = estado.alfa;
+  let xs;
+  if (calc.crit) xs = [0, t, 1];
+  else { const xf = posFrente(a, t); xs = [0, Math.min(t, xf), Math.max(t, xf), 1]; }
+  const out = [];
+  for (let i = 0; i + 1 < xs.length; i++) {
+    if (xs[i + 1] - xs[i] < 1e-9) continue;
+    const r = regionEn((xs[i] + xs[i + 1]) / 2, t);
+    if (r) out.push({ xa: xs[i], xb: xs[i + 1], r });
+  }
+  return out;
+}
+const tonoRegion = r => Math.min(r.k, 3);
+function movimiento(r) {
+  if (Math.abs(r.B) > 1e-12) return r.B > 0 ? "baja" : "sube";
+  return (Math.abs(r.A) > 1e-12 || Math.abs(r.C) > 1e-12) ? "quieta" : "sin deformar";
+}
+function formaLineal(r) {
+  const t = [];
+  if (Math.abs(r.A) > 5e-13) t.push([r.A, "x"]);
+  if (Math.abs(r.B) > 5e-13) t.push([r.B, "τ"]);
+  if (Math.abs(r.C) > 5e-13) t.push([r.C, ""]);
+  if (!t.length) return "0";
+  return t.map(([v, l], i) => {
+    const signo = i === 0 ? (v < 0 ? "−" : "") : (v < 0 ? " − " : " + ");
+    return `${signo}<span class="nw">${num(Math.abs(v), 3)}${l ? " " + l : ""}</span>`;
+  }).join("");
+}
+function lugarNumeral(pp, ancho, alto) {   // mejor lugar para un rótulo dentro de un polígono convexo
+  let ymin = Infinity, ymax = -Infinity;
+  for (const p of pp) { ymin = Math.min(ymin, p[1]); ymax = Math.max(ymax, p[1]); }
+  const cuerdaEn = y => {
+    let lo = Infinity, hi = -Infinity;
+    for (let i = 0; i < pp.length; i++) {
+      const [x0, y0] = pp[i], [x1, y1] = pp[(i + 1) % pp.length];
+      if (y0 === y1 || (y0 - y) * (y1 - y) > 0) continue;
+      const x = x0 + (y - y0) * (x1 - x0) / (y1 - y0);
+      lo = Math.min(lo, x); hi = Math.max(hi, x);
+    }
+    return [lo, hi];
+  };
+  if (ymax - ymin < alto + 6) return null;
+  let mejor = null;
+  for (let i = 0; i <= 16; i++) {
+    const y = ymin + alto / 2 + 3 + (ymax - ymin - alto - 6) * i / 16;
+    const [a1, b1] = cuerdaEn(y - alto / 2), [a2, b2] = cuerdaEn(y + alto / 2);
+    const lo = Math.max(a1, a2), hi = Math.min(b1, b2);
+    const holgura = Math.min((hi - lo - ancho) / 2, y - ymin - alto / 2, ymax - y - alto / 2);
+    if (!mejor || holgura > mejor.h) mejor = { x: (lo + hi) / 2, y, h: holgura };
+  }
+  return mejor && mejor.h >= 3 ? mejor : null;
+}
+
+/* =====================================================================
+   Utilidades de dibujo
+   ===================================================================== */
+const NS = "http://www.w3.org/2000/svg";
+const $ = s => document.querySelector(s);
+function el(tag, attrs, parent) {
+  const e = document.createElementNS(NS, tag);
+  if (attrs) for (const k in attrs) e.setAttribute(k, attrs[k]);
+  if (parent) parent.appendChild(e);
+  return e;
+}
+function set(e, attrs) { for (const k in attrs) e.setAttribute(k, attrs[k]); }
+function vaciar(g) { while (g.firstChild) g.removeChild(g.firstChild); }
+function escala(d0, d1, r0, r1) {
+  const k = (r1 - r0) / (d1 - d0);
+  const f = v => r0 + (v - d0) * k;
+  f.inv = p => d0 + (p - r0) / k;
+  f.r = [r0, r1];
+  return f;
+}
+function puntos(pts, X, Y) {
+  let s = "";
+  for (let i = 0; i < pts.length; i++) {
+    s += (i ? " " : "") + X(pts[i][0]).toFixed(1) + "," + Y(pts[i][1]).toFixed(1);
+  }
+  return s;
+}
+function marcas(d0, d1, paso) {
+  const out = [];
+  const i0 = Math.ceil(d0 / paso - 1e-9), i1 = Math.floor(d1 / paso + 1e-9);
+  for (let i = i0; i <= i1; i++) out.push(+(i * paso).toFixed(10));
+  return out;
+}
+function num(v, d = 3) {
+  if (!isFinite(v)) return "—";
+  let s = v.toFixed(d);
+  if (/^-0\.?0*$/.test(s)) s = s.slice(1);
+  return s.replace(".", ",").replace("-", "−");
+}
+function numEje(v) {
+  const r = Math.round(v * 1000) / 1000;
+  return String(r).replace(".", ",").replace("-", "−");
+}
+function texto(g, x, y, s, attrs) {
+  const t = el("text", Object.assign({ x, y }, attrs || {}), g);
+  t.textContent = s;
+  return t;
+}
+function grilla(g, X, Y, xMay, xMen, yMay, yMen) {
+  const [xa, xb] = X.r, [ya, yb] = Y.r;
+  const y0 = Math.min(ya, yb), y1 = Math.max(ya, yb), x0 = Math.min(xa, xb), x1 = Math.max(xa, xb);
+  for (const v of xMen) el("line", { x1: X(v), x2: X(v), y1: y0, y2: y1, class: "g-mm", "shape-rendering": "crispEdges" }, g);
+  for (const v of yMen) el("line", { x1: x0, x2: x1, y1: Y(v), y2: Y(v), class: "g-mm", "shape-rendering": "crispEdges" }, g);
+  for (const v of xMay) el("line", { x1: X(v), x2: X(v), y1: y0, y2: y1, class: "g-mm-mayor", "shape-rendering": "crispEdges" }, g);
+  for (const v of yMay) el("line", { x1: x0, x2: x1, y1: Y(v), y2: Y(v), class: "g-mm-mayor", "shape-rendering": "crispEdges" }, g);
+}
+function menores(may, paso, partes) {
+  const out = [];
+  if (may.length < 2) return out;
+  for (let v = may[0] - paso; v <= may[may.length - 1] + paso + 1e-9; v += paso / partes) out.push(+v.toFixed(10));
+  return out;
+}
+function crearTip(svg) {
+  const g = el("g", { class: "g-tip", visibility: "hidden", "pointer-events": "none" }, svg);
+  const linea = el("line", { class: "g-cruz" }, g);
+  const rect = el("rect", { rx: 3, ry: 3 }, g);
+  const txt = el("text", null, g);
+  return { g, linea, rect, txt };
+}
+function mostrarTip(tip, x, y, s, area, linea) {
+  tip.txt.textContent = s;
+  tip.g.setAttribute("visibility", "visible");
+  if (linea) set(tip.linea, linea); else set(tip.linea, { x1: 0, x2: 0, y1: 0, y2: 0 });
+  const w = tip.txt.getComputedTextLength() + 14, h = 22;
+  let tx = x + 12, ty = y - h - 8;
+  if (tx + w > area.x1) tx = x - w - 12;
+  if (tx < area.x0) tx = area.x0 + 2;
+  if (ty < area.y0) ty = y + 12;
+  if (ty + h > area.y1) ty = area.y1 - h - 2;
+  set(tip.rect, { x: tx, y: ty, width: w, height: h });
+  set(tip.txt, { x: tx + 7, y: ty + 15 });
+}
+function ocultarTip(tip) { tip.g.setAttribute("visibility", "hidden"); }
+function posPuntero(svg, e) {
+  const r = svg.getBoundingClientRect();
+  return { x: e.clientX - r.left, y: e.clientY - r.top };
+}
+
+/* Márgenes horizontales comunes: la cuerda y el diagrama comparten el eje x */
+const ML = 54, MR = 18;
+
+/* =====================================================================
+   Instrumento 1: cuerda y trayectoria
+   ===================================================================== */
+const cuerda = {
+  host: $("#lienzo-cuerda"),
+  init() {
+    const svg = this.svg = el("svg", { class: "grafico", role: "img", "aria-label": "Forma de la cuerda y trayectoria del punto bajo la carga" }, this.host);
+    const defs = el("defs", null, svg);
+    const clip = el("clipPath", { id: "clip-cuerda" }, defs);
+    this.clipRect = el("rect", null, clip);
+    const mk = el("marker", { id: "punta-flecha", viewBox: "0 0 10 10", refX: 9, refY: 5, markerWidth: 7, markerHeight: 7, orient: "auto-start-reverse" }, defs);
+    el("path", { d: "M0,0 L10,5 L0,10 z", class: "g-flecha" }, mk);
+    const recorte = { "clip-path": "url(#clip-cuerda)" };
+    this.gZona = el("g", recorte, svg);
+    this.gGrilla = el("g", null, svg);
+    this.gGuias = el("g", recorte, svg);
+    this.gFijo = el("g", recorte, svg);
+    this.gDin = el("g", recorte, svg);
+    this.gEjes = el("g", null, svg);
+    this.gNum = el("g", { "pointer-events": "none" }, svg);
+    this.gRot = el("g", null, svg);
+    this.zona = el("rect", { class: "g-reposo" }, this.gZona);
+    this.cuasi = el("polyline", { class: "g-cuasi" }, this.gFijo);
+    this.trayTenue = el("polyline", { class: "g-tray-tenue" }, this.gFijo);
+    this.forz = el("polyline", { class: "g-forzada" }, this.gDin);
+    this.lib = el("polyline", { class: "g-libre" }, this.gDin);
+    this.tray = el("polyline", { class: "g-tray" }, this.gDin);
+    this.cuerdaL = el("polyline", { class: "g-cuerda" }, this.gDin);
+    this.gCruces = el("g", null, this.gDin);
+    this.puntoTray = el("circle", { r: 4.5, class: "g-punto-tray" }, this.gDin);
+    this.zonaTxt = el("text", { class: "g-rotulo-suave", "text-anchor": "middle" }, this.gRot);
+    this.frenteLinea = el("line", { class: "g-frente-linea" }, this.gRot);
+    this.frentePunto = el("circle", { r: 5.5, class: "g-frente-punto" }, this.gRot);
+    this.frenteTxt = el("text", { class: "g-rotulo" }, this.gRot);
+    this.carga = el("line", { class: "g-carga", "marker-end": "url(#punta-flecha)" }, this.gRot);
+    this.cargaTxt = el("text", { class: "g-rotulo" }, this.gRot);
+    this.tip = crearTip(svg);
+    this.arrastre = false;
+    svg.addEventListener("pointerdown", e => {
+      this.arrastre = true;
+      try { svg.setPointerCapture(e.pointerId); } catch (_) {}
+      this.mover(e);
+    });
+    svg.addEventListener("pointermove", e => { if (this.arrastre) this.mover(e); this.hover(e); });
+    const fin = () => { this.arrastre = false; };
+    svg.addEventListener("pointerup", fin);
+    svg.addEventListener("pointercancel", fin);
+    svg.addEventListener("pointerleave", () => ocultarTip(this.tip));
+  },
+  mover(e) {
+    if (!this.X) return;
+    const p = posPuntero(this.svg, e);
+    detener();
+    fijarTau(this.X.inv(p.x));
+  },
+  hover(e) {
+    if (!this.X) return;
+    const p = posPuntero(this.svg, e);
+    const x = this.X.inv(p.x);
+    if (x < 0 || x > 1) { ocultarTip(this.tip); return; }
+    const a = estado.alfa, t = estado.tau;
+    let w;
+    if (calc.crit) w = wExacta(a, x, t);
+    else w = estado.modo === "exacta" ? wExacta(a, x, t) : wSerie(a, nModos(), x, t);
+    const yc = this.Y(w);
+    mostrarTip(this.tip, this.X(x), yc, `x = ${num(x, 3)} L   w = ${num(w, 3)} w₀`, this.area,
+      { x1: this.X(x), x2: this.X(x), y1: this.area.y0, y2: this.area.y1 });
+  },
+  layout() {
+    const W = this.host.clientWidth;
+    if (!W) return false;
+    const H = Math.round(Math.max(250, Math.min(380, W * 0.42)));
+    this.W = W; this.H = H;
+    set(this.svg, { width: W, height: H, viewBox: `0 0 ${W} ${H}` });
+    this.area = { x0: ML, x1: W - MR, y0: 8, y1: H - 34 };
+    set(this.clipRect, { x: this.area.x0, y: this.area.y0, width: this.area.x1 - this.area.x0, height: this.area.y1 - this.area.y0 });
+    this.X = escala(0, 1, this.area.x0, this.area.x1);
+    return true;
+  },
+  fijo() {                             // depende de alfa, del modo y del tamaño
+    const lim = calc.lim;
+    this.Y = escala(-0.36 * lim, lim, this.area.y0, this.area.y1);
+    const X = this.X, Y = this.Y;
+    const pasoY = lim <= 1.35 ? 0.25 : (lim <= 2.6 ? 0.5 : 1);
+    const yMay = marcas(-0.36 * lim, lim, pasoY);
+    const xMay = marcas(0, 1, 0.1);
+    vaciar(this.gGrilla);
+    grilla(this.gGrilla, X, Y, xMay, marcas(0, 1, 0.02), yMay, menores(yMay, pasoY, 5).filter(v => v > -0.36 * lim && v < lim));
+    vaciar(this.gEjes);
+    const g = this.gEjes, a0 = this.area;
+    el("line", { x1: a0.x0, x2: a0.x0, y1: a0.y0, y2: a0.y1, class: "g-eje" }, g);
+    el("line", { x1: a0.x0, x2: a0.x1, y1: a0.y1, y2: a0.y1, class: "g-eje" }, g);
+    el("line", { x1: a0.x0, x2: a0.x1, y1: Y(0), y2: Y(0), class: "g-cero" }, g);
+    for (const v of marcas(0, 1, 0.2)) {
+      el("line", { x1: X(v), x2: X(v), y1: a0.y1, y2: a0.y1 + 4, class: "g-eje" }, g);
+      texto(g, X(v), a0.y1 + 17, numEje(v), { class: "g-tick", "text-anchor": "middle" });
+    }
+    for (const v of yMay) {
+      el("line", { x1: a0.x0 - 4, x2: a0.x0, y1: Y(v), y2: Y(v), class: "g-eje" }, g);
+      texto(g, a0.x0 - 7, Y(v) + 4, numEje(v), { class: "g-tick", "text-anchor": "end" });
+    }
+    texto(g, a0.x1, a0.y1 + 30, "x/L", { class: "g-titulo-eje", "text-anchor": "end" });
+    const ty = texto(g, 0, 0, "w/w₀ (hacia abajo)", { class: "g-titulo-eje", "text-anchor": "middle" });
+    ty.setAttribute("transform", `translate(14 ${(a0.y0 + a0.y1) / 2}) rotate(-90)`);
+    // apoyos de la cuerda
+    for (const xa of [0, 1]) {
+      const px = X(xa), py = Y(0);
+      el("path", { d: `M${px},${py} l-6,10 h12 z`, class: "g-apoyo" }, g);
+    }
+    // cuasiestática y recorrido completo
+    const cq = [];
+    for (let i = 0; i <= 100; i++) { const t = i / 100; cq.push([t, 4 * t * (1 - t)]); }
+    this.cuasi.setAttribute("points", puntos(cq, X, Y));
+    if (calc.tray) {
+      this.trayTenue.setAttribute("points", puntos(calc.tray.T.map((t, i) => [t, calc.tray.W[i]]), X, Y));
+      this.trayTenue.removeAttribute("visibility");
+    } else {
+      this.trayTenue.setAttribute("visibility", "hidden");
+    }
+    // guías de los cruces
+    vaciar(this.gGuias);
+    this.guias = [];
+    if (estado.vistas.cruces) {
+      for (const c of calc.cruces) {
+        el("line", { x1: X(c.t), x2: X(c.t), y1: a0.y0, y2: a0.y1, class: "g-guia" }, this.gGuias);
+      }
+    }
+  },
+  instante() {
+    const a = estado.alfa, t = estado.tau, X = this.X, Y = this.Y, lim = calc.lim, a0 = this.area;
+    const v = estado.vistas;
+    const xf = posFrente(a, t);
+    // cuerda y partes
+    let wCarga = NaN;
+    if (estado.modo === "exacta" || calc.crit && estado.modo === "exacta") {
+      this.cuerdaL.setAttribute("points", puntos(cuerdaExacta(a, t), X, Y));
+      if (!calc.crit) {
+        const pa = partesExactas(a, t);
+        this.forz.setAttribute("points", puntos(pa.f, X, Y));
+        this.lib.setAttribute("points", puntos(pa.l, X, Y));
+        this.maxPartes = Math.max(Math.abs(pa.f[1][1]), Math.abs(pa.l[1][1]));
+      }
+    } else {
+      const s = cuerdaSerie(a, nModos(), t);
+      this.cuerdaL.setAttribute("points", puntos(s.tot, X, Y));
+      if (!calc.crit) {
+        this.forz.setAttribute("points", puntos(s.f, X, Y));
+        this.lib.setAttribute("points", puntos(s.l, X, Y));
+        let m = 0;
+        for (let i = 0; i < s.f.length; i++) m = Math.max(m, Math.abs(s.f[i][1]), Math.abs(s.l[i][1]));
+        this.maxPartes = m;
+      }
+    }
+    const verPartes = v.partes && !calc.crit;
+    this.forz.setAttribute("visibility", verPartes ? "visible" : "hidden");
+    this.lib.setAttribute("visibility", verPartes ? "visible" : "hidden");
+    // trayectoria recorrida
+    if (calc.tray) {
+      const T = calc.tray.T, Wt = calc.tray.W, pts = [];
+      for (let i = 0; i < T.length && T[i] <= t + 1e-12; i++) pts.push([T[i], Wt[i]]);
+      wCarga = wBajoCarga(t);
+      pts.push([t, wCarga]);
+      this.tray.setAttribute("points", puntos(pts, X, Y));
+      this.tray.removeAttribute("visibility");
+      set(this.puntoTray, { cx: X(t), cy: Y(wCarga), visibility: "visible" });
+    } else {
+      this.tray.setAttribute("visibility", "hidden");
+      this.puntoTray.setAttribute("visibility", "hidden");
+    }
+    // cruces sobre la trayectoria
+    vaciar(this.gCruces);
+    if (v.cruces && calc.tray) {
+      for (const c of calc.cruces) {
+        el("circle", { cx: X(c.t), cy: Y(wExacta(a, c.t, c.t)), r: 4.5, class: c.t <= t + 1e-9 ? "g-cruce" : "g-cruce-futuro" }, this.gCruces);
+      }
+    }
+    // región de Smith de cada tramo recto de la cuerda
+    vaciar(this.gNum);
+    if (v.regiones && calc.regiones) {
+      for (const s of tramosCuerda(t)) {
+        const r = s.r, x1 = X(s.xa), x2 = X(s.xb);
+        if (x2 - x1 < 30) continue;
+        const y1 = Y(r.A * s.xa + r.B * t + r.C), y2 = Y(r.A * s.xb + r.B * t + r.C);
+        const dx = x2 - x1, dy = y2 - y1, largo = Math.hypot(dx, dy);
+        const mx = (x1 + x2) / 2 + 13 * dy / largo, my = (y1 + y2) / 2 - 13 * dx / largo;
+        texto(this.gNum, mx, Math.max(a0.y0 + 8, my), r.romano, { class: "g-numeral-suave g-halo", "text-anchor": "middle", "dominant-baseline": "central" });
+      }
+    }
+    // zona en reposo: mientras el frente no llega al apoyo derecho
+    const primerPaso = calc.crit ? true : t / a < 1;
+    const xr = calc.crit ? t : Math.max(t, xf);
+    if (v.frente && primerPaso && xr < 1) {
+      set(this.zona, { x: X(xr), y: a0.y0, width: Math.max(0, X(1) - X(xr)), height: a0.y1 - a0.y0, visibility: "visible" });
+      const ancho = X(1) - X(xr);
+      if (ancho > 170) {
+        set(this.zonaTxt, { x: X(1) - 8, y: a0.y0 + 16, "text-anchor": "end", visibility: "visible" });
+        this.zonaTxt.textContent = "en reposo";
+      } else this.zonaTxt.setAttribute("visibility", "hidden");
+    } else {
+      this.zona.setAttribute("visibility", "hidden");
+      this.zonaTxt.setAttribute("visibility", "hidden");
+    }
+    // carga
+    const yTope = Y(-0.31 * lim);
+    const yCarga = calc.crit ? Y(0) : Y(isFinite(wCarga) ? wCarga : wExacta(a, t, t));
+    set(this.carga, { x1: X(t), x2: X(t), y1: yTope, y2: yCarga - 3 });
+    // frente
+    const verFrente = v.frente && !calc.crit;
+    const ladoFrente = xf >= t ? 1 : -1;
+    let anclaCarga = ladoFrente > 0 ? "end" : "start";
+    let dxCarga = ladoFrente > 0 ? -7 : 7;
+    if (X(t) + dxCarga - 40 < a0.x0 && anclaCarga === "end") { anclaCarga = "start"; dxCarga = 7; }
+    if (X(t) + dxCarga + 40 > a0.x1 && anclaCarga === "start") { anclaCarga = "end"; dxCarga = -7; }
+    set(this.cargaTxt, { x: X(t) + dxCarga, y: yTope + 10, "text-anchor": anclaCarga });
+    this.cargaTxt.textContent = calc.crit ? "P  v = c →" : "P  v →";
+    if (verFrente) {
+      const wf = estado.modo === "exacta" ? wExacta(a, xf, t) : wSerie(a, nModos(), xf, t);
+      const yF = Y(wf);
+      set(this.frentePunto, { cx: X(xf), cy: yF, visibility: "visible" });
+      set(this.frenteLinea, { x1: X(xf), x2: X(xf), y1: Y(-0.17 * lim), y2: yF - 6, visibility: "visible" });
+      const dir = sentidoFrente(a, t);
+      let ancla = ladoFrente > 0 ? "start" : "end";
+      let dx = ladoFrente > 0 ? 7 : -7;
+      if (X(xf) + 90 > a0.x1 && ancla === "start") { ancla = "end"; dx = -7; }
+      if (X(xf) - 90 < a0.x0 && ancla === "end") { ancla = "start"; dx = 7; }
+      set(this.frenteTxt, { x: X(xf) + dx, y: Y(-0.17 * lim) + 4, "text-anchor": ancla, visibility: "visible" });
+      this.frenteTxt.textContent = dir > 0 ? "frente  c →" : "← c  frente";
+    } else {
+      for (const e of [this.frentePunto, this.frenteLinea, this.frenteTxt]) e.setAttribute("visibility", "hidden");
+    }
+    // avisos
+    let aviso = "";
+    if (calc.crit) {
+      aviso = "Con α = 1 la deflexión bajo la carga no está definida: la carga queda sobre el escalón, que crece hasta 2 w₀.";
+      if (v.partes) aviso += " Las partes forzada y libre divergen en α = 1; solo su suma es finita.";
+    } else if (verPartes && this.maxPartes > 1.02 * lim) {
+      aviso = "Cerca de α = 1 las partes forzada y libre crecen como 1/(1 − α²) y casi se anulan entre sí, así que salen del gráfico.";
+    }
+    const av = $("#aviso-cuerda");
+    av.textContent = aviso;
+    av.hidden = !aviso;
+    return wCarga;
+  }
+};
+
+/* =====================================================================
+   Instrumento 2: diagrama posición-tiempo (x horizontal, tiempo hacia abajo)
+   ===================================================================== */
+const diagrama = {
+  host: $("#lienzo-diagrama"),
+  init() {
+    const svg = this.svg = el("svg", { class: "grafico", role: "img", "aria-label": "Diagrama posición-tiempo de la carga y del frente de onda" }, this.host);
+    const defs = el("defs", null, svg);
+    const clip = el("clipPath", { id: "clip-diagrama" }, defs);
+    this.clipRect = el("rect", null, clip);
+    const recorte = { "clip-path": "url(#clip-diagrama)" };
+    this.gRegiones = el("g", recorte, svg);
+    this.gZona = el("g", recorte, svg);
+    this.gGrilla = el("g", null, svg);
+    this.gGuias = el("g", recorte, svg);
+    this.gCaminos = el("g", recorte, svg);
+    this.gFoco = el("g", recorte, svg);
+    this.gNumerales = el("g", { "pointer-events": "none" }, svg);
+    this.gCruces = el("g", null, svg);
+    this.gAhora = el("g", null, svg);
+    this.gEjes = el("g", null, svg);
+    this.zona = el("polygon", { class: "g-reposo" }, this.gZona);
+    this.zonaTxt = el("text", { class: "g-rotulo-suave", "text-anchor": "end" }, this.gZona);
+    this.caminoCarga = el("line", { class: "g-camino-carga" }, this.gCaminos);
+    this.caminoFrente = el("polyline", { class: "g-camino-frente" }, this.gCaminos);
+    this.ahora = el("line", { class: "g-ahora" }, this.gAhora);
+    this.pCarga = el("circle", { r: 4.5, class: "g-punto-carga" }, this.gAhora);
+    this.pFrente = el("circle", { r: 5, class: "g-frente-punto" }, this.gAhora);
+    this.foco = el("polygon", { class: "g-region-foco", visibility: "hidden" }, this.gFoco);
+    this.tip = crearTip(svg);
+    svg.addEventListener("pointerleave", () => this.resaltar(null));
+    this.arrastre = false;
+    svg.addEventListener("pointerdown", e => {
+      this.arrastre = true;
+      try { svg.setPointerCapture(e.pointerId); } catch (_) {}
+      this.mover(e);
+    });
+    svg.addEventListener("pointermove", e => { if (this.arrastre) this.mover(e); this.hover(e); });
+    const fin = () => { this.arrastre = false; };
+    svg.addEventListener("pointerup", fin);
+    svg.addEventListener("pointercancel", fin);
+    svg.addEventListener("pointerleave", () => ocultarTip(this.tip));
+  },
+  mover(e) {
+    if (!this.Y) return;
+    const p = posPuntero(this.svg, e);
+    detener();
+    fijarTau(this.Y.inv(p.y));
+  },
+  hover(e) {
+    if (!this.Y) return;
+    const p = posPuntero(this.svg, e);
+    const t = this.Y.inv(p.y);
+    if (t < 0 || t > 1) { ocultarTip(this.tip); this.resaltar(null); return; }
+    const a = estado.alfa;
+    const linea = { x1: this.area.x0, x2: this.area.x1, y1: this.Y(t), y2: this.Y(t) };
+    if (estado.vistas.regiones && calc.regiones) {
+      const x = this.X.inv(p.x);
+      const r = x >= 0 && x <= 1 ? regionEn(x, t) : null;
+      this.resaltar(r);
+      mostrarTip(this.tip, p.x, this.Y(t), r ? `τ = ${num(t, 3)} · región ${r.romano}, ${movimiento(r)}` : `τ = ${num(t, 3)}`, this.area, linea);
+    } else {
+      mostrarTip(this.tip, p.x, this.Y(t), `τ = ${num(t, 3)}   carga ${num(t, 2)} L   frente ${num(posFrente(a, t), 2)} L`, this.area, linea);
+    }
+  },
+  resaltar(r) {
+    if (r && this.X) {
+      this.foco.setAttribute("points", r.poli.map(p => this.X(p[0]).toFixed(1) + "," + this.Y(p[1]).toFixed(1)).join(" "));
+      this.foco.setAttribute("visibility", "visible");
+    } else this.foco.setAttribute("visibility", "hidden");
+    for (const tr of this.filas || []) tr.classList.toggle("foco", !!r && +tr.dataset.n === r.n);
+  },
+  layout() {
+    const W = this.host.clientWidth;
+    if (!W) return false;
+    const H = Math.round(Math.max(220, Math.min(320, W * 0.34)));
+    this.W = W; this.H = H;
+    set(this.svg, { width: W, height: H, viewBox: `0 0 ${W} ${H}` });
+    this.area = { x0: ML, x1: W - MR, y0: 8, y1: H - 34 };
+    set(this.clipRect, { x: this.area.x0, y: this.area.y0, width: this.area.x1 - this.area.x0, height: this.area.y1 - this.area.y0 });
+    this.X = escala(0, 1, this.area.x0, this.area.x1);
+    this.Y = escala(0, 1, this.area.y0, this.area.y1);
+    const X = this.X, Y = this.Y, a0 = this.area;
+    vaciar(this.gGrilla);
+    grilla(this.gGrilla, X, Y, marcas(0, 1, 0.1), marcas(0, 1, 0.02), marcas(0, 1, 0.25), marcas(0, 1, 0.05));
+    vaciar(this.gEjes);
+    const g = this.gEjes;
+    el("line", { x1: a0.x0, x2: a0.x0, y1: a0.y0, y2: a0.y1, class: "g-eje" }, g);
+    el("line", { x1: a0.x0, x2: a0.x1, y1: a0.y1, y2: a0.y1, class: "g-eje" }, g);
+    for (const v of marcas(0, 1, 0.2)) {
+      el("line", { x1: X(v), x2: X(v), y1: a0.y1, y2: a0.y1 + 4, class: "g-eje" }, g);
+      texto(g, X(v), a0.y1 + 17, numEje(v), { class: "g-tick", "text-anchor": "middle" });
+    }
+    for (const v of marcas(0, 1, 0.25)) {
+      el("line", { x1: a0.x0 - 4, x2: a0.x0, y1: Y(v), y2: Y(v), class: "g-eje" }, g);
+      texto(g, a0.x0 - 7, Y(v) + 4, numEje(v), { class: "g-tick", "text-anchor": "end" });
+    }
+    texto(g, a0.x1, a0.y1 + 30, "x/L", { class: "g-titulo-eje", "text-anchor": "end" });
+    const ty = texto(g, 0, 0, "τ = vt/L", { class: "g-titulo-eje", "text-anchor": "middle" });
+    ty.setAttribute("transform", `translate(14 ${(a0.y0 + a0.y1) / 2}) rotate(-90)`);
+    return true;
+  },
+  fijo() {
+    const a = estado.alfa, X = this.X, Y = this.Y, a0 = this.area, v = estado.vistas;
+    // regiones de Smith: polígonos, numerales y tabla
+    vaciar(this.gRegiones);
+    vaciar(this.gNumerales);
+    this.resaltar(null);
+    if (v.regiones) {
+      for (const r of calc.regiones) {
+        const pp = r.poli.map(q => [X(q[0]), Y(q[1])]);
+        el("polygon", { points: pp.map(q => q[0].toFixed(1) + "," + q[1].toFixed(1)).join(" "), class: "g-region t" + tonoRegion(r) }, this.gRegiones);
+        const lugar = lugarNumeral(pp, 8.6 * r.romano.length + 2, 14);
+        if (lugar) texto(this.gNumerales, lugar.x, lugar.y, r.romano, { class: "g-numeral", "text-anchor": "middle", "dominant-baseline": "central" });
+      }
+      tablaRegiones(this);
+    }
+    // zona en reposo: triángulo sobre el camino del frente (alfa < 1) o de la carga (alfa >= 1)
+    const tz = Math.min(a, 1);
+    if (v.regiones) {
+      this.zona.setAttribute("visibility", "hidden");
+      this.zonaTxt.setAttribute("visibility", "hidden");
+    } else if (v.frente) {
+      this.zona.setAttribute("points", puntos([[0, 0], [1, 0], [1, tz]], X, Y));
+      this.zona.removeAttribute("visibility");
+      if (tz >= 0.14) {
+        set(this.zonaTxt, { x: X(1) - 6, y: Y(0) + 15, visibility: "visible" });
+        this.zonaTxt.textContent = "cuerda en reposo";
+      } else this.zonaTxt.setAttribute("visibility", "hidden");
+    } else {
+      this.zona.setAttribute("visibility", "hidden");
+      this.zonaTxt.setAttribute("visibility", "hidden");
+    }
+    set(this.caminoCarga, { x1: X(0), y1: Y(0), x2: X(1), y2: Y(1) });
+    const pts = [];
+    if (calc.crit) pts.push([0, 0], [1, 1]);
+    else {
+      for (let k = 0; k * a < 1; k++) pts.push([posFrente(a, k * a), k * a]);
+      pts.push([posFrente(a, 1), 1]);
+    }
+    this.caminoFrente.setAttribute("points", puntos(pts, X, Y));
+    vaciar(this.gGuias);
+    vaciar(this.gCruces);
+    if (v.cruces) {
+      for (const c of calc.cruces) {
+        el("line", { x1: X(c.t), x2: X(c.t), y1: a0.y0, y2: a0.y1, class: "g-guia" }, this.gGuias);
+      }
+    }
+    // pie: lista de cruces
+    const pie = $("#pie-diagrama");
+    if (calc.crit) {
+      pie.innerHTML = "Con α = 1 el frente viaja pegado a la carga durante todo el recorrido.";
+    } else if (!calc.cruces.length) {
+      pie.innerHTML = "La carga es más rápida que las ondas: el frente queda atrás y nunca la alcanza.";
+    } else {
+      const lista = calc.cruces.slice(0, 12).map(c => `<b>${num(c.t, 3)}</b> (${c.tipo})`).join(", ");
+      const resto = calc.cruces.length > 12 ? `, y ${calc.cruces.length - 12} más` : "";
+      pie.innerHTML = `Cruces del frente con la carga en τ = ${lista}${resto}.`;
+    }
+  },
+  instante() {
+    const a = estado.alfa, t = estado.tau, X = this.X, Y = this.Y, a0 = this.area;
+    set(this.ahora, { x1: a0.x0, x2: a0.x1, y1: Y(t), y2: Y(t) });
+    set(this.pCarga, { cx: X(t), cy: Y(t) });
+    set(this.pFrente, { cx: X(posFrente(a, t)), cy: Y(t) });
+    vaciar(this.gCruces);
+    if (estado.vistas.cruces) {
+      for (const c of calc.cruces) {
+        el("circle", { cx: X(c.t), cy: Y(c.t), r: 4.5, class: c.t <= t + 1e-9 ? "g-cruce" : "g-cruce-futuro" }, this.gCruces);
+      }
+    }
+    if (estado.vistas.regiones && this.filas) {
+      const ahora = new Set(tramosCuerda(t).map(s => s.r.n));
+      for (const tr of this.filas) tr.classList.toggle("ahora", ahora.has(+tr.dataset.n));
+    }
+  }
+};
+
+/* Tabla de regiones, bajo el diagrama */
+function tablaRegiones(dg) {
+  const a = estado.alfa, cuerpo = $("#filas-regiones");
+  vaciar(cuerpo);
+  dg.filas = [];
+  for (const r of calc.regiones) {
+    const tr = document.createElement("tr");
+    tr.dataset.n = r.n;
+    const donde = `${r.detras ? "detrás" : "delante"} · ${r.k} ${r.k === 1 ? "paso" : "pasos"}`;
+    tr.innerHTML = `<td><span class="romano"><i class="sw-region t${tonoRegion(r)}" aria-hidden="true"></i>${r.romano}</span><small class="donde-mini">${donde}</small></td>`
+      + `<td class="col-donde">${donde}</td>`
+      + `<td class="lineal">${formaLineal(r)}</td><td>${movimiento(r)}</td>`;
+    tr.addEventListener("pointerenter", () => dg.resaltar(r));
+    tr.addEventListener("pointerleave", () => dg.resaltar(null));
+    cuerpo.appendChild(tr);
+    dg.filas.push(tr);
+  }
+  const n = calc.regiones.length;
+  let nota;
+  if (calc.crit) nota = "Con α = 1 el frente viaja pegado a la carga: la región II se reduce a una línea y quedan solo la I y la III.";
+  else if (a > 1) nota = "Con α > 1 el frente queda detrás de la carga y nunca la alcanza; la región II es la franja entre ambos.";
+  else if (a >= 0.5) nota = "Con α ≥ 1/2 la carga termina antes de que el frente vuelva del apoyo inicial, así que no se forma la región VI.";
+  else if (n === 6) nota = "Son las seis regiones de la ecuación (14) de Smith (1964), escrita para 1/3 &lt; α &lt; 1/2.";
+  else nota = `Con α &lt; 1/3 el frente alcanza a la carga por detrás y aparecen más regiones que las seis de Smith: las nuevas se numeran desde la VII.`;
+  const vel = calc.crit ? "" : ` Donde se mueve, lo hace con velocidad uniforme: |b| = 4/|1 − α²| = <b>${num(4 / Math.abs(1 - a * a), 3)}</b>.`;
+  $("#pie-regiones").innerHTML = `${n} regiones en este recorrido. En cada una la cuerda es la recta w/w₀ = a·x + b·τ + c, con x en unidades de L.${vel} ${nota}`;
+}
+
+/* =====================================================================
+   Instrumento 3: factor de amplificación D(alfa)
+   ===================================================================== */
+const dalfa = {
+  host: $("#lienzo-dalfa"),
+  curva: null,
+  init() {
+    const svg = this.svg = el("svg", { class: "grafico", role: "img", "aria-label": "Factor de amplificación dinámica en función de alfa" }, this.host);
+    this.gGrilla = el("g", null, svg);
+    this.gEjes = el("g", null, svg);
+    this.gCurva = el("g", null, svg);
+    this.gMarca = el("g", null, svg);
+    this.marca = el("line", { class: "g-marca-alfa" }, this.gMarca);
+    this.punto = el("circle", { r: 5, class: "g-punto-carga" }, this.gMarca);
+    this.txt = el("text", { class: "g-rotulo" }, this.gMarca);
+    this.tip = crearTip(svg);
+    const pts = [];
+    for (let i = 0; i <= 780; i++) {
+      const a = ALFA_MIN + (ALFA_MAX - ALFA_MIN) * i / 780;
+      pts.push([a, Dalfa(a)]);
+    }
+    pts.push([1, 1]);
+    pts.sort((p, q) => p[0] - q[0]);
+    this.curva = pts;
+    this.arrastre = false;
+    svg.addEventListener("pointerdown", e => {
+      this.arrastre = true;
+      try { svg.setPointerCapture(e.pointerId); } catch (_) {}
+      this.mover(e);
+    });
+    svg.addEventListener("pointermove", e => { if (this.arrastre) this.mover(e); this.hover(e); });
+    const fin = () => { this.arrastre = false; };
+    svg.addEventListener("pointerup", fin);
+    svg.addEventListener("pointercancel", fin);
+    svg.addEventListener("pointerleave", () => ocultarTip(this.tip));
+  },
+  mover(e) {
+    if (!this.X) return;
+    const p = posPuntero(this.svg, e);
+    fijarAlfa(this.X.inv(p.x), { redondear: true });
+  },
+  hover(e) {
+    if (!this.X) return;
+    const p = posPuntero(this.svg, e);
+    const a = this.X.inv(p.x);
+    if (a < ALFA_MIN || a > ALFA_MAX) { ocultarTip(this.tip); return; }
+    const d = Dalfa(a);
+    mostrarTip(this.tip, this.X(a), this.Y(d), `α = ${num(a, 3)}   D = ${num(d, 3)}`, this.area,
+      { x1: this.X(a), x2: this.X(a), y1: this.area.y0, y2: this.area.y1 });
+  },
+  layout() {
+    const W = this.host.clientWidth;
+    if (!W) return false;
+    const H = Math.round(Math.max(210, Math.min(300, W * 0.34)));
+    this.W = W; this.H = H;
+    set(this.svg, { width: W, height: H, viewBox: `0 0 ${W} ${H}` });
+    this.area = { x0: ML, x1: W - MR, y0: 22, y1: H - 34 };
+    const X = this.X = escala(0, 2, this.area.x0, this.area.x1);
+    const Y = this.Y = escala(0.5, 1.6, this.area.y1, this.area.y0);
+    const a0 = this.area;
+    vaciar(this.gGrilla);
+    grilla(this.gGrilla, X, Y, marcas(0, 2, 0.25), marcas(0, 2, 0.05), marcas(0.6, 1.6, 0.2), marcas(0.5, 1.6, 0.05));
+    vaciar(this.gEjes);
+    const g = this.gEjes;
+    el("line", { x1: a0.x0, x2: a0.x0, y1: a0.y0, y2: a0.y1, class: "g-eje" }, g);
+    el("line", { x1: a0.x0, x2: a0.x1, y1: a0.y1, y2: a0.y1, class: "g-eje" }, g);
+    for (const v of marcas(0, 2, 0.5)) {
+      el("line", { x1: X(v), x2: X(v), y1: a0.y1, y2: a0.y1 + 4, class: "g-eje" }, g);
+      texto(g, X(v), a0.y1 + 17, numEje(v), { class: "g-tick", "text-anchor": "middle" });
+    }
+    for (const v of marcas(0.6, 1.6, 0.2)) {
+      el("line", { x1: a0.x0 - 4, x2: a0.x0, y1: Y(v), y2: Y(v), class: "g-eje" }, g);
+      texto(g, a0.x0 - 7, Y(v) + 4, numEje(v), { class: "g-tick", "text-anchor": "end" });
+    }
+    texto(g, a0.x1, a0.y1 + 30, "α = v/c", { class: "g-titulo-eje", "text-anchor": "end" });
+    const ty = texto(g, 0, 0, "D(α)", { class: "g-titulo-eje", "text-anchor": "middle" });
+    ty.setAttribute("transform", `translate(14 ${(a0.y0 + a0.y1) / 2}) rotate(-90)`);
+    // referencias: estática y velocidad crítica
+    el("line", { x1: a0.x0, x2: a0.x1, y1: Y(1), y2: Y(1), class: "g-ref" }, g);
+    texto(g, a0.x1 - 4, Y(1) - 6, "estática, D = 1", { class: "g-rotulo-suave", "text-anchor": "end" });
+    el("line", { x1: X(1), x2: X(1), y1: a0.y0, y2: a0.y1, class: "g-ref" }, g);
+    texto(g, X(1) + 6, a0.y1 - 8, "v = c", { class: "g-rotulo-suave", "text-anchor": "start" });
+    vaciar(this.gCurva);
+    el("polyline", { points: puntos(this.curva, X, Y), class: "g-curva-d" }, this.gCurva);
+    el("circle", { cx: X(1 / 3), cy: Y(1.5), r: 4, class: "g-cruce" }, this.gCurva);
+    texto(this.gCurva, X(1 / 3) + 9, Y(1.5) - 6, "máximo 1,5 en α = 1/3", { class: "g-rotulo-suave", "text-anchor": "start" });
+    return true;
+  },
+  instante() {
+    const a = estado.alfa, X = this.X, Y = this.Y, a0 = this.area;
+    set(this.marca, { x1: X(a), x2: X(a), y1: a0.y0, y2: a0.y1 });
+    set(this.punto, { cx: X(a), cy: Y(calc.D) });
+    const derecha = X(a) + 150 < a0.x1;
+    set(this.txt, { x: X(a) + (derecha ? 8 : -8), y: Math.min(a0.y1 - 8, Y(calc.D) + 20), "text-anchor": derecha ? "start" : "end" });
+    this.txt.textContent = `D = ${num(calc.D, 3)}`;
+  }
+};
+
+/* =====================================================================
+   Lecturas
+   ===================================================================== */
+function lecturas(wCarga) {
+  const a = estado.alfa, t = estado.tau;
+  const reg = $("#l-regimen"), regSub = $("#l-regimen-sub");
+  if (calc.crit) {
+    reg.textContent = "Crítico";
+    reg.className = "pastilla critico";
+    regSub.textContent = "La carga avanza con la velocidad de las ondas";
+  } else if (a < 1) {
+    reg.textContent = "Subcrítico";
+    reg.className = "pastilla";
+    regSub.textContent = `Las ondas viajan ${num(1 / a, 1)} veces más rápido que la carga`;
+  } else {
+    reg.textContent = "Supercrítico";
+    reg.className = "pastilla";
+    regSub.textContent = `La carga viaja ${num(a, 2)} veces más rápido que las ondas`;
+  }
+  const lc = $("#l-carga"), lcs = $("#l-carga-sub");
+  if (calc.crit) {
+    lc.textContent = "no definida";
+    lcs.textContent = "La carga está sobre el escalón";
+  } else {
+    lc.innerHTML = `${num(wCarga, 3)} w<sub>0</sub>`;
+    lcs.innerHTML = calc.trayMax ? `Máximo ${num(calc.trayMax.w, 3)} w<sub>0</sub> en τ = ${num(calc.trayMax.t, 3)}` : "";
+  }
+  const lf = $("#l-frente"), lfs = $("#l-frente-sub");
+  if (calc.crit) {
+    lf.textContent = `x = ${num(t, 3)} L →`;
+    lfs.textContent = "Viaja junto a la carga";
+  } else {
+    lf.textContent = `x = ${num(posFrente(a, t), 3)} L ${sentidoFrente(a, t) > 0 ? "→" : "←"}`;
+    const n = nRebotes(a, t);
+    lfs.textContent = n === 0 ? "Todavía no rebota" : (n === 1 ? "1 rebote en los apoyos" : `${n} rebotes en los apoyos`);
+  }
+  const lx = $("#l-cruce"), lxs = $("#l-cruce-sub");
+  const total = calc.cruces.length;
+  const prox = calc.cruces.find(c => c.t > t + 1e-9);
+  if (calc.crit) {
+    lx.textContent = "—";
+    lxs.textContent = "El frente no se separa de la carga";
+  } else if (!total) {
+    lx.textContent = "ninguno";
+    lxs.textContent = "El frente nunca alcanza a la carga";
+  } else if (prox) {
+    lx.textContent = `τ = ${num(prox.t, 3)}`;
+    lxs.textContent = `${prox.tipo === "de frente" ? "De frente" : "Por detrás"} · ${total} ${total === 1 ? "cruce" : "cruces"} en el recorrido`;
+  } else {
+    lx.textContent = "—";
+    lxs.textContent = `Ya ocurrieron ${total === 1 ? "el único cruce" : `los ${total} cruces`}`;
+  }
+}
+
+/* =====================================================================
+   Coordinación
+   ===================================================================== */
+let listo = false;
+function dibujarTodo() {
+  if (!listo) return;
+  const okC = cuerda.layout(), okD = diagrama.layout(), okA = dalfa.layout();
+  if (okC) cuerda.fijo();
+  if (okD) diagrama.fijo();
+  dibujarInstante(okC, okD, okA);
+}
+function dibujarInstante(okC = !!cuerda.Y, okD = !!diagrama.Y, okA = !!dalfa.Y) {
+  let wCarga = wBajoCarga(estado.tau);
+  if (okC) wCarga = cuerda.instante();
+  if (okD && estado.vistas.diagrama) diagrama.instante();
+  if (okA) dalfa.instante();
+  lecturas(wCarga);
+  $("#tau-valor").textContent = `τ = ${num(estado.tau, 3)}`;
+  const tr = $("#tau-rango");
+  if (document.activeElement !== tr) tr.value = estado.tau;
+  tr.setAttribute("aria-valuetext", `τ = ${num(estado.tau, 3)}`);
+}
+
+function fijarTau(t) {
+  estado.tau = Math.min(1, Math.max(0, t));
+  if (listo) dibujarInstante();
+}
+function fijarAlfa(a, opciones = {}) {
+  if (!isFinite(a)) return;
+  a = Math.min(ALFA_MAX, Math.max(ALFA_MIN, a));
+  if (opciones.redondear) a = Math.round(a / 0.005) * 0.005;
+  if (Math.abs(a - 1) < 0.0025) a = 1;
+  estado.alfa = a;
+  const r = $("#alfa-rango");
+  if (opciones.desde !== "rango") r.value = a;
+  r.setAttribute("aria-valuetext", `α = ${num(a, 3)}`);
+  if (opciones.desde !== "texto") $("#alfa-texto").value = num(a, Math.abs(a * 1000 - Math.round(a * 1000)) < 1e-6 ? 3 : 4).replace(/,?0+$/, "") || "0";
+  $("#alfa-valor").textContent = `α = ${num(a, 3)}`;
+  for (const b of document.querySelectorAll("#chips-alfa .chip")) {
+    b.setAttribute("aria-pressed", Math.abs(parseFloat(b.dataset.alfa) - a) < 1e-6 ? "true" : "false");
+  }
+  actualizarNotaCalculo();
+  recalcular();
+  dibujarTodo();
+  guardar();
+}
+function leerAlfa(s) {
+  s = String(s).trim().replace(",", ".");
+  if (s.includes("/")) {
+    const [p, q] = s.split("/").map(Number);
+    return q ? p / q : NaN;
+  }
+  return parseFloat(s);
+}
+function actualizarNotaCalculo() {
+  const nota = $("#nota-calculo");
+  if (estado.modo === "exacta") {
+    nota.textContent = "La serie de la tesis sumada en forma cerrada: sin truncamiento y al instante.";
+    $("#insignia-calculo").textContent = "Suma exacta";
+  } else {
+    const n = nModos();
+    $("#n-valor").textContent = `n = ${n}`;
+    $("#insignia-calculo").textContent = `Serie, n = ${n}`;
+    if (esCritico(estado.alfa)) {
+      nota.textContent = "Con α = 1 la serie converge a la mitad del escalón, y cerca de él aparecen oscilaciones.";
+    } else {
+      const cota = 8 / (PI * PI * n * Math.abs(1 - estado.alfa));
+      nota.innerHTML = `Error de truncamiento menor que ${num(cota, cota < 0.01 ? 4 : 3)} w<sub>0</sub>. Con pocos modos los quiebres de la cuerda se redondean.`;
+    }
+  }
+}
+function ocultarSegunVistas() {
+  for (const e of document.querySelectorAll("[data-vista]")) {
+    e.hidden = !estado.vistas[e.dataset.vista] || !!(e.dataset.sin && estado.vistas[e.dataset.sin]);
+  }
+}
+function aplicarVistas() {
+  ocultarSegunVistas();
+  $("#panel-diagrama").hidden = !estado.vistas.diagrama;
+  dibujarTodo();
+  guardar();
+}
+
+/* ---------- Reproducción ---------- */
+let reproduciendo = false, tPrev = null, pausaFinal = 0;
+function cuadro(ts) {
+  if (!reproduciendo) return;
+  if (tPrev === null) tPrev = ts;
+  const dt = Math.min(0.1, (ts - tPrev) / 1000);
+  tPrev = ts;
+  if (pausaFinal > 0) {
+    pausaFinal -= dt;
+    if (pausaFinal <= 0) {
+      if (estado.repetir) estado.tau = 0;
+      else { detener(); return; }
+    }
+  } else {
+    estado.tau = Math.min(1, estado.tau + dt / estado.duracion);
+    if (estado.tau >= 1) pausaFinal = 1;
+  }
+  dibujarInstante();
+  requestAnimationFrame(cuadro);
+}
+function reproducir() {
+  if (estado.tau >= 1) estado.tau = 0;
+  reproduciendo = true;
+  tPrev = null;
+  pausaFinal = 0;
+  botonPlay();
+  requestAnimationFrame(cuadro);
+}
+function detener() {
+  if (!reproduciendo) return;
+  reproduciendo = false;
+  botonPlay();
+}
+function botonPlay() {
+  const b = $("#btn-play");
+  b.setAttribute("aria-pressed", reproduciendo ? "true" : "false");
+  $("#txt-play").textContent = reproduciendo ? "Pausar" : "Reproducir";
+  $("#icono-play").innerHTML = reproduciendo
+    ? '<path d="M2.5 1.5h3.2v11H2.5zM8.3 1.5h3.2v11H8.3z"/>'
+    : '<path d="M3 1.5v11l9-5.5z"/>';
+}
+
+/* ---------- Preferencias del visitante (solo en este navegador) ---------- */
+function guardar() {
+  try {
+    localStorage.setItem(CLAVE, JSON.stringify({
+      alfa: estado.alfa, vistas: estado.vistas, modo: estado.modo,
+      nIdx: estado.nIdx, duracion: estado.duracion, repetir: estado.repetir
+    }));
+  } catch (_) {}
+}
+function cargarGuardado() {
+  try { return JSON.parse(localStorage.getItem(CLAVE) || "null"); } catch (_) { return null; }
+}
+function aplicarDatos(d) {
+  if (!d || typeof d !== "object") return;
+  if (isFinite(d.alfa)) estado.alfa = Math.min(ALFA_MAX, Math.max(ALFA_MIN, +d.alfa));
+  if (isFinite(d.tau)) estado.tau = Math.min(1, Math.max(0, +d.tau));
+  if (d.vistas && typeof d.vistas === "object") {
+    for (const k of Object.keys(estado.vistas)) if (typeof d.vistas[k] === "boolean") estado.vistas[k] = d.vistas[k];
+  }
+  if (d.modo === "exacta" || d.modo === "serie") estado.modo = d.modo;
+  if (Number.isInteger(d.nIdx) && d.nIdx >= 0 && d.nIdx < N_MODOS.length) estado.nIdx = d.nIdx;
+  if ([3, 6, 12, 24].includes(d.duracion)) estado.duracion = d.duracion;
+  if (typeof d.repetir === "boolean") estado.repetir = d.repetir;
+}
+
+/* ---------- Controles ---------- */
+function conectar() {
+  $("#alfa-rango").addEventListener("input", e => fijarAlfa(parseFloat(e.target.value), { desde: "rango" }));
+  const campo = $("#alfa-texto");
+  const confirmar = () => {
+    const a = leerAlfa(campo.value);
+    if (isFinite(a)) fijarAlfa(a, { desde: "texto" });
+    else campo.value = num(estado.alfa, 3);
+  };
+  campo.addEventListener("change", confirmar);
+  campo.addEventListener("keydown", e => { if (e.key === "Enter") { e.preventDefault(); confirmar(); } });
+  for (const b of document.querySelectorAll("#chips-alfa .chip")) {
+    b.addEventListener("click", () => fijarAlfa(parseFloat(b.dataset.alfa)));
+  }
+  $("#tau-rango").addEventListener("input", e => { detener(); fijarTau(parseFloat(e.target.value)); });
+  $("#btn-play").addEventListener("click", () => reproduciendo ? detener() : reproducir());
+  $("#btn-inicio").addEventListener("click", () => fijarTau(0));
+  $("#duracion").addEventListener("change", e => { estado.duracion = parseInt(e.target.value, 10); guardar(); });
+  $("#repetir").addEventListener("change", e => { estado.repetir = e.target.checked; guardar(); });
+  const mapa = { "v-frente": "frente", "v-partes": "partes", "v-diagrama": "diagrama", "v-cruces": "cruces", "v-regiones": "regiones" };
+  for (const id in mapa) {
+    $("#" + id).addEventListener("change", e => { estado.vistas[mapa[id]] = e.target.checked; aplicarVistas(); });
+  }
+  for (const r of document.querySelectorAll('input[name="modo"]')) {
+    r.addEventListener("change", () => {
+      if (!r.checked) return;
+      estado.modo = r.value;
+      sincronizarModo();
+      recalcular();
+      dibujarTodo();
+      guardar();
+    });
+  }
+  $("#n-rango").addEventListener("input", e => {
+    estado.nIdx = parseInt(e.target.value, 10);
+    actualizarNotaCalculo();
+    recalcular();
+    dibujarTodo();
+    guardar();
+  });
+  document.addEventListener("keydown", e => {
+    if (e.key !== " " && e.code !== "Space") return;
+    const tg = e.target;
+    if (tg && (tg.closest("button, input[type=text], select, summary, label, a") || tg.isContentEditable)) return;
+    e.preventDefault();
+    reproduciendo ? detener() : reproducir();
+  });
+}
+function sincronizarModo() {
+  for (const r of document.querySelectorAll('input[name="modo"]')) {
+    r.checked = r.value === estado.modo;
+    r.parentElement.classList.toggle("activo", r.checked);
+  }
+  $("#serie-ajustes").hidden = estado.modo !== "serie";
+  $("#n-rango").value = estado.nIdx;
+  actualizarNotaCalculo();
+}
+function sincronizarControles() {
+  $("#v-frente").checked = estado.vistas.frente;
+  $("#v-partes").checked = estado.vistas.partes;
+  $("#v-diagrama").checked = estado.vistas.diagrama;
+  $("#v-cruces").checked = estado.vistas.cruces;
+  $("#v-regiones").checked = estado.vistas.regiones;
+  $("#duracion").value = String(estado.duracion);
+  $("#repetir").checked = estado.repetir;
+  sincronizarModo();
+  ocultarSegunVistas();
+  $("#panel-diagrama").hidden = !estado.vistas.diagrama;
+}
+
+/* ---------- Arranque ---------- */
+function arrancar(datos) {
+  aplicarDatos(datos);
+  cuerda.init();
+  diagrama.init();
+  dalfa.init();
+  conectar();
+  sincronizarControles();
+  listo = true;
+  fijarAlfa(estado.alfa);
+  let pendiente = false;
+  const ro = new ResizeObserver(() => {
+    if (pendiente) return;
+    pendiente = true;
+    requestAnimationFrame(() => { pendiente = false; dibujarTodo(); });
+  });
+  for (const h of [cuerda.host, diagrama.host, dalfa.host]) ro.observe(h);
+}
+
+const hot = window.claude && window.claude.hot;
+if (hot && typeof hot.snapshot === "function") {
+  hot.snapshot(() => ({
+    alfa: estado.alfa, tau: estado.tau, vistas: estado.vistas, modo: estado.modo,
+    nIdx: estado.nIdx, duracion: estado.duracion, repetir: estado.repetir
+  }));
+}
+const guardado = cargarGuardado();
+if (hot && typeof hot.ready === "function") hot.ready(d => arrancar((d && Object.keys(d).length ? d : guardado) || {}));
+else arrancar((hot && hot.data) || guardado || {});
+
+/* Para pruebas fuera de la página */
+window.__caso1 = { wExacta, wSerie, cruces, Dalfa, posFrente, limiteVertical, trayectoriaExacta, regionesDe, pasesFrente };
+})();
+</script>
+
+</body></html>

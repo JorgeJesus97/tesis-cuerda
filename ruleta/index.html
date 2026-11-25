@@ -1,0 +1,705 @@
+<!DOCTYPE html>
+<html lang="es">
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width,initial-scale=1">
+<title>Ruleta del Caso III</title>
+<link rel="icon" href="data:,">
+<link rel="preconnect" href="https://fonts.googleapis.com">
+<link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+<link href="https://fonts.googleapis.com/css2?family=Bungee&family=Rubik:wght@400;500;700&display=swap" rel="stylesheet">
+<style>
+/* VOICE   juego de feria con física de verdad: dos ruletas y una cuerda floja
+   IDEA    el puesto de la ruleta de una feria junto al mar, con su toldo y sus ampolletas; abajo, el escenario de la cuerda
+   PICTURE las dos ruletas giratorias sobre el toldo turquesa de flecos blancos y la cuerda con su partícula, que puede salir volando
+   COLOUR  turquesa profundo de toldo de playa, blanco espuma, turquesa claro y azul mar en las ruletas, azul marino de tinta y aros; el rojo queda solo para el despegue
+   TYPE    Bungee para el letrero, Rubik para el resto, cifras tabulares
+   LAYOUT  una columna: letrero, ruletas, botón, escenario, medidor, resultado y marcador */
+:root{color-scheme:light dark;--bg:light-dark(#FFFFFF,#08151F);--panel:light-dark(#EDF6F8,#102331);--ink:light-dark(#0B2E45,#E8F4F7);--ink2:light-dark(#4A6576,#9CB4C0);--line:light-dark(#D3E4EA,#213A4B);--toldo:light-dark(#0B7D89,#0A5F69);--sombra:light-dark(#07535B,#043B41);--turquesa:light-dark(#2EC4C6,#46D9D6);--aqua:#8FEAE6;--marino:#0B2E45;--azul:light-dark(#1C62C4,#7FB0FF);--pierde:light-dark(#C92F22,#FF7A6B);--foco:light-dark(#1C62C4,#8FEAE6);--soporte:light-dark(#0B2E45,#C5DCE4)}
+:root[data-theme=light]{color-scheme:light}:root[data-theme=dark]{color-scheme:dark}
+*{box-sizing:border-box;min-width:0}
+html,body{margin:0}
+body{background:var(--bg);color:var(--ink);font:16px/1.5 Rubik,system-ui,"Segoe UI",Roboto,Arial,sans-serif;overflow-x:clip;-webkit-tap-highlight-color:transparent}
+button{font:inherit;color:inherit;cursor:pointer}
+.banda{background:var(--toldo);color:#fff;padding:10px max(4vw,14px) 12px;position:relative}
+.banda::after{content:"";position:absolute;left:0;right:0;bottom:-10px;height:10px;background:radial-gradient(circle at 10px 0,var(--toldo) 9px,transparent 10px) 0 0/40px 10px repeat-x,radial-gradient(circle at 30px 0,#fff 7.3px,var(--toldo) 7.9px,var(--toldo) 9px,transparent 10px) 0 0/40px 10px repeat-x}
+.cab{display:flex;align-items:center;justify-content:space-between;gap:10px;max-width:680px;margin:0 auto}
+h1{margin:0;font:400 clamp(19px,5.4vw,32px)/1.05 Bungee,Impact,system-ui,sans-serif;letter-spacing:.01em;text-wrap:balance}
+.redondo{flex:none;width:40px;height:40px;border-radius:50%;border:2px solid #fff;background:transparent;color:#fff;font:700 20px/1 Rubik,sans-serif}
+.ruedas{display:grid;grid-template-columns:minmax(0,1fr) auto minmax(0,1fr);align-items:center;gap:8px;max-width:440px;margin:6px auto 0}
+.rueda{margin:0;text-align:center}
+.rueda svg{width:100%;max-width:134px;aspect-ratio:200/212;display:block;margin:0 auto}
+.rueda text{font:700 17px Rubik,sans-serif}
+.rueda .giro text{font-size:15px}
+.rueda figcaption{font-size:12.5px;line-height:1.2}
+.rueda figcaption span{display:block;opacity:.92}
+.rueda figcaption b{display:block;font:400 20px/1.2 Bungee,Impact,sans-serif;min-height:24px;font-variant-numeric:tabular-nums}
+.girar{width:86px;height:86px;border:0;border-radius:50%;background:#fff;color:var(--marino);font:400 17px Bungee,Impact,sans-serif;box-shadow:0 4px 0 var(--sombra)}
+.girar:active{transform:translateY(2px);box-shadow:0 2px 0 var(--sombra)}
+.girar:disabled{opacity:.6;cursor:default}
+.centro{display:grid;justify-items:center;gap:8px;margin-bottom:14px}
+.comodin{position:relative;overflow:hidden;min-height:34px;padding:0 12px;border:0;border-radius:17px;background:var(--marino);color:var(--aqua);font:700 13.5px Rubik,sans-serif;white-space:nowrap}
+.comodin b{display:inline-block;min-width:1.3em;margin-left:3px;padding:1px 5px;border-radius:9px;background:var(--aqua);color:var(--marino);font-weight:700}
+.comodin:disabled{opacity:.45;cursor:default}
+.comodin i{position:absolute;left:0;bottom:0;height:4px;width:0;background:var(--aqua)}
+.rueda svg.elegible{cursor:pointer;filter:drop-shadow(0 0 6px #A8F5F1)}
+.elige{display:flex;flex-wrap:wrap;gap:8px;margin-top:8px}
+.elige button{min-height:40px;padding:0 14px;border-radius:20px;border:0;background:var(--turquesa);color:var(--marino);font-weight:700}
+.elige button.no{background:transparent;color:var(--ink2);box-shadow:inset 0 0 0 1px var(--line)}
+main{max-width:680px;margin:0 auto;padding:18px max(4vw,14px) 18px}
+.lectura{display:flex;justify-content:space-between;font-size:14px;color:var(--ink2);font-variant-numeric:tabular-nums;gap:10px}
+.lectura b{color:var(--ink);font-weight:500}
+.fig{position:relative;height:clamp(160px,40vw,250px);margin-top:4px;background:var(--panel);border-radius:14px;overflow:hidden}
+.fig svg{position:absolute;top:0;left:0;width:100%;height:100%}
+.aviso{position:absolute;left:50%;top:12px;transform:translateX(-50%);background:#C92F22;color:#fff;font:400 15px Bungee,Impact,sans-serif;padding:5px 12px;border-radius:8px;white-space:nowrap}
+.aviso[hidden]{display:none}
+.lenta{position:absolute;right:10px;bottom:8px;font-size:12.5px;color:var(--ink2)}
+.lenta[hidden]{display:none}
+.medidor{display:grid;grid-template-columns:auto minmax(0,1fr) auto;align-items:center;gap:10px;margin-top:8px;font-size:14px;color:var(--ink2);font-variant-numeric:tabular-nums}
+.barra{height:12px;border-radius:6px;background:var(--panel);box-shadow:inset 0 0 0 1px var(--line);overflow:hidden}
+.barra i{display:block;height:100%;width:0;border-radius:6px;background:var(--azul);transition:background-color .2s}
+#m-val{min-width:7.5em;text-align:right;color:var(--ink)}
+.resultado{margin-top:10px;padding:9px 12px;border-radius:12px;background:var(--panel);font-size:15px;line-height:1.4;min-height:46px}
+.resultado strong{display:block;font:400 19px/1.2 Bungee,Impact,sans-serif;margin-bottom:1px}
+.resultado.gana strong{color:var(--azul)}
+.resultado.pierde strong{color:var(--pierde)}
+.stats{display:grid;grid-template-columns:repeat(3,minmax(0,1fr));gap:6px;margin-top:8px;text-align:center}
+.stats.dos{grid-template-columns:repeat(2,minmax(0,1fr));text-align:left}
+.stats>div{background:var(--panel);border-radius:12px;padding:5px 4px}
+.stats .jug{padding:6px 10px;box-shadow:inset 0 0 0 2px transparent}
+.stats .jug.turno{box-shadow:inset 0 0 0 2px var(--c)}
+.stats .jug h4{margin:0;display:flex;align-items:center;gap:6px;font:700 14px Rubik,sans-serif;white-space:nowrap}
+.stats .jug h4 i{flex:none;width:12px;height:12px;border-radius:50%;background:var(--c)}
+.stats .jug h4 em{margin-left:auto;font-style:normal;font-size:12px;font-weight:500;color:var(--c);white-space:nowrap}
+.stats .jug p{margin:1px 0 0;font-size:12.5px;color:var(--ink2);white-space:nowrap;overflow:hidden;text-overflow:ellipsis}
+.stats .jug p b{display:inline;font:400 18px/1.2 Bungee,Impact,sans-serif;color:var(--ink)}
+.stats b{display:block;font:400 21px/1.2 Bungee,Impact,sans-serif;font-variant-numeric:tabular-nums}
+.stats span{font-size:13px;color:var(--ink2)}
+.pie{display:flex;flex-wrap:wrap;align-items:center;justify-content:space-between;gap:2px 8px;margin-top:6px}
+.modo{display:inline-grid;grid-template-columns:repeat(2,auto);gap:2px;padding:2px;border-radius:10px;background:var(--panel)}
+.modo button{min-height:38px;padding:0 10px;border:0;border-radius:8px;background:transparent;color:var(--ink2);font-weight:500;font-size:14px}
+.modo button[aria-pressed=true]{background:var(--bg);color:var(--ink);box-shadow:0 1px 2px rgba(8,46,69,.18)}
+.modo button:disabled{opacity:.5;cursor:default}
+.link{border:0;background:none;color:var(--azul);font-weight:500;min-height:44px;padding:0 12px}
+.link:disabled{opacity:.4;cursor:default}
+.link.peligro{color:var(--pierde)}
+button:focus-visible{outline:3px solid var(--foco);outline-offset:2px}
+.banda button:focus-visible{outline-color:#fff}
+.hoja{position:fixed;inset:0;z-index:10;display:flex;align-items:flex-end;justify-content:center;background:rgba(4,22,34,.55)}
+.hoja[hidden]{display:none}
+.hoja-panel{width:100%;max-width:680px;max-height:86%;overflow-y:auto;background:var(--bg);border-radius:18px 18px 0 0;padding:16px 20px 24px}
+.hoja-cab{display:flex;justify-content:space-between;align-items:center;gap:10px}
+.hoja h2{margin:0;font:400 22px Bungee,Impact,sans-serif}
+.hoja h3{margin:14px 0 2px;font-size:16px}
+.hoja p{margin:6px 0;color:var(--ink2);font-size:15px}
+.cerrar{min-height:44px;padding:0 14px;border-radius:12px;border:1px solid var(--line);background:var(--panel);font-weight:500}
+@media (prefers-reduced-motion:reduce){.barra i{transition:none}}
+</style>
+</head>
+<body>
+<header class="banda">
+  <div class="cab"><h1>Load on a taut string game</h1><button class="redondo" id="b-reglas" type="button" aria-label="Cómo se juega">?</button></div>
+  <div class="ruedas">
+    <figure class="rueda"><svg id="r-a" viewBox="-100 -112 200 212" role="img" aria-label="Ruleta de la velocidad α = v/c"></svg><figcaption><span>velocidad α</span><b id="v-a">–</b></figcaption></figure>
+    <div class="centro"><button class="girar" id="b-girar" type="button">Girar</button><button class="comodin" id="b-comodin" type="button" disabled aria-label="Activar comodín">Comodín <b id="n-com">3</b><i id="c-tiempo"></i></button></div>
+    <figure class="rueda"><svg id="r-m" viewBox="-100 -112 200 212" role="img" aria-label="Ruleta de la razón de masas μ = m/(ρAL)"></svg><figcaption><span>masas μ</span><b id="v-m">–</b></figcaption></figure>
+  </div>
+</header>
+<main>
+  <div class="lectura"><span id="t-tau">τ = 0</span><span id="t-y">ȳ = 0</span></div>
+  <div class="fig" id="fig"><svg id="escena" role="img" aria-label="La cuerda tensa y la partícula que la recorre"></svg><div class="aviso" id="aviso" hidden>¡Se despegó!</div><div class="lenta" id="lenta" hidden>cámara lenta ×3</div></div>
+  <div class="medidor"><span>Contacto</span><div class="barra"><i id="m-barra"></i></div><span id="m-val">–</span></div>
+  <div class="resultado" id="resultado" aria-live="polite">Gira las ruletas. La partícula parte apenas se detienen: si crees que se va a despegar, usa un comodín rápido, antes de τ&nbsp;=&nbsp;0,5.</div>
+  <div class="stats" id="stats" aria-live="polite"></div>
+  <div class="pie">
+    <div class="modo" id="modo" role="group" aria-label="Número de jugadores"><button type="button" data-modo="1">1 jugador</button><button type="button" data-modo="2">2 jugadores</button></div>
+    <div><button class="link" id="b-otra" type="button" disabled>Ver de nuevo</button><button class="link" id="b-reset" type="button">Reiniciar récords</button></div>
+  </div>
+</main>
+<div class="hoja" id="hoja" role="dialog" aria-modal="true" aria-labelledby="hoja-t" hidden>
+  <div class="hoja-panel">
+    <div class="hoja-cab"><h2 id="hoja-t">Cómo se juega</h2><button class="cerrar" id="b-cerrar" type="button">Cerrar</button></div>
+    <p>Gira las dos ruletas. La primera da la velocidad de la partícula, α = v/c, en unidades de la velocidad de las ondas en la cuerda. La segunda da su masa, μ = m/(ρAL), en unidades de la masa de la cuerda.</p>
+    <p>La partícula entra por el apoyo izquierdo y avanza con velocidad constante. Si llega al apoyo derecho sin despegarse, ganas. Si la fuerza de contacto se anula, se despega y pierdes.</p>
+    <p>En estas ruletas hay 270 combinaciones (18 × 15) y la partícula se despega en 135: sin comodín, pierdes la mitad de las veces. Las peligrosas son las partículas livianas y lentas; casi siempre se despegan en el último décimo del recorrido.</p>
+    <h3>Comodines</h3>
+    <p>Empiezas con 3. Apenas se detienen las ruletas, la partícula parte. Si crees que se va a despegar, tienes hasta τ = 0,5 (la barrita bajo «Comodín» marca el tiempo): toca «Comodín», que pausa y te deja elegir, o toca directamente la ruleta que quieres volver a girar. Sale un valor distinto y la partícula parte de nuevo desde el principio. Se puede usar uno por jugada, y ganas otro cada 3 victorias seguidas, hasta tener 5.</p>
+    <h3>Dos jugadores</h3>
+    <p>Abajo eliges 1 o 2 jugadores. Con 2 se turnan: cada uno gira en su turno, tiene sus propios comodines, su racha y sus partidas ganadas, y la partícula toma su color (turquesa el Jugador 1, azul el Jugador 2).</p>
+    <p>«Reiniciar récords» borra el marcador del modo que estás usando; hay que tocarlo dos veces para confirmar.</p>
+    <h3>La física</h3>
+    <p>Hasta el despegue, la cuerda y la partícula siguen la solución por ondas del Caso III (la de la app Caso III), con la cuerda dibujada como ȳ = Nu/(PL) hacia abajo.</p>
+    <p>Después, la partícula vuela solo con su peso y la cuerda sigue libre. Si la cuerda la vuelve a alcanzar, la empuja con su impedancia, una fuerza de 2α veces la diferencia de velocidades, más las ondas que vuelven del apoyo final. Por eso la partícula puede rebotar varias veces antes de salir volando. No se incluyen las ondas que vuelven del apoyo inicial, que no alcanzan a regresar antes del final.</p>
+    <p>Es el modelo lineal, con pendientes pequeñas y tensión constante; cerca del apoyo final ese modelo deja de valer, así que la salida es solo ilustrativa.</p>
+  </div>
+</div>
+<script type="text/plain" id="motor">
+// Motor del juego: solución por ondas del Caso III (la de la app Caso III) y el despegue.
+"use strict";
+function gaoPesos(kappa) {
+  const th = [1];
+  let k = 1, mx = 1;
+  for (;;) {
+    const nxt = -th[th.length - 1] * Math.pow(kappa, k + 1) / (1 - Math.pow(kappa, k));
+    th.push(nxt);
+    mx = Math.max(mx, Math.abs(nxt));
+    if ((Math.abs(nxt) < 1e-30 * mx && k > 3) || k > 6000) break;
+    k++;
+  }
+  let prod = 1;
+  for (let j = 2; Math.pow(kappa, j) > 1e-18; j++) prod *= 1 - Math.pow(kappa, j);
+  return th.map(t => t / prod);
+}
+function resolverOndas(alpha, mu, opc = {}) {
+  const sMax = opc.sMax || 14;
+  const kappa = (1 - alpha) / (1 + alpha), lam = mu * alpha * alpha;
+  const a = 2 * alpha / (1 + alpha), b = a / kappa;
+  const rigidez = 2 * kappa / (alpha * mu);
+  const ds = opc.ds || Math.min(1e-3, 0.5 / rigidez);
+  const ak = gaoPesos(kappa), K = ak.length;
+  const rk = new Float64Array(K);
+  for (let k = 0; k < K; k++) rk[k] = (2 / (mu * alpha)) * Math.pow(kappa, k);
+  function cerrada(t) {
+    let f = 1, yp = 0, yb = 0;
+    for (let k = 0; k < K; k++) {
+      const E = Math.exp(-rk[k] * t);
+      f -= ak[k] * E;
+      yp += ak[k] * (1 - E) / rk[k];
+      yb += ak[k] * (t / rk[k] - (1 - E) / (rk[k] * rk[k]));
+    }
+    return { y: yb / lam, z: yp / lam, f };
+  }
+  const s0 = -Math.log(1 - a);
+  const N = Math.ceil((sMax - s0) / ds) + 2;
+  const Y = new Float64Array(N), Z = new Float64Array(N), F = new Float64Array(N);
+  let n = 0;
+  const c0 = cerrada(a);
+  Y[0] = c0.y; Z[0] = c0.z; F[0] = (1 - a) * c0.f; n = 1;
+  function hist(phi, cual) {
+    if (phi <= a) { const c = cerrada(phi); return cual === 0 ? c.z : c.f; }
+    const x = (-Math.log(1 - phi) - s0) / ds;
+    let i0 = Math.floor(x) - 1;
+    if (i0 > n - 4) i0 = n - 4;
+    if (i0 < 0) i0 = 0;
+    const arr = cual === 0 ? Z : F;
+    const d0 = x - i0, d1 = d0 - 1, d2 = d0 - 2, d3 = d0 - 3;
+    const res = arr[i0] * (d1 * d2 * d3) / -6 + arr[i0 + 1] * (d0 * d2 * d3) / 2
+              + arr[i0 + 2] * (d0 * d1 * d3) / -2 + arr[i0 + 3] * (d0 * d1 * d2) / 6;
+    return cual === 0 ? res : res / (1 - phi);
+  }
+  function zDe(t, yb) {
+    let tot = t - 2 * alpha * yb;
+    let phi = kappa * t;
+    if (phi > 0) tot -= phi - lam * hist(phi, 0);
+    for (let k = 1; k * a <= t; k++) {
+      phi = (t - k * a) / kappa; if (phi > 0) tot -= phi - lam * hist(phi, 0);
+      phi = t - k * a; if (phi > 0) tot += phi - lam * hist(phi, 0);
+      if (k * b <= t) {
+        phi = t - k * b; if (phi > 0) tot += phi - lam * hist(phi, 0);
+        phi = kappa * t - k * a; if (phi > 0) tot -= phi - lam * hist(phi, 0);
+      }
+    }
+    return tot / lam;
+  }
+  function fDe(t, z) {
+    let tot = 2 * alpha * z;
+    let phi = kappa * t;
+    if (phi > 0) tot += kappa * hist(phi, 1);
+    for (let k = 1; k * a <= t; k++) {
+      phi = (t - k * a) / kappa; if (phi > 0) tot += hist(phi, 1) / kappa;
+      phi = t - k * a; if (phi > 0) tot -= hist(phi, 1);
+      if (k * b <= t) {
+        phi = t - k * b; if (phi > 0) tot -= hist(phi, 1);
+        phi = kappa * t - k * a; if (phi > 0) tot += kappa * hist(phi, 1);
+      }
+    }
+    return tot;
+  }
+  let s = s0, y = Y[0];
+  const h = ds;
+  while (s < sMax - 1e-12 && n < N) {
+    const r1 = (1 - (1 - Math.exp(-s))) * zDe(1 - Math.exp(-s), y);
+    const sm = s + h / 2, tm = 1 - Math.exp(-sm);
+    const r2 = (1 - tm) * zDe(tm, y + h / 2 * r1);
+    const r3 = (1 - tm) * zDe(tm, y + h / 2 * r2);
+    const se = s + h, te = 1 - Math.exp(-se);
+    const r4 = (1 - te) * zDe(te, y + h * r3);
+    y += h / 6 * (r1 + 2 * r2 + 2 * r3 + r4);
+    s = se;
+    const z = zDe(te, y);
+    Y[n] = y; Z[n] = z; F[n] = (1 - te) * fDe(te, z); n++;
+  }
+  const tauFin = 1 - Math.exp(-(s0 + (n - 1) * ds));
+  function yEn(t) {
+    if (t <= a) return cerrada(t).y;
+    if (t >= tauFin) return Y[n - 1];
+    const x = (-Math.log(1 - t) - s0) / ds;
+    const i = Math.min(Math.floor(x), n - 2), r = x - i;
+    return Y[i] * (1 - r) + Y[i + 1] * r;
+  }
+  function zEn(t) { return t >= tauFin ? Z[n - 1] : hist(t, 0); }
+  function fEn(t) { return t >= tauFin ? F[n - 1] / (1 - tauFin) : hist(t, 1); }
+  function cuerda(xi, t) {            // 2 alpha wbar = sum sigma_i G(phi_i)
+    if (t <= 0) return 0;
+    const G = q => q <= 0 ? 0 : q - lam * hist(q, 0);
+    const Kk = Math.ceil((t / alpha + 1) / 2) + 1;
+    let tot = 0;
+    for (let k = -Kk; k <= Kk; k++) {
+      const u1 = t - alpha * xi + 2 * k * alpha, u2 = t + alpha * xi - 2 * k * alpha;
+      tot += G(Math.min(u1 / (1 - alpha), u2 / (1 + alpha))) - G(Math.min(u1 / (1 + alpha), u2 / (1 - alpha)));
+    }
+    return tot / (2 * alpha);
+  }
+  return { alpha, mu, lam, kappa, a, b, ds, s0, n, Y, Z, F, tauFin, yFin: Y[n - 1], cerrada, yEn, zEn, fEn, cuerda };
+}
+
+// Una jugada: la solución por ondas hasta que la fuerza de contacto se anula (tc) o hasta el final;
+// si se despega, el estado de la cuerda en tc para su vibración libre (d'Alembert) y el de la partícula.
+function jugada(al, mu) {
+  const kappa = (1 - al) / (1 + al), rig = 2 * kappa / (al * mu), lam = al * al * mu;
+  const s = resolverOndas(al, mu, { ds: Math.min(5e-4, 0.25 / rig), sMax: 14 });
+  let tc = null, tp = 0;
+  for (let k = 1; k <= 600 && tc === null; k++) { const t = s.a * k / 600; if (s.cerrada(t).f < 0) tc = t; else tp = t; }
+  for (let k = 0; k < s.n && tc === null; k++) { const t = 1 - Math.exp(-(s.s0 + k * s.ds)); if (s.F[k] < 0) tc = t; else tp = t; }
+  if (tc !== null) {                                   // afina el instante del despegue por bisección
+    let a = tp, b = tc;
+    for (let i = 0; i < 40; i++) { const m = 0.5 * (a + b); if (s.fEn(m) < 0) b = m; else a = m; }
+    tc = a;
+  }
+  const tEnd = tc !== null ? tc : Math.min(0.999, s.tauFin);
+  const F = Math.max(30, Math.round(240 * tEnd)), NX = 121;
+  const w = new Float32Array((F + 1) * NX), y = new Float32Array(F + 1), f = new Float32Array(F + 1);
+  let lo = 0, hi = 0;
+  for (let k = 0; k <= F; k++) {
+    const t = tEnd * k / F;
+    y[k] = k ? s.yEn(t) : 0;
+    f[k] = k ? s.fEn(t) : s.cerrada(0).f;
+    lo = Math.min(lo, y[k]); hi = Math.max(hi, y[k]);
+    for (let i = 1; i < NX - 1 && k; i++) {
+      const v = s.cuerda(i / (NX - 1), t);
+      w[k * NX + i] = v;
+      if (v < lo) lo = v;
+      if (v > hi) hi = v;
+    }
+  }
+  let vuelo = null;
+  if (tc !== null) {
+    const M = 480, d = 1e-4, fx = new Float64Array(2 * M + 1), gv = new Float64Array(2 * M + 1), G = new Float64Array(2 * M + 1);
+    for (let i = 1; i < M; i++) { const w1 = s.cuerda(i / M, tc); fx[i] = w1; gv[i] = (w1 - s.cuerda(i / M, tc - d)) / d; }
+    for (let i = 1; i <= M; i++) { fx[M + i] = -fx[M - i]; gv[M + i] = -gv[M - i]; }   // impar en torno al apoyo final
+    for (let i = 1; i <= 2 * M; i++) G[i] = G[i - 1] + 0.5 * (gv[i - 1] + gv[i]) / M;
+    const deriva = G[2 * M];
+    for (let i = 0; i <= 2 * M; i++) G[i] -= deriva * i / (2 * M);                       // primitiva periódica
+    vuelo = { y0: s.yEn(tc), z0: s.zEn(tc), M, fx, G, c: 1 / al };
+    Object.assign(vuelo, despues(al, lam, tc, vuelo));
+  }
+  return { al, mu, lam, tc, y1: s.yFin, cuadros: { F, NX, tEnd, w, y, f, lo, hi }, vuelo };
+}
+// Después del despegue: la partícula vuela con su peso y la cuerda sigue libre (d'Alembert); si la vuelve a
+// tocar, la empuja con la impedancia de la cuerda, f = 2 alfa (v_p - Dw), más las ondas que vuelven del apoyo
+// final (factor 1/kappa en el instante retardado (tau - a)/kappa). Las ondas emitidas después de tc se suman a
+// la cuerda como «carpas» que se abren a velocidad 1/alfa, con sus imágenes en los dos apoyos.
+function despues(al, lam, tc, v) {
+  const kap = (1 - al) / (1 + al), a = 2 * al / (1 + al), h = 2e-5, TMAX = 1.16;
+  const N = Math.ceil((TMAX - tc) / h), CADA = 10, NS = Math.floor(N / CADA) + 1;
+  const I = new Float64Array(N + 2), fh = new Float64Array(N + 2);
+  const ys = new Float32Array(NS), cs = new Uint8Array(NS), fs = new Float32Array(NS), Is = new Float64Array(NS);
+  let k = 0;
+  const enRejilla = (arr, t) => { if (t <= tc) return 0; const q = (t - tc) / h, i = Math.floor(q); if (i >= k) return arr[k]; return arr[i] + (arr[i + 1] - arr[i]) * (q - i); };
+  const libre = (xi, t) => cuerdaLibre(v, xi, t - tc);
+  const Wp = t => libre(t, t) + (enRejilla(I, t) - enRejilla(I, (t - a) / kap)) / (2 * al);
+  let yp = v.y0, vp = v.z0, cont = false, saltos = 0, choques = 0, vmax = 0;
+  for (k = 0; k < N; k++) {
+    const t = tc + k * h;
+    let f = 0;
+    if (t < 1) {
+      const e = 1e-6, Dw = (libre(t + e, t + e) - libre(t - e, t - e)) / (2 * e);
+      const fr = enRejilla(fh, (t - a) / kap) / kap;
+      if (!cont && k > 0 && Wp(t) - yp <= 0) { cont = true; choques++; }
+      if (cont) {
+        vp = (vp + h / lam * (1 + 2 * al * Dw - fr)) / (1 + 2 * al * h / lam);
+        f = 2 * al * (vp - Dw) + fr;
+        if (f < 0) { cont = false; f = 0; saltos++; }
+      }
+      fh[k] = f; I[k + 1] = I[k] + f * h;
+      if (cont) { yp = Wp(t + h); } else { yp += h * vp + 0.5 * h * h / lam; vp += h / lam; }
+    } else {
+      cont = false; fh[k] = 0; I[k + 1] = I[k];
+      yp += h * vp + 0.5 * h * h / lam; vp += h / lam;
+    }
+    vmax = Math.max(vmax, Math.abs(vp));
+    if ((k + 1) % CADA === 0) { const q = (k + 1) / CADA; ys[q] = yp; cs[q] = cont ? 1 : 0; fs[q] = f; Is[q] = I[k + 1]; }
+  }
+  ys[0] = v.y0; cs[0] = 0; fs[0] = 0; Is[0] = 0;
+  return { dt: h * CADA, NS, ys, cs, fs, Is, choques, tmax: TMAX, vmax };
+}
+// ondas emitidas después de tc en el punto xi (carpas con sus imágenes en los apoyos)
+function cuerdaRad(v, al, tc, xi, t) {
+  const n = v.NS, at = u => { if (u <= tc) return 0; const q = (u - tc) / v.dt, i = Math.floor(q); if (i >= n - 1) return v.Is[n - 1]; return v.Is[i] + (v.Is[i + 1] - v.Is[i]) * (q - i); };
+  const T = Math.min(t, 1);
+  let tot = at(Math.min(xi, T, (t - al * xi) / (1 - al)));                  // emitidas detrás del punto
+  const sup = Math.min(T, (t + al * xi) / (1 + al));                          // emitidas delante del punto
+  if (sup > xi) tot += at(sup) - at(Math.max(xi, tc));
+  tot -= at(Math.min(T, (t - al * (2 - xi)) / (1 - al)));                    // imagen en el apoyo final
+  tot -= at(Math.min(T, (t - al * xi) / (1 + al)));                          // imagen en el apoyo inicial
+  return tot / (2 * al);
+}
+// cuerda libre después del despegue: d'Alembert con la extensión impar de período 2
+function cuerdaLibre(v, xi, s) {
+  const per = (arr, x) => { let u = x % 2; if (u < 0) u += 2; const q = u * v.M, i = Math.min(2 * v.M - 1, Math.floor(q)), r = q - i; return arr[i] * (1 - r) + arr[i + 1] * r; };
+  const a = xi - v.c * s, b = xi + v.c * s;
+  return 0.5 * (per(v.fx, a) + per(v.fx, b)) + (per(v.G, b) - per(v.G, a)) / (2 * v.c);
+}
+function alturaVuelo(v, lam, s) { return v.y0 + v.z0 * s + s * s / (2 * lam); }
+if (typeof module !== "undefined") module.exports = { jugada, cuerdaLibre, cuerdaRad, alturaVuelo, resolverOndas };
+
+</script>
+<script>
+{
+const $ = id => document.getElementById(id);
+const ALFAS = [0.1, 0.15, 0.2, 0.25, 0.3, 0.35, 0.4, 0.45, 0.5, 0.55, 0.6, 0.65, 0.7, 0.75, 0.8, 0.85, 0.9, 0.95];
+const MUS = [0.03, 0.05, 0.1, 0.15, 0.2, 0.3, 0.4, 0.5, 0.7, 1, 2, 3, 4, 5, 20];
+const SECT = [{ f: "#2EC4C6", t: "#0B2E45" }, { f: "#FFFFFF", t: "#0B2E45" }, { f: "#1C62C4", t: "#FFFFFF" }];
+const num = (v, d) => (v < 0 ? "−" : "") + Math.abs(v).toFixed(d).replace(".", ",");
+const corto = v => String(v).replace(".", ",");
+const acot = (v, a, b) => Math.max(a, Math.min(b, v));
+const reducido = window.matchMedia && matchMedia("(prefers-reduced-motion: reduce)").matches;
+
+// ---------- marcador: 1 jugador (M) o 2 jugadores (D) ----------
+const COLORES = [{ f: "#2CCAC4", s: "#0A4F55", c: "light-dark(#0A7A7C,#4FD8D2)" }, { f: "#3B74F0", s: "#102F75", c: "light-dark(#2453C9,#8DB1FF)" }];
+const nuevo = () => ({ racha: 0, mejor: 0, jugadas: 0, ganadas: 0, comodines: 3 });
+let M = nuevo(), D = { turno: 0, j: [nuevo(), nuevo()] }, modo = 1;
+try {
+  const g = JSON.parse(localStorage.getItem("ruleta-caso3") || "null"); if (g && typeof g.racha === "number") M = Object.assign(nuevo(), g);
+  const d = JSON.parse(localStorage.getItem("ruleta-caso3-2j") || "null"); if (d && d.j && d.j.length === 2) D = { turno: d.turno === 1 ? 1 : 0, j: d.j.map(x => Object.assign(nuevo(), x)) };
+  if (localStorage.getItem("ruleta-caso3-modo") === "2") modo = 2;
+} catch (e) { /* sin almacenamiento */ }
+const P = () => modo === 1 ? M : D.j[D.turno];
+const nombre = i => "Jugador " + (i + 1);
+function marcador() {
+  const st = $("stats");
+  if (modo === 1) {
+    st.className = "stats";
+    st.innerHTML = `<div><b>${M.racha}</b><span>racha</span></div><div><b>${M.mejor}</b><span>mejor racha</span></div><div><b>${M.ganadas}/${M.jugadas}</b><span>ganadas</span></div>`;
+  } else {
+    st.className = "stats dos";
+    st.innerHTML = D.j.map((p, i) => `<div class="jug${i === D.turno ? " turno" : ""}" style="--c:${COLORES[i].c}"><h4><i></i>${nombre(i)}${i === D.turno ? "<em>turno</em>" : ""}</h4>` +
+      `<p><b>${p.ganadas}</b> ${p.ganadas === 1 ? "ganada" : "ganadas"} de ${p.jugadas}</p><p>racha ${p.racha} · comodines ${p.comodines}</p></div>`).join("");
+  }
+  $("n-com").textContent = P().comodines;
+  for (const b of $("modo").children) b.setAttribute("aria-pressed", String(+b.dataset.modo === modo));
+  try {
+    localStorage.setItem("ruleta-caso3", JSON.stringify(M)); localStorage.setItem("ruleta-caso3-2j", JSON.stringify(D)); localStorage.setItem("ruleta-caso3-modo", String(modo));
+  } catch (e) { /* sin almacenamiento */ }
+}
+
+// ---------- ruletas ----------
+function rueda(svg, vals, centro) {
+  const N = vals.length, ang = 360 / N, R = 88;
+  let s = '<g class="giro">';
+  for (let k = 0; k < N; k++) {
+    const a0 = (k * ang - 90) * Math.PI / 180, a1 = ((k + 1) * ang - 90) * Math.PI / 180, c = SECT[k % 3];
+    s += `<path d="M0 0L${(R * Math.cos(a0)).toFixed(2)} ${(R * Math.sin(a0)).toFixed(2)}A${R} ${R} 0 0 1 ${(R * Math.cos(a1)).toFixed(2)} ${(R * Math.sin(a1)).toFixed(2)}Z" fill="${c.f}" stroke="#0B2E45" stroke-width="1.4"/>`;
+    s += `<text transform="rotate(${((k + 0.5) * ang - 90).toFixed(2)}) translate(61 0)" text-anchor="middle" dominant-baseline="central" fill="${c.t}">${corto(vals[k])}</text>`;
+  }
+  s += '</g><circle r="91" fill="none" stroke="#0B2E45" stroke-width="7"/>';
+  for (let i = 0; i < 16; i++) { const a = i * Math.PI / 8; s += `<circle cx="${(91 * Math.cos(a)).toFixed(2)}" cy="${(91 * Math.sin(a)).toFixed(2)}" r="2.4" fill="#FFFFFF"/>`; }
+  s += `<circle r="17" fill="#0B2E45"/><text text-anchor="middle" dominant-baseline="central" fill="#8FEAE6" style="font:700 17px Rubik,sans-serif">${centro}</text>`;
+  s += '<path d="M0 -80L-10 -104H10Z" fill="#FFFFFF" stroke="#0B2E45" stroke-width="2.5" stroke-linejoin="round"/>';
+  svg.innerHTML = s;
+  return { g: svg.querySelector(".giro"), N, ang, rot: 0 };
+}
+const RA = rueda($("r-a"), ALFAS, "α"), RM = rueda($("r-m"), MUS, "μ");
+function girarRueda(r, k, dur, listo) {
+  const c = (k + 0.5) * r.ang, jit = (Math.random() - 0.5) * r.ang * 0.6;
+  const desde = r.rot, hasta = desde + 360 * (reducido ? 1 : 5) + ((((-c - desde) % 360) + 360) % 360) + jit;
+  const t0 = performance.now();
+  const paso = ts => {
+    const u = Math.min(1, (ts - t0) / dur), e = 1 - Math.pow(1 - u, 4);
+    r.rot = desde + (hasta - desde) * e;
+    r.g.setAttribute("transform", `rotate(${r.rot.toFixed(2)})`);
+    if (u < 1) requestAnimationFrame(paso); else listo();
+  };
+  requestAnimationFrame(paso);
+}
+
+// ---------- cálculo (en un hilo aparte si se puede) ----------
+const fuente = $("motor").textContent;
+let hilo = null, local = null, esperando = null;
+try {
+  const url = URL.createObjectURL(new Blob([fuente + "\nself.onmessage = function (e) { var p = e.data, r; try { r = jugada(p.al, p.mu); } catch (err) { r = { error: String(err) }; } r.id = p.id; var tr = []; if (r.cuadros) { tr.push(r.cuadros.w.buffer, r.cuadros.y.buffer, r.cuadros.f.buffer); if (r.vuelo) tr.push(r.vuelo.fx.buffer, r.vuelo.G.buffer, r.vuelo.ys.buffer, r.vuelo.cs.buffer, r.vuelo.fs.buffer, r.vuelo.Is.buffer); } self.postMessage(r, tr); };"], { type: "text/javascript" }));
+  hilo = new Worker(url);
+  hilo.onmessage = e => { if (esperando && esperando.id === e.data.id) { const f = esperando.listo; esperando = null; f(e.data); } };
+  hilo.onerror = ev => { if (ev && ev.preventDefault) ev.preventDefault(); hilo = null; if (esperando) { const p = esperando; esperando = null; calcular(p.al, p.mu, p.listo); } };
+} catch (e) { hilo = null; }
+let idc = 0;
+function calcular(al, mu, listo) {
+  if (hilo) { esperando = { id: ++idc, al, mu, listo }; hilo.postMessage({ id: idc, al, mu }); return; }
+  setTimeout(() => {
+    if (!local) local = new Function(fuente + "\nreturn { jugada: jugada };")();
+    let r; try { r = local.jugada(al, mu); } catch (err) { r = { error: String(err) }; }
+    listo(r);
+  }, 30);
+}
+
+// ---------- el escenario ----------
+const X0 = -0.03, X1 = 1.16, ST = {}, ESC = { lo: -0.06, hi: 0.3 };
+let J = null, libre = null, rad = null;
+const A = { tau: 0, fase: "quieto", raf: 0, ult: 0, pierde: false };
+function geom() { const sv = $("escena"); ST.W = sv.clientWidth; ST.H = sv.clientHeight; ST.l = 12; ST.r = 12; ST.t = 26; ST.b = 22; }
+const X = x => ST.l + (x - X0) / (X1 - X0) * (ST.W - ST.l - ST.r);
+const Y = w => ST.t + (w - ESC.lo) / (ESC.hi - ESC.lo) * (ST.H - ST.t - ST.b);
+function escala() {
+  const c = J.cuadros; let lo = Math.min(c.lo, 0), hi = Math.max(c.hi, 0);
+  if (J.vuelo) {
+    const v = J.vuelo;
+    for (let q = 0; q < v.NS; q += 20) { const t = J.tc + q * v.dt; if (t > 1) break; lo = Math.min(lo, v.ys[q]); hi = Math.max(hi, v.ys[q]); }
+    for (let j = 1; j <= 12; j++) { const t = J.tc + (1.16 - J.tc) * j / 12; for (let i = 1; i < 30; i++) { const w = cuerdaPost(i / 30, t); lo = Math.min(lo, w); hi = Math.max(hi, w); } }
+  }
+  const sp = Math.max(hi - lo, 0.08); ESC.lo = lo - 0.14 * sp; ESC.hi = hi + 0.1 * sp;
+}
+function cuerdaPost(xi, t) { return libre(J.vuelo, xi, t - J.tc) + rad(J.vuelo, J.al, J.tc, xi, t); }
+// estado de la partícula en tau: [y, fuerza, en contacto, 0 = cuerda, 1 = después del despegue]
+function estado(tau) {
+  const c = J.cuadros;
+  if (J.tc === null || tau <= c.tEnd) {
+    const kf = acot(tau / c.tEnd, 0, 1) * c.F, k0 = Math.min(c.F - 1, Math.floor(kf)), f = kf - k0;
+    return { y: c.y[k0] * (1 - f) + c.y[k0 + 1] * f, f: c.f[k0] * (1 - f) + c.f[k0 + 1] * f, cont: true, k0, fr: f };
+  }
+  const v = J.vuelo, q = acot((tau - J.tc) / v.dt, 0, v.NS - 1.001), i = Math.floor(q), r = q - i;
+  return { y: v.ys[i] * (1 - r) + v.ys[i + 1] * r, f: v.fs[i], cont: !!v.cs[i] };
+}
+function particula(x, y, vuela) {
+  const ex = vuela ? 2.9 : 2.3, py = vuela ? -2.6 : -1.2, col = COLORES[J ? J.jugador || 0 : modo === 2 ? D.turno : 0];
+  return `<g transform="translate(${x.toFixed(1)} ${(y - 8).toFixed(1)})"><circle r="8.5" fill="${col.f}" stroke="${col.s}" stroke-width="1.6"/>` +
+    `<circle cx="-3" cy="-1.6" r="${ex}" fill="#fff"/><circle cx="3" cy="-1.6" r="${ex}" fill="#fff"/>` +
+    `<circle cx="-2.2" cy="${py}" r="1.1" fill="#0B2E45"/><circle cx="3.8" cy="${py}" r="1.1" fill="#0B2E45"/></g>`;
+}
+function dibujar() {
+  if (!ST.W) geom();
+  if (!ST.W || !ST.H) return;
+  let s = `<line x1="${X(0)}" y1="${Y(0)}" x2="${X(1)}" y2="${Y(0)}" stroke="currentColor" opacity=".35" stroke-dasharray="3 5"/>`;
+  for (const x of [0, 1]) s += `<path d="M${X(x)} ${Y(0)}l-8 13h16z" style="fill:var(--soporte)"/><rect x="${X(x) - 12}" y="${Y(0) + 13}" width="24" height="4" rx="2" style="fill:var(--soporte)"/>`;
+  if (!J) {
+    s += `<line x1="${X(0)}" y1="${Y(0)}" x2="${X(1)}" y2="${Y(0)}" stroke="currentColor" stroke-width="2.4"/>` + particula(X(0), Y(0), false);
+    $("escena").innerHTML = s; return;
+  }
+  const tau = A.tau, c = J.cuadros, e = estado(tau);
+  let cuerda = "", tray1 = "", tray2 = "", tray3 = "";
+  const P = (x, w) => X(x).toFixed(1) + " " + Y(w).toFixed(1);
+  if (J.tc === null || tau <= c.tEnd) {
+    let puesto = false;
+    for (let i = 0; i < c.NX; i++) {
+      const x = i / (c.NX - 1);
+      if (!puesto && x >= tau) { cuerda += (cuerda ? "L" : "M") + P(tau, e.y); puesto = true; if (x === tau) continue; }
+      cuerda += (cuerda ? "L" : "M") + P(x, c.w[e.k0 * c.NX + i] * (1 - e.fr) + c.w[(e.k0 + 1) * c.NX + i] * e.fr);
+    }
+    for (let k = 0; k <= e.k0; k++) tray1 += (k ? "L" : "M") + P(c.tEnd * k / c.F, c.y[k]);
+    tray1 += "L" + P(tau, e.y);
+  } else {
+    for (let i = 0; i <= 120; i++) { const x = i / 120; cuerda += (i ? "L" : "M") + P(x, i === 0 || i === 120 ? 0 : cuerdaPost(x, tau)); }
+    for (let k = 0; k <= c.F; k++) tray1 += (k ? "L" : "M") + P(c.tEnd * k / c.F, c.y[k]);
+    const v = J.vuelo, qmax = Math.min(v.NS - 1, Math.floor((tau - J.tc) / v.dt));
+    let actual = null;
+    for (let q = 0; q <= qmax; q += 2) {
+      const t = J.tc + q * v.dt, seg = v.cs[q] ? 2 : 3, p = P(t, v.ys[q]);
+      if (seg !== actual) { const pr = q ? P(J.tc + (q - 2) * v.dt, v.ys[q - 2]) : p; if (seg === 2) tray2 += "M" + pr; else tray3 += "M" + pr; actual = seg; }
+      if (seg === 2) tray2 += "L" + p; else tray3 += "L" + p;
+    }
+  }
+  s += `<path d="${tray1}${tray2}" fill="none" stroke="var(--azul)" stroke-width="2" opacity=".85"/>`;
+  if (tray3) s += `<path d="${tray3}" fill="none" stroke="var(--pierde)" stroke-width="2" stroke-dasharray="5 4"/>`;
+  s += `<path d="${cuerda}" fill="none" stroke="currentColor" stroke-width="2.4" stroke-linejoin="round" stroke-linecap="round"/>`;
+  if (J.tc !== null && tau > c.tEnd) s += `<circle cx="${X(J.tc).toFixed(1)}" cy="${Y(J.vuelo.y0).toFixed(1)}" r="4" fill="none" stroke="var(--pierde)" stroke-width="2"/>`;
+  s += particula(X(tau), Y(e.y), !e.cont);
+  $("escena").innerHTML = s;
+  $("t-tau").innerHTML = "τ = <b>" + num(Math.min(tau, 9.999), 3) + "</b>";
+  $("t-y").innerHTML = "ȳ = <b>" + num(e.y, Math.abs(e.y) < 0.01 ? 4 : 3) + "</b>";
+  const b = $("m-barra");
+  if (e.cont && tau < 1) {
+    b.style.width = (100 * acot(e.f / 2, 0, 1)).toFixed(1) + "%";
+    b.style.backgroundColor = e.f > 0.5 ? "var(--azul)" : e.f > 0.2 ? "var(--turquesa)" : "var(--pierde)";
+    $("m-val").textContent = (e.f > 9.99 ? "> 9,99" : num(Math.max(0, e.f), 2)) + " veces el peso";
+  } else { b.style.width = "0"; $("m-val").textContent = tau >= 1 ? "fuera de la cuerda" : "en el aire"; }
+}
+new ResizeObserver(() => { geom(); dibujar(); }).observe($("escena"));
+
+// ---------- la animación ----------
+function bucle(ts) {
+  A.raf = 0;
+  const dt = A.ult ? Math.min(0.05, (ts - A.ult) / 1000) : 0; A.ult = ts;
+  const c = J.cuadros, post = J.tc !== null && A.tau >= c.tEnd;
+  A.tau += dt * (post ? 1 / 18 : 1 / 6);
+  if (R.ventana) {
+    const q = 1 - A.tau / VENT;
+    if (q <= 0) { R.ventana = false; botones(); mensajeJugada("¡Allá va!"); } else $("c-tiempo").style.width = (100 * q).toFixed(1) + "%";
+  }
+  if (J.tc === null && A.tau >= c.tEnd) { A.tau = c.tEnd; dibujar(); return terminar(); }
+  if (J.tc !== null && !A.pierde && A.tau >= J.tc) { A.pierde = true; $("aviso").hidden = false; $("lenta").hidden = false; }
+  if (post) {
+    const e = estado(A.tau), sp = ESC.hi - ESC.lo;
+    if (A.tau >= J.vuelo.tmax - 1e-6 || (A.tau > 1 && (e.y < ESC.lo - 0.2 * sp || e.y > ESC.hi + 0.3 * sp))) { dibujar(); return terminar(); }
+  }
+  dibujar();
+  A.raf = requestAnimationFrame(bucle);
+}
+function correr(repeticion) {
+  A.tau = 0; A.ult = 0; A.pierde = false; A.fase = "corre";
+  $("aviso").hidden = true; $("lenta").hidden = true;
+  if (repeticion) R.ventana = false;
+  R.fase = "corre"; botones();
+  if (R.ventana) $("c-tiempo").style.width = "100%";
+  if (!A.raf) A.raf = requestAnimationFrame(bucle);
+}
+function terminar() {
+  A.fase = "fin"; $("lenta").hidden = true;
+  const r = $("resultado"), primera = !J.contado, yo = J.jugador || 0, p = modo === 1 ? M : D.j[yo], dos = modo === 2;
+  let premio = false;
+  J.contado = true;
+  if (primera) {
+    p.jugadas++;
+    if (J.tc === null) {
+      p.ganadas++; p.racha++; p.mejor = Math.max(p.mejor, p.racha);
+      if (p.racha % 3 === 0 && p.comodines < 5) { p.comodines++; premio = true; }
+    } else p.racha = 0;
+    if (dos) D.turno = 1 - yo;                       // pasa el turno
+    marcador();
+  }
+  R.fase = "fin"; R.ventana = false; botones();
+  const turno = dos && primera ? ` Turno del ${nombre(1 - yo)}.` : "";
+  if (J.tc === null) {
+    r.className = "resultado gana";
+    r.innerHTML = `<strong>¡Llegó al apoyo!</strong>` + (dos ? `Punto para el ${nombre(yo)}: lleva ${p.ganadas} de ${p.jugadas}.` : `No se despegó en todo el recorrido. Racha:&nbsp;${p.racha}.`) +
+      ` Llegó con ȳ&nbsp;=&nbsp;${num(J.y1, 3)}.` + (premio ? (dos ? " ¡Ganó un comodín!" : " ¡Ganaste un comodín!") : "") + turno;
+  } else {
+    // sube o cae al pasar el apoyo final
+    const v = J.vuelo, q1 = Math.min(v.NS - 1, Math.max(0, Math.round((1 - J.tc) / v.dt)));
+    let ymin = v.ys[q1];
+    for (let q = q1; q < v.NS; q++) ymin = Math.min(ymin, v.ys[q]);
+    const sube = v.ys[q1] - ymin > 0.08 * (ESC.hi - ESC.lo);          // sube a la vista antes de caer
+    r.className = "resultado pierde";
+    r.innerHTML = `<strong>Se despegó en τ&nbsp;=&nbsp;${num(J.tc, J.tc >= 0.995 ? 4 : 3)}</strong>` + (sube ? "Salió volando hacia arriba." : "Cayó pasado el apoyo.") +
+      (primera ? (dos ? ` El ${nombre(yo)} no suma.` : " Perdiste; la racha vuelve a 0.") : "") + turno;
+  }
+}
+
+// ---------- girar, comodín y jugar: la partícula parte apenas se detienen las ruletas ----------
+const VENT = 0.5;                                   // el comodín se puede usar hasta tau = 0,5
+const R = { fase: "listo", ia: 0, im: 0, datos: null, id: 0, usado: false, ventana: false };
+const azar = n => Math.floor(Math.random() * n);
+const puedeComodin = () => R.fase === "corre" && R.ventana && P().comodines > 0 && !R.usado;
+function botones() {
+  const g = $("b-girar"), ok = puedeComodin();
+  g.disabled = !(R.fase === "listo" || R.fase === "fin");
+  $("b-comodin").disabled = !ok;
+  if (!ok && R.fase !== "eligiendo") $("c-tiempo").style.width = "0";
+  $("b-otra").disabled = R.fase !== "fin";
+  const quieto = R.fase === "listo" || R.fase === "fin";
+  for (const b of $("modo").children) b.disabled = !quieto;
+  $("b-reset").disabled = !quieto;
+  for (const id of ["r-a", "r-m"]) $(id).classList.toggle("elegible", ok || R.fase === "eligiendo");
+}
+function calcularJugada() {
+  R.datos = null;
+  const id = ++R.id;
+  calcular(ALFAS[R.ia], MUS[R.im], d => { if (id !== R.id) return; R.datos = d; if (R.fase === "esperando") jugar(); });
+}
+function mensajeJugada(extra) {
+  const al = ALFAS[R.ia], mu = MUS[R.im], lam = al * al * mu, r = $("resultado");
+  r.className = "resultado";
+  r.innerHTML = (modo === 2 ? `${nombre(D.turno)}: ` : "") + `α&nbsp;=&nbsp;${corto(al)}, μ&nbsp;=&nbsp;${corto(mu)}, λ&nbsp;=&nbsp;α²μ&nbsp;=&nbsp;${num(lam, lam < 0.01 ? 4 : lam < 1 ? 3 : 1)}. ${extra}`;
+}
+function girar() {
+  if (A.raf) { cancelAnimationFrame(A.raf); A.raf = 0; }
+  $("aviso").hidden = true; $("lenta").hidden = true;
+  R.fase = "girando"; R.usado = false; R.ventana = false; botones();
+  $("v-a").textContent = "…"; $("v-m").textContent = "…";
+  const r = $("resultado"); r.className = "resultado"; r.textContent = modo === 2 ? `${nombre(D.turno)} gira…` : "Girando…";
+  R.ia = azar(ALFAS.length); R.im = azar(MUS.length);
+  calcularJugada();
+  let paradas = 0;
+  const listo = () => { if (++paradas === 2) jugar(); };
+  girarRueda(RA, R.ia, reducido ? 500 : 2600, () => { $("v-a").textContent = corto(ALFAS[R.ia]); listo(); });
+  girarRueda(RM, R.im, reducido ? 700 : 3400, () => { $("v-m").textContent = corto(MUS[R.im]); listo(); });
+}
+function jugar() {
+  const r = $("resultado");
+  if (!R.datos) { R.fase = "esperando"; botones(); r.textContent = "Calculando…"; return; }
+  if (R.datos.error) { R.fase = "fin"; botones(); r.textContent = "No se pudo calcular esta jugada; gira otra vez."; return; }
+  J = R.datos; J.contado = false;
+  escala(); geom();
+  R.ventana = !R.usado && P().comodines > 0;
+  J.jugador = modo === 2 ? D.turno : 0;
+  mensajeJugada(R.ventana ? "¡Allá va! ¿Comodín? Decide antes de τ&nbsp;=&nbsp;0,5." : "¡Allá va!");
+  correr(false);
+}
+function comodin() {
+  if (!puedeComodin()) return;
+  if (A.raf) { cancelAnimationFrame(A.raf); A.raf = 0; }
+  R.fase = "eligiendo"; botones();
+  $("resultado").innerHTML = 'Pausa. ¿Qué ruleta vuelves a girar? También puedes tocarla.<div class="elige"><button type="button" data-c="a">Girar α</button><button type="button" data-c="m">Girar μ</button><button type="button" class="no" data-c="no">Mejor no</button></div>';
+}
+function cambiar(c) {
+  if (R.fase !== "eligiendo" && !(c !== "no" && puedeComodin())) return;
+  if (c === "no") {                                  // sigue la misma jugada
+    R.fase = "corre"; botones(); mensajeJugada("¡Sigue!");
+    A.ult = 0; if (!A.raf) A.raf = requestAnimationFrame(bucle);
+    return;
+  }
+  if (A.raf) { cancelAnimationFrame(A.raf); A.raf = 0; }
+  P().comodines--; marcador(); R.usado = true; R.ventana = false; R.fase = "girando"; botones();
+  const esA = c === "a", n = esA ? ALFAS.length : MUS.length, antes = esA ? R.ia : R.im;
+  let k; do k = azar(n); while (k === antes);
+  if (esA) { R.ia = k; $("v-a").textContent = "…"; } else { R.im = k; $("v-m").textContent = "…"; }
+  calcularJugada();
+  J = null; A.tau = 0; $("aviso").hidden = true; $("lenta").hidden = true; dibujar();
+  const r = $("resultado"); r.className = "resultado"; r.textContent = "Comodín: girando de nuevo…";
+  girarRueda(esA ? RA : RM, k, reducido ? 500 : 2600, () => { if (esA) $("v-a").textContent = corto(ALFAS[k]); else $("v-m").textContent = corto(MUS[k]); jugar(); });
+}
+$("b-girar").addEventListener("click", () => { if (R.fase === "listo" || R.fase === "fin") girar(); });
+$("b-comodin").addEventListener("click", comodin);
+$("resultado").addEventListener("click", ev => { const b = ev.target.closest("button[data-c]"); if (b) cambiar(b.dataset.c); });
+$("r-a").addEventListener("click", () => cambiar("a"));
+$("r-m").addEventListener("click", () => cambiar("m"));
+$("modo").addEventListener("click", ev => {
+  const b = ev.target.closest("button[data-modo]");
+  if (!b || +b.dataset.modo === modo || !(R.fase === "listo" || R.fase === "fin")) return;
+  modo = +b.dataset.modo; marcador(); botones(); dibujar();
+  const r = $("resultado"); r.className = "resultado";
+  r.textContent = modo === 2 ? `Dos jugadores: se turnan y cada uno tiene sus comodines. Le toca al ${nombre(D.turno)}.` : "Un jugador: gira las ruletas.";
+});
+let resetT = 0;
+$("b-reset").addEventListener("click", () => {
+  const b = $("b-reset");
+  if (!(R.fase === "listo" || R.fase === "fin")) return;
+  if (!b.classList.contains("peligro")) {
+    b.classList.add("peligro"); b.textContent = "¿Seguro? Toca otra vez";
+    clearTimeout(resetT); resetT = setTimeout(() => { b.classList.remove("peligro"); b.textContent = "Reiniciar récords"; }, 3000);
+    return;
+  }
+  clearTimeout(resetT); b.classList.remove("peligro"); b.textContent = "Reiniciar récords";
+  if (modo === 1) M = nuevo(); else D = { turno: 0, j: [nuevo(), nuevo()] };
+  marcador(); botones(); dibujar();
+  const r = $("resultado"); r.className = "resultado";
+  r.textContent = modo === 1 ? "Récords reiniciados: racha 0, mejor racha 0 y 3 comodines." : "Marcador de los dos jugadores reiniciado. Empieza el Jugador 1.";
+});
+$("b-otra").addEventListener("click", () => { if (J && R.fase === "fin") { const r = $("resultado"); r.className = "resultado"; r.innerHTML = `α&nbsp;=&nbsp;${corto(J.al)}, μ&nbsp;=&nbsp;${corto(J.mu)}: otra vez.`; correr(true); } });
+
+// ---------- reglas ----------
+const hoja = $("hoja");
+$("b-reglas").addEventListener("click", () => { hoja.hidden = false; $("b-cerrar").focus(); });
+$("b-cerrar").addEventListener("click", () => { hoja.hidden = true; $("b-reglas").focus(); });
+hoja.addEventListener("click", ev => { if (ev.target === hoja) hoja.hidden = true; });
+document.addEventListener("keydown", ev => { if (ev.key === "Escape") hoja.hidden = true; });
+// Flecha atrás de la app Android: primero cierra las reglas o la pausa del comodín; si no hay nada abierto, la app sale.
+window.atras = () => { if (!hoja.hidden) { hoja.hidden = true; $("b-reglas").focus(); return true; } if (R.fase === "eligiendo") { cambiar("no"); return true; } return false; };
+
+// funciones del motor para dibujar la cuerda después del despegue
+const m = new Function(fuente + "\nreturn { cuerdaLibre: cuerdaLibre, cuerdaRad: cuerdaRad };")();
+libre = m.cuerdaLibre; rad = m.cuerdaRad;
+marcador(); botones(); dibujar();
+if (modo === 2) $("resultado").textContent = `Dos jugadores: le toca al ${nombre(D.turno)}.`;
+}
+</script>
+</body>
+</html>

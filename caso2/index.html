@@ -1,0 +1,1663 @@
+<!doctype html><html><head><meta charset=utf8><meta name=viewport content="width=device-width,initial-scale=1,viewport-fit=cover"><style>:root{color-scheme:light;box-sizing:border-box;padding-top:env(safe-area-inset-top,0px);padding-bottom:env(safe-area-inset-bottom,0px)}html{scroll-padding-top:env(safe-area-inset-top,0px)}body{margin:0;padding:0;font:14px -apple-system,BlinkMacSystemFont,sans-serif;background:#fff;color:#000}img{max-width:100%}[hidden]:not([hidden=until-found i]){display:none!important}</style><style>.ceja a{color:inherit;text-decoration:underline;text-decoration-thickness:1px;text-underline-offset:3px}.ceja a:hover{color:var(--tinta)}</style>
+</head><body>
+<title>Consola del Caso II</title>
+<meta name="claude:viewport-fit-sides" content="cover">
+<link rel="preconnect" href="https://fonts.googleapis.com">
+<link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+<link rel="stylesheet" href="https://fonts.googleapis.com/css2?family=Barlow:ital,wght@0,400;0,500;0,600;1,400&family=Barlow+Semi+Condensed:wght@500;600;700&family=IBM+Plex+Mono:wght@400;500&display=swap">
+<style>
+/* Diseño: la misma consola de banco de ensayo del Caso I. Columna de mandos a la
+   izquierda e instrumentos sobre papel milimetrado a la derecha; cuerda naranja,
+   trayectoria azul y, en lugar del frente de onda, la caída libre en aqua. */
+:root {
+  --papel: #EDF0F3;
+  --panel: #FBFCFD;
+  --tinta: #17202A;
+  --tinta-2: #46515E;
+  --tinta-3: #76808C;
+  --linea: #D4DAE1;
+  --mm: #E6EBF1;
+  --mm-mayor: #CFD8E2;
+  --reposo: #E8ECF0;
+  --cuerda: #EB6834;
+  --tray: #2A78D6;
+  --tray-tenue: #B7D3F6;
+  --caida: #1BAF7A;
+  --mando: #17202A;
+  --mando-texto: #F6F8FA;
+  --chip: #E6EAEF;
+  --foco: #2A78D6;
+  --f-display: "Barlow Semi Condensed", "Barlow", "Arial Narrow", system-ui, -apple-system, "Segoe UI", Roboto, Arial, sans-serif;
+  --f-texto: "Barlow", system-ui, -apple-system, "Segoe UI", Roboto, Helvetica, Arial, sans-serif;
+  --f-datos: "IBM Plex Mono", ui-monospace, SFMono-Regular, Menlo, Consolas, "Liberation Mono", monospace;
+}
+@media (prefers-color-scheme: dark) {
+  :root:not([data-theme="light"]) {
+    --papel: #0C1117;
+    --panel: #131A22;
+    --tinta: #E3E8EE;
+    --tinta-2: #A8B3BF;
+    --tinta-3: #7B8693;
+    --linea: #263240;
+    --mm: #19222C;
+    --mm-mayor: #24303D;
+    --reposo: #1A242E;
+    --cuerda: #D95926;
+    --tray: #3987E5;
+    --tray-tenue: #1E4E87;
+    --caida: #199E70;
+    --mando: #E3E8EE;
+    --mando-texto: #0C1117;
+    --chip: #1C2631;
+    --foco: #3987E5;
+    color-scheme: dark;
+  }
+}
+:root[data-theme="dark"] {
+  --papel: #0C1117;
+  --panel: #131A22;
+  --tinta: #E3E8EE;
+  --tinta-2: #A8B3BF;
+  --tinta-3: #7B8693;
+  --linea: #263240;
+  --mm: #19222C;
+  --mm-mayor: #24303D;
+  --reposo: #1A242E;
+  --cuerda: #D95926;
+  --tray: #3987E5;
+  --tray-tenue: #1E4E87;
+  --caida: #199E70;
+  --mando: #E3E8EE;
+  --mando-texto: #0C1117;
+  --chip: #1C2631;
+  --foco: #3987E5;
+  color-scheme: dark;
+}
+
+*, *::before, *::after { box-sizing: border-box; }
+body {
+  margin: 0;
+  background: var(--papel);
+  color: var(--tinta);
+  font-family: var(--f-texto);
+  font-size: 15px;
+  line-height: 1.5;
+  -webkit-font-smoothing: antialiased;
+}
+.pagina {
+  max-width: 1380px;
+  margin: 0 auto;
+  padding-left: max(16px, env(safe-area-inset-left, 0px));
+  padding-right: max(16px, env(safe-area-inset-right, 0px));
+  padding-block: 22px 48px;
+}
+
+/* ---------- Cabecera ---------- */
+.cabecera { display: grid; gap: 4px; margin-bottom: 18px; }
+.cab-fila { display: flex; flex-wrap: wrap; justify-content: space-between; align-items: center; gap: 6px 16px; }
+.ceja {
+  margin: 0;
+  font: 600 12px/1.2 var(--f-display);
+  letter-spacing: .12em;
+  text-transform: uppercase;
+  color: var(--tinta-3);
+}
+.nav-casos { display: inline-flex; border: 1px solid var(--linea); border-radius: 5px; overflow: hidden; }
+.nav-casos a, .nav-casos span {
+  font: 600 13px/1 var(--f-display);
+  letter-spacing: .06em;
+  text-transform: uppercase;
+  padding: 7px 12px;
+  color: var(--tinta-2);
+  text-decoration: none;
+  border-left: 1px solid var(--linea);
+}
+.nav-casos > :first-child { border-left: 0; }
+.nav-casos a:hover { color: var(--tinta); background: var(--chip); }
+.nav-casos [aria-current="page"] { background: var(--mando); color: var(--mando-texto); }
+.bajada a { color: var(--tinta); }
+h1 {
+  margin: 0;
+  font: 700 clamp(26px, 3.4vw, 36px)/1.08 var(--f-display);
+  letter-spacing: -.005em;
+  text-wrap: balance;
+}
+.bajada { margin: 6px 0 0; max-width: 72ch; color: var(--tinta-2); }
+
+/* ---------- Distribución ---------- */
+.consola {
+  display: grid;
+  grid-template-columns: 296px minmax(0, 1fr);
+  grid-template-areas:
+    "mandos lecturas"
+    "mandos cuerda"
+    "mandos detalle"
+    "mandos llegada"
+    "mandos ecuaciones";
+  gap: 14px 20px;
+  align-items: start;
+}
+.lecturas { grid-area: lecturas; }
+#panel-cuerda { grid-area: cuerda; }
+.mandos { grid-area: mandos; }
+.detalle { grid-area: detalle; }
+#panel-llegada { grid-area: llegada; }
+#panel-ecuaciones { grid-area: ecuaciones; }
+.detalle {
+  display: grid;
+  grid-template-columns: repeat(auto-fit, minmax(300px, 1fr));
+  gap: 14px 20px;
+  min-width: 0;
+}
+.detalle:not(:has(> section:not([hidden]))) { display: none; }
+@media (min-width: 1041px) and (min-height: 820px) {
+  .mandos { position: sticky; top: calc(env(safe-area-inset-top, 0px) + 12px); }
+}
+@media (max-width: 1040px) {
+  .consola {
+    grid-template-columns: minmax(0, 1fr);
+    grid-template-areas: "lecturas" "cuerda" "mandos" "detalle" "llegada" "ecuaciones";
+  }
+  .mandos { display: grid; grid-template-columns: repeat(2, minmax(0, 1fr)); column-gap: 24px; }
+  .mandos > .grupo:nth-child(-n+2) { border-top: 0; }
+  .mandos > .ayuda { grid-column: 1 / -1; }
+}
+@media (max-width: 660px) {
+  .mandos { grid-template-columns: minmax(0, 1fr); }
+  .mandos > .grupo:nth-child(2) { border-top: 1px solid var(--linea); }
+  .detalle { grid-template-columns: minmax(0, 1fr); }
+}
+
+/* ---------- Lecturas ---------- */
+.lecturas {
+  display: grid;
+  grid-template-columns: repeat(4, minmax(0, 1fr));
+  gap: 10px;
+  margin: 0;
+}
+@media (max-width: 860px) { .lecturas { grid-template-columns: repeat(2, minmax(0, 1fr)); } }
+.lectura {
+  background: var(--panel);
+  border: 1px solid var(--linea);
+  border-radius: 6px;
+  padding: 9px 12px 10px;
+  min-width: 0;
+  display: grid;
+  gap: 2px;
+  align-content: start;
+}
+.lectura p { margin: 0; }
+.dato {
+  font: 500 19px/1.3 var(--f-datos);
+  font-variant-numeric: tabular-nums;
+  white-space: nowrap;
+  overflow: hidden;
+  text-overflow: ellipsis;
+}
+@media (max-width: 480px) { .dato { font-size: 16px; } }
+.sub { font-size: 12.5px; line-height: 1.35; color: var(--tinta-2); }
+.pastilla {
+  display: inline-block;
+  padding: 2px 9px 1px;
+  border-radius: 999px;
+  border: 1px solid var(--tinta-3);
+  font: 600 13px/1.5 var(--f-display);
+  letter-spacing: .07em;
+  text-transform: uppercase;
+  vertical-align: middle;
+}
+.pastilla.lleno { background: var(--mando); color: var(--mando-texto); border-color: var(--mando); }
+
+/* ---------- Instrumentos ---------- */
+.instrumento {
+  background: var(--panel);
+  border: 1px solid var(--linea);
+  border-radius: 6px;
+  padding: 12px 14px 12px;
+  min-width: 0;
+}
+.instr-cab {
+  display: flex;
+  flex-wrap: wrap;
+  align-items: baseline;
+  justify-content: space-between;
+  gap: 2px 16px;
+  margin-bottom: 4px;
+}
+.instr-cab h2, .ecuaciones summary h2 {
+  margin: 0;
+  font: 600 15px/1.25 var(--f-display);
+  letter-spacing: .07em;
+  text-transform: uppercase;
+}
+.sin-mayus { text-transform: none; letter-spacing: 0; }
+.instr-nota { font-size: 13px; color: var(--tinta-2); }
+.insignia {
+  font: 500 12px/1.4 var(--f-datos);
+  color: var(--tinta-2);
+  border: 1px solid var(--linea);
+  border-radius: 4px;
+  padding: 1px 7px;
+  white-space: nowrap;
+}
+.leyenda {
+  display: flex;
+  flex-wrap: wrap;
+  gap: 3px 14px;
+  margin: 2px 0 6px;
+  padding: 0;
+  list-style: none;
+  font-size: 12.5px;
+  color: var(--tinta-2);
+}
+.leyenda li { display: inline-flex; align-items: center; gap: 6px; }
+.sw { width: 24px; height: 10px; flex: none; overflow: visible; }
+.lienzo { position: relative; width: 100%; }
+.lienzo svg {
+  display: block;
+  width: 100%;
+  height: auto;
+  touch-action: pan-y;
+  user-select: none;
+  -webkit-user-select: none;
+  cursor: crosshair;
+}
+.aviso {
+  margin: 6px 0 0;
+  font-size: 13px;
+  color: var(--tinta-2);
+  border-left: 3px solid var(--tinta-3);
+  padding: 2px 0 2px 10px;
+}
+.pie { margin: 6px 0 0; font-size: 13px; color: var(--tinta-2); }
+.pie b { font-weight: 600; color: var(--tinta); }
+
+/* ---------- Mandos ---------- */
+.mandos {
+  background: var(--panel);
+  border: 1px solid var(--linea);
+  border-radius: 6px;
+  padding: 2px 16px 6px;
+  min-width: 0;
+}
+.grupo {
+  margin: 0;
+  padding: 14px 0 14px;
+  border: 0;
+  border-top: 1px solid var(--linea);
+  min-width: 0;
+}
+.grupo:first-child { border-top: 0; }
+.sin-borde { border: 0; margin: 0; padding: 0; min-width: 0; min-inline-size: 0; }
+.grupo-cab {
+  display: flex;
+  justify-content: space-between;
+  align-items: baseline;
+  gap: 8px;
+  margin-bottom: 4px;
+}
+.etiqueta {
+  margin: 0;
+  padding: 0;
+  font: 600 12px/1.3 var(--f-display);
+  letter-spacing: .1em;
+  text-transform: uppercase;
+  color: var(--tinta-2);
+}
+legend.etiqueta { margin-bottom: 6px; }
+.valor { font: 500 16px/1.2 var(--f-datos); font-variant-numeric: tabular-nums; white-space: nowrap; }
+input[type="range"] { width: 100%; margin: 6px 0 4px; accent-color: var(--mando); height: 24px; }
+.escala-rango {
+  display: flex;
+  justify-content: space-between;
+  font: 500 11px/1 var(--f-datos);
+  color: var(--tinta-3);
+  margin: -2px 0 2px;
+}
+.fila { display: flex; flex-wrap: wrap; align-items: center; gap: 8px; margin-top: 6px; }
+.campo {
+  width: 84px;
+  font: 500 14px/1 var(--f-datos);
+  font-variant-numeric: tabular-nums;
+  color: var(--tinta);
+  background: var(--papel);
+  border: 1px solid var(--linea);
+  border-radius: 4px;
+  padding: 7px 8px;
+}
+.chips { display: flex; flex-wrap: wrap; gap: 6px; align-items: center; }
+.chips-rotulo { font-size: 12.5px; color: var(--tinta-2); min-width: 44px; }
+.chip {
+  font: 500 12.5px/1 var(--f-datos);
+  padding: 7px 8px;
+  border-radius: 4px;
+  border: 1px solid var(--linea);
+  background: var(--chip);
+  color: var(--tinta);
+  cursor: pointer;
+}
+.chip:hover { border-color: var(--tinta-3); }
+.chip[aria-pressed="true"] { background: var(--mando); color: var(--mando-texto); border-color: var(--mando); }
+.nota { margin: 8px 0 0; font-size: 13px; line-height: 1.4; color: var(--tinta-2); }
+.btn-principal, .btn {
+  display: inline-flex;
+  align-items: center;
+  gap: 8px;
+  font: 600 14px/1 var(--f-display);
+  letter-spacing: .05em;
+  text-transform: uppercase;
+  border-radius: 4px;
+  padding: 9px 13px;
+  cursor: pointer;
+}
+.btn-principal { background: var(--mando); color: var(--mando-texto); border: 1px solid var(--mando); min-width: 132px; justify-content: center; }
+.btn { background: transparent; color: var(--tinta); border: 1px solid var(--linea); }
+.btn:hover { border-color: var(--tinta-3); }
+.btn svg, .btn-principal svg { width: 14px; height: 14px; fill: currentColor; flex: none; }
+.selector { display: inline-flex; align-items: center; gap: 6px; font-size: 13.5px; color: var(--tinta-2); }
+.selector select {
+  font: 500 13.5px/1 var(--f-datos);
+  color: var(--tinta);
+  background: var(--papel);
+  border: 1px solid var(--linea);
+  border-radius: 4px;
+  padding: 6px 6px;
+}
+.casilla { display: inline-flex; align-items: center; gap: 6px; font-size: 13.5px; color: var(--tinta-2); cursor: pointer; }
+.casilla input { accent-color: var(--mando); width: 16px; height: 16px; margin: 0; }
+
+.interruptor {
+  display: grid;
+  grid-template-columns: auto 26px minmax(0, 1fr);
+  align-items: center;
+  gap: 10px;
+  padding: 6px 0;
+  cursor: pointer;
+}
+.interruptor input {
+  appearance: none;
+  -webkit-appearance: none;
+  width: 34px;
+  height: 20px;
+  margin: 0;
+  border-radius: 999px;
+  background: var(--chip);
+  border: 1px solid var(--linea);
+  position: relative;
+  cursor: pointer;
+  transition: background .15s, border-color .15s;
+}
+.interruptor input::after {
+  content: "";
+  position: absolute;
+  top: 2px;
+  left: 2px;
+  width: 14px;
+  height: 14px;
+  border-radius: 50%;
+  background: var(--tinta-3);
+  transition: transform .15s;
+}
+.interruptor input:checked { background: var(--mando); border-color: var(--mando); }
+.interruptor input:checked::after { transform: translateX(14px); background: var(--mando-texto); }
+.interruptor .sw { width: 26px; height: 14px; }
+.interruptor b { display: block; font-weight: 600; font-size: 14.5px; line-height: 1.25; }
+.interruptor small { display: block; font-size: 12.5px; line-height: 1.35; color: var(--tinta-2); }
+.ayuda { margin: 4px 0 10px; font-size: 13px; line-height: 1.45; color: var(--tinta-2); }
+.ayuda kbd {
+  font: 500 11.5px/1 var(--f-datos);
+  border: 1px solid var(--linea);
+  border-bottom-width: 2px;
+  border-radius: 3px;
+  padding: 2px 5px;
+  background: var(--papel);
+}
+
+button:focus-visible, select:focus-visible, input:focus-visible, summary:focus-visible, a:focus-visible, .lienzo svg:focus-visible {
+  outline: 2px solid var(--foco);
+  outline-offset: 2px;
+}
+
+/* ---------- Ecuaciones ---------- */
+.ecuaciones details > summary {
+  display: flex;
+  flex-wrap: wrap;
+  align-items: baseline;
+  justify-content: space-between;
+  gap: 2px 16px;
+  cursor: pointer;
+  list-style: none;
+}
+.ecuaciones details > summary::-webkit-details-marker { display: none; }
+.ecuaciones summary h2::before {
+  content: "";
+  display: inline-block;
+  width: 0;
+  height: 0;
+  margin-right: 8px;
+  border-left: 5px solid currentColor;
+  border-top: 4px solid transparent;
+  border-bottom: 4px solid transparent;
+  vertical-align: middle;
+  transition: transform .15s;
+}
+.ecuaciones details[open] summary h2::before { transform: rotate(90deg); }
+.ec-grid {
+  display: grid;
+  grid-template-columns: repeat(2, minmax(0, 1fr));
+  gap: 6px 28px;
+  margin-top: 10px;
+}
+@media (max-width: 760px) { .ec-grid { grid-template-columns: minmax(0, 1fr); } }
+.ec-grid article { min-width: 0; padding: 8px 0; border-top: 1px solid var(--linea); container-type: inline-size; }
+.ec-grid h3 { margin: 0 0 4px; font: 600 14px/1.3 var(--f-display); letter-spacing: .05em; text-transform: uppercase; color: var(--tinta-2); }
+.ec-grid p { margin: 4px 0; max-width: 62ch; font-size: 14px; }
+.ec { overflow-x: auto; overflow-y: hidden; padding: 2px 0; font-size: 15px; }
+@container (max-width: 430px) { .ec { font-size: 13.5px; } }
+.ec-grid code, .pie-pagina code { font: 500 12.5px var(--f-datos); }
+.pie-pagina { margin-top: 18px; font-size: 12.5px; color: var(--tinta-3); max-width: 90ch; }
+
+/* ---------- Gráficos (SVG) ---------- */
+:where(.grafico) text { font-family: var(--f-datos); }
+.g-tick { font-size: 11px; fill: var(--tinta-3); }
+.g-titulo-eje { font: 600 12px var(--f-display); letter-spacing: .06em; fill: var(--tinta-2); }
+.g-rotulo { font: 600 13px var(--f-display); letter-spacing: .03em; fill: var(--tinta); }
+.g-rotulo-suave { font: 500 12px var(--f-texto); fill: var(--tinta-2); }
+.g-mm { stroke: var(--mm); stroke-width: 1; }
+.g-mm-mayor { stroke: var(--mm-mayor); stroke-width: 1; }
+.g-eje { stroke: var(--tinta-3); stroke-width: 1; }
+.g-cero { stroke: var(--tinta-3); stroke-width: 1; stroke-dasharray: 1.5 3; }
+.g-negativa { fill: var(--reposo); stroke: none; }
+.g-cuerda { fill: none; stroke: var(--cuerda); stroke-width: 2.8; stroke-linejoin: round; stroke-linecap: round; }
+.g-tray { fill: none; stroke: var(--tray); stroke-width: 2.2; stroke-linejoin: round; stroke-linecap: round; }
+.g-tray-tenue { fill: none; stroke: var(--tray-tenue); stroke-width: 1.8; stroke-dasharray: 5 4; }
+.g-cuasi { fill: none; stroke: var(--tinta-3); stroke-width: 1.3; stroke-dasharray: 1.5 4; stroke-linecap: round; }
+.g-caida { fill: none; stroke: var(--caida); stroke-width: 1.8; stroke-dasharray: 9 4 2 4; }
+.g-particular { fill: none; stroke: var(--tinta-2); stroke-width: 1.6; stroke-dasharray: 7 5; }
+.g-particula { fill: var(--tinta); stroke: var(--panel); stroke-width: 2; }
+.g-llegada { fill: var(--panel); stroke: var(--tinta); stroke-width: 1.8; }
+.g-salto { stroke: var(--tinta); stroke-width: 2; stroke-dasharray: 3 3; fill: none; }
+.g-apoyo { fill: var(--panel); stroke: var(--tinta-2); stroke-width: 1.2; }
+.g-fuerza { fill: none; stroke: var(--tinta); stroke-width: 2; stroke-linejoin: round; }
+.g-ref { stroke: var(--tinta-3); stroke-width: 1; stroke-dasharray: 2 4; fill: none; }
+.g-ahora { stroke: var(--tinta-2); stroke-width: 1.2; stroke-dasharray: 4 3; fill: none; }
+.g-punto { fill: var(--tinta); stroke: var(--panel); stroke-width: 2; }
+.g-punto-tray { fill: var(--tray); stroke: var(--panel); stroke-width: 2; }
+.g-smith { fill: var(--tinta); stroke: var(--panel); stroke-width: 1.6; }
+.g-curva-llegada { fill: none; stroke: var(--tray); stroke-width: 2.2; stroke-linejoin: round; }
+.g-marca { stroke: var(--tinta-2); stroke-width: 1.2; stroke-dasharray: 4 3; fill: none; }
+.g-flecha { fill: var(--tinta); stroke: none; }
+.g-tip rect { fill: var(--panel); stroke: var(--linea); }
+.g-tip text { font-size: 11.5px; fill: var(--tinta); }
+.g-cruz { stroke: var(--tinta-3); stroke-width: 1; fill: none; }
+.nw { white-space: nowrap; }
+.g-halo { paint-order: stroke; stroke: var(--panel); stroke-width: 4px; stroke-linejoin: round; }
+
+@media (prefers-reduced-motion: reduce) {
+  *, *::before, *::after { transition: none !important; }
+}
+</style>
+<script>
+  window.MathJax = {
+    tex: { inlineMath: [["\\(", "\\)"]], displayMath: [["\\[", "\\]"]] },
+    svg: { fontCache: "global" },
+    options: { enableMenu: false }
+  };
+</script>
+<script src="https://cdn.jsdelivr.net/npm/mathjax@3.2.2/es5/tex-svg.js" defer></script>
+
+<div class="pagina">
+  <header class="cabecera">
+    <div class="cab-fila">
+      <p class="ceja"><a href="../">Trabajo de título</a> · Caso II</p>
+      <nav class="nav-casos" aria-label="Mapa y consolas de los tres casos">
+        <a href="../mapa/">Mapa</a>
+        <a href="../caso1/">Caso I</a>
+        <span aria-current="page">Caso II</span>
+        <a href="../caso3/">Caso III</a>
+      </nav>
+    </div>
+    <h1>Consola del Caso II</h1>
+    <p class="bajada">Cuerda tensa sin masa recorrida por una partícula de masa <i>m</i> y peso <span class="nw"><i>P</i> = <i>mg</i></span>, con velocidad horizontal constante <i>v</i> (el problema de Smith). Mueve el parámetro <span class="nw">λ = <i>mv</i>²/(<i>LN</i>)</span> y la posición <span class="nw">τ = <i>vt</i>/<i>L</i></span>, y sigue cómo llega la partícula al apoyo final. En el <a href="../caso3/">plano del caso III</a> este caso es el límite α → 0 con λ fijo.</p>
+  </header>
+
+  <div class="consola">
+
+    <section class="lecturas" aria-label="Lecturas del instante">
+      <div class="lectura">
+        <p class="etiqueta">Llegada al apoyo</p>
+        <p class="dato"><span id="l-llegada" class="pastilla">Por debajo</span></p>
+        <p class="sub" id="l-llegada-sub">ȳ(1) = +0,1562 · u = 0,62 w<sub>0</sub> bajo el apoyo</p>
+      </div>
+      <div class="lectura">
+        <p class="etiqueta">Partícula</p>
+        <p class="dato" id="l-particula">ȳ = 0,3814</p>
+        <p class="sub" id="l-particula-sub">Máximo 0,4546 en τ = 0,762</p>
+      </div>
+      <div class="lectura">
+        <p class="etiqueta">Fuerza de la cuerda</p>
+        <p class="dato" id="l-fuerza">F = 4,24 P</p>
+        <p class="sub" id="l-fuerza-sub">Tramo izquierdo 0,42 P · derecho 3,81 P</p>
+      </div>
+      <div class="lectura">
+        <p class="etiqueta">Comprobación</p>
+        <p class="dato" id="l-comprobacion">ȳ(1) = 0,156189</p>
+        <p class="sub" id="l-comprobacion-sub">Fórmula de Gauss 0,156189</p>
+      </div>
+    </section>
+
+    <section class="instrumento" id="panel-cuerda" aria-labelledby="t-cuerda">
+      <div class="instr-cab">
+        <h2 id="t-cuerda">Cuerda y trayectoria</h2>
+        <span class="insignia" id="insignia-lam">λ = 0,250</span>
+      </div>
+      <ul class="leyenda">
+        <li><svg class="sw" viewBox="0 0 24 10" aria-hidden="true"><line x1="2" y1="5" x2="22" y2="5" class="g-cuerda"/></svg>Cuerda</li>
+        <li><svg class="sw" viewBox="0 0 24 10" aria-hidden="true"><circle cx="12" cy="5" r="4.5" class="g-particula"/></svg>Partícula</li>
+        <li><svg class="sw" viewBox="0 0 24 10" aria-hidden="true"><line x1="2" y1="5" x2="22" y2="5" class="g-tray"/></svg>Trayectoria</li>
+        <li><svg class="sw" viewBox="0 0 24 10" aria-hidden="true"><line x1="1" y1="5" x2="23" y2="5" class="g-tray-tenue"/></svg>Recorrido completo</li>
+        <li><svg class="sw" viewBox="0 0 24 10" aria-hidden="true"><circle cx="12" cy="5" r="4" class="g-llegada"/></svg>Llegada a x = L</li>
+        <li data-vista="refs"><svg class="sw" viewBox="0 0 24 10" aria-hidden="true"><line x1="2" y1="5" x2="22" y2="5" class="g-cuasi"/></svg>Cuasiestática τ(1 − τ)</li>
+        <li data-vista="refs"><svg class="sw" viewBox="0 0 24 10" aria-hidden="true"><line x1="1" y1="5" x2="23" y2="5" class="g-caida"/></svg>Caída libre τ²/(2λ)</li>
+        <li data-vista="particular"><svg class="sw" viewBox="0 0 24 10" aria-hidden="true"><line x1="1" y1="5" x2="23" y2="5" class="g-particular"/></svg>Solución particular</li>
+      </ul>
+      <div class="lienzo" id="lienzo-cuerda"></div>
+      <p class="aviso" id="aviso-cuerda" hidden></p>
+    </section>
+
+    <aside class="mandos" aria-label="Controles">
+      <div class="grupo">
+        <div class="grupo-cab">
+          <label class="etiqueta" for="lam-rango">Parámetro de masa</label>
+          <span class="valor" id="lam-valor">λ = 0,250</span>
+        </div>
+        <input type="range" id="lam-rango" min="-2.30103" max="0.30103" step="0.0005" value="-0.60206">
+        <div class="escala-rango" aria-hidden="true"><span>0,005</span><span>0,05</span><span>0,5</span><span>2</span></div>
+        <div class="fila">
+          <input class="campo" id="lam-texto" type="text" inputmode="decimal" autocomplete="off" spellcheck="false" aria-label="Valor exacto de λ (acepta fracciones como 1/6)" value="0,25">
+          <span class="nota" style="margin:0">λ = mv²/(LN), en escala logarítmica</span>
+        </div>
+        <div class="fila chips" role="group" aria-label="Valores de λ usados en la tesis" id="chips-tesis">
+          <span class="chips-rotulo">Tesis</span>
+          <button type="button" class="chip" data-lam="0.01">0,01</button>
+          <button type="button" class="chip" data-lam="0.04">0,04</button>
+          <button type="button" class="chip" data-lam="0.12">0,12</button>
+          <button type="button" class="chip" data-lam="0.25">0,25</button>
+          <button type="button" class="chip" data-lam="1/2">1/2</button>
+          <button type="button" class="chip" data-lam="1">1</button>
+        </div>
+        <div class="fila chips" role="group" aria-label="Valores de Smith" id="chips-smith">
+          <span class="chips-rotulo">Smith</span>
+          <button type="button" class="chip" data-lam="1/6">1/6</button>
+          <button type="button" class="chip" data-lam="1/12">1/12</button>
+          <button type="button" class="chip" data-lam="1/20">1/20</button>
+          <button type="button" class="chip" data-lam="1/30">1/30</button>
+        </div>
+      </div>
+
+      <div class="grupo">
+        <div class="grupo-cab">
+          <label class="etiqueta" for="tau-rango">Posición de la partícula</label>
+          <span class="valor" id="tau-valor">τ = 0,850</span>
+        </div>
+        <input type="range" id="tau-rango" min="0" max="1" step="0.001" value="0.85">
+        <div class="fila">
+          <button type="button" class="btn-principal" id="btn-play" aria-pressed="false">
+            <svg viewBox="0 0 14 14" aria-hidden="true" id="icono-play"><path d="M3 1.5v11l9-5.5z"/></svg>
+            <span id="txt-play">Reproducir</span>
+          </button>
+          <button type="button" class="btn" id="btn-inicio" aria-label="Volver al inicio del recorrido" title="Volver al inicio">
+            <svg viewBox="0 0 14 14" aria-hidden="true"><path d="M2 1.5h2v11H2zM12 1.5v11L5 7z"/></svg>
+          </button>
+        </div>
+        <div class="fila">
+          <label class="selector">Cruce en
+            <select id="duracion">
+              <option value="3">3 s</option>
+              <option value="6" selected>6 s</option>
+              <option value="12">12 s</option>
+              <option value="24">24 s</option>
+            </select>
+          </label>
+          <label class="casilla"><input type="checkbox" id="repetir" checked> Repetir</label>
+        </div>
+        <div class="fila">
+          <label class="casilla"><input type="checkbox" id="lento" checked> Ralentizar el último 10 %</label>
+        </div>
+      </div>
+
+      <div class="grupo"><fieldset class="sin-borde">
+        <legend class="etiqueta">Vistas</legend>
+        <label class="interruptor">
+          <input type="checkbox" id="v-refs" checked>
+          <svg class="sw" viewBox="0 0 26 14" aria-hidden="true"><line x1="1" y1="4" x2="25" y2="4" class="g-cuasi"/><line x1="1" y1="10.5" x2="25" y2="10.5" class="g-caida"/></svg>
+          <span><b>Cuasiestática y caída libre</b><small>Los dos extremos: λ → 0 y la entrada</small></span>
+        </label>
+        <label class="interruptor">
+          <input type="checkbox" id="v-particular">
+          <svg class="sw" viewBox="0 0 26 14" aria-hidden="true"><line x1="1" y1="7" x2="25" y2="7" class="g-particular"/></svg>
+          <span><b>Solución particular</b><small>El centro de la oscilación, si λ &lt; 1/2</small></span>
+        </label>
+        <label class="interruptor">
+          <input type="checkbox" id="v-final" checked>
+          <svg class="sw" viewBox="0 0 26 14" aria-hidden="true"><line x1="4" y1="2" x2="22" y2="12" class="g-cuerda"/><line x1="22" y1="2" x2="22" y2="12" class="g-salto"/></svg>
+          <span><b>Tramo final ampliado</b><small>Los últimos 0,1 L de la cuerda</small></span>
+        </label>
+        <label class="interruptor">
+          <input type="checkbox" id="v-fuerza" checked>
+          <svg class="sw" viewBox="0 0 26 14" aria-hidden="true"><polyline points="1,12 8,7 15,8 20,5 25,1" class="g-fuerza"/></svg>
+          <span><b>Fuerza de la cuerda</b><small>Lo que siente la partícula</small></span>
+        </label>
+      </fieldset></div>
+
+      <p class="ayuda">Arrastra sobre la cuerda, el tramo final o la fuerza para mover la partícula, y sobre la llegada para cambiar λ. <kbd>Espacio</kbd> reproduce o pausa.</p>
+    </aside>
+
+    <div class="detalle">
+      <section class="instrumento" id="panel-final" aria-labelledby="t-final">
+        <div class="instr-cab">
+          <h2 id="t-final">Tramo final</h2>
+          <span class="instr-nota">0,9 ≤ x/L ≤ 1, misma escala vertical</span>
+        </div>
+        <div class="lienzo" id="lienzo-final"></div>
+        <p class="pie" id="pie-final"></p>
+      </section>
+      <section class="instrumento" id="panel-fuerza" aria-labelledby="t-fuerza">
+        <div class="instr-cab">
+          <h2 id="t-fuerza">Fuerza de la cuerda</h2>
+          <span class="instr-nota">En unidades del peso P, positiva hacia arriba</span>
+        </div>
+        <div class="lienzo" id="lienzo-fuerza"></div>
+        <p class="pie" id="pie-fuerza"></p>
+      </section>
+    </div>
+
+    <section class="instrumento" id="panel-llegada" aria-labelledby="t-llegada">
+      <div class="instr-cab">
+        <h2 id="t-llegada">Llegada al apoyo final <span class="sin-mayus">ȳ(1)</span></h2>
+        <span class="instr-nota">Hacia abajo, la partícula llega bajo el nivel del apoyo</span>
+      </div>
+      <div class="lienzo" id="lienzo-llegada"></div>
+      <p class="pie" id="pie-llegada"></p>
+    </section>
+
+    <section class="instrumento ecuaciones" id="panel-ecuaciones">
+      <details open>
+        <summary><h2>Ecuaciones del modelo</h2><span class="instr-nota">Lo que calcula la consola</span></summary>
+        <div class="ec-grid">
+          <article>
+            <h3>Carga inercial</h3>
+            <p>La ecuación del caso I con la fuerza de inercia de la partícula, cuya posición vertical es <span class="nw">u(t) = w(vt, t)</span>:</p>
+            <div class="ec">\[ -N\,\frac{\partial^2 w}{\partial x^2}+\rho A\,\frac{\partial^2 w}{\partial t^2}=\delta(x-vt)\,\bigl[P-m\,\ddot u\bigr] \]</div>
+            <p>Con ρA → 0 la velocidad de las ondas tiende a infinito y la cuerda se acomoda al instante. El modelo vale si la partícula es mucho más lenta que las ondas, <span class="nw">v ≪ c</span>.</p>
+          </article>
+          <article>
+            <h3>Cuerda sin masa</h3>
+            <p>A cada lado de la partícula la cuerda es una recta, y el salto de pendiente bajo ella da la ecuación de un oscilador con rigidez variable:</p>
+            <div class="ec">\[ w=\begin{cases} u\,\dfrac{x}{vt}, & x\le vt\\[6pt] u\,\dfrac{L-x}{L-vt}, & x\ge vt\end{cases} \]</div>
+            <div class="ec">\[ m\,\ddot u+\frac{N L}{vt\,(L-vt)}\,u=P \]</div>
+            <div class="ec">\[ u(0)=\dot u(0)=0 \]</div>
+          </article>
+          <article>
+            <h3>Forma adimensional</h3>
+            <div class="ec">\[ \lambda\,\bar y''+\frac{\bar y}{\tau\,(1-\tau)}=1,\qquad \bar y(0)=\bar y'(0)=0 \]</div>
+            <div class="ec">\[ \tau=\frac{vt}{L},\qquad \bar y=\frac{N u}{P L}=\frac{u}{4w_0},\qquad \lambda=\frac{m v^2}{L N} \]</div>
+            <p>La forma depende solo de λ. La escala de ȳ es cuatro veces la del caso I, por eso la cuasiestática llega a 1/4 y no a 1.</p>
+          </article>
+          <article>
+            <h3>Solución exacta</h3>
+            <div class="ec">\[ \bar y=\frac{\tau(1-\tau)-\tau\,{}_2F_1(p,\,1-p;\,2;\,\tau)}{1-2\lambda} \]</div>
+            <div class="ec">\[ p=\frac{1+\sqrt{1+4/\lambda}}{2} \]</div>
+            <p>Al entrar, <span class="nw">ȳ ≈ τ²/(2λ)</span>: la partícula cae libremente mientras <span class="nw">τ ≪ 6λ</span>. La solución particular, <span class="nw">τ(1 − τ)/(1 − 2λ)</span>, es la forma estática bajo la fuerza <span class="nw">P/(1 − 2λ)</span>.</p>
+          </article>
+          <article>
+            <h3>Llegada al apoyo final</h3>
+            <div class="ec">\[ \bar y(1)=\frac{\lambda\,\sin(\pi p)}{\pi\,(1-2\lambda)} \]</div>
+            <div class="ec">\[ \lambda_n=\frac{1}{n\,(n+1)},\qquad n=2,3,4,\dots \]</div>
+            <p>Se anula solo en los valores de Smith λₙ, donde la trayectoria es un polinomio: <span class="nw">3τ²(1 − τ)</span> con <span class="nw">λ = 1/6</span> y <span class="nw">6τ²(1 − τ)²</span> con <span class="nw">λ = 1/12</span>. Con <span class="nw">λ = 1/2</span> la fórmula queda 0/0, y la forma cerrada es</p>
+            <div class="ec">\[ \bar y=\tfrac13\bigl[\tau^2-2\tau(1-\tau)\ln(1-\tau)\bigr] \]</div>
+          </article>
+          <article>
+            <h3>Fuerza de la cuerda</h3>
+            <div class="ec">\[ \frac{F}{P}=1-\lambda\,\bar y''=\frac{\bar y}{\tau}+\frac{\bar y}{1-\tau} \]</div>
+            <p>Los dos términos son las componentes verticales de la tensión en el tramo izquierdo y en el derecho. La fuerza es nula al entrar (caída libre) y crece sin límite al final si <span class="nw">ȳ(1) ≠ 0</span>. Si es negativa, la cuerda tira de la partícula hacia abajo: el modelo supone que nunca se separan.</p>
+          </article>
+          <article>
+            <h3>Regiones de Smith</h3>
+            <p>Smith dividió el plano posición–tiempo en regiones separadas por el frente de onda y sus reflexiones. En la cuerda sin masa las ondas viajan con velocidad infinita y las regiones se reducen a dos, delante y detrás de la partícula, que son los dos tramos rectos. Las regiones completas están en la consola del caso I.</p>
+          </article>
+          <article>
+            <h3>Cálculo en la consola</h3>
+            <p>La ecuación se integra con un Runge–Kutta de paso adaptativo (Dormand–Prince 5(4)) desde <span class="nw">τ = 10⁻⁶</span>, partiendo de la caída libre, hasta <span class="nw">1 − 10⁻¹⁰</span>, como en <code>cap4_figuras.py</code>. La lectura «Comprobación» compara la llegada integrada con la fórmula de Gauss.</p>
+          </article>
+        </div>
+      </details>
+    </section>
+  </div>
+
+  <p class="pie-pagina">Cálculo hecho en el navegador. Coincide con la solución hipergeométrica de <code>cap4_figuras.py</code> dentro de 10⁻⁹ y reproduce la tabla de comparación del capítulo 4.</p>
+</div>
+
+<script>
+(() => {
+"use strict";
+
+/* =====================================================================
+   Modelo del Caso II: lam*y'' + y/(tau(1-tau)) = 1, y(0) = y'(0) = 0,
+   con tau = vt/L, y = Nu/(PL) y lam = mv^2/(LN).
+   ===================================================================== */
+const PI = Math.PI;
+const LAM_MIN = 0.005, LAM_MAX = 2;
+const T0 = 1e-6, T1 = 1 - 1e-10;
+const DP_C = [0, 1 / 5, 3 / 10, 4 / 5, 8 / 9, 1, 1];
+const DP_A = [[], [1 / 5], [3 / 40, 9 / 40], [44 / 45, -56 / 15, 32 / 9],
+  [19372 / 6561, -25360 / 2187, 64448 / 6561, -212 / 729],
+  [9017 / 3168, -355 / 33, 46732 / 5247, 49 / 176, -5103 / 18656],
+  [35 / 384, 0, 500 / 1113, 125 / 192, -2187 / 6784, 11 / 84]];
+const DP_B5 = [35 / 384, 0, 500 / 1113, 125 / 192, -2187 / 6784, 11 / 84, 0];
+const DP_B4 = [5179 / 57600, 0, 7571 / 16695, 393 / 640, -92097 / 339200, 187 / 2100, 1 / 40];
+
+/* Dormand-Prince 5(4) con paso adaptativo; parte de la caída libre en T0 */
+function integrar(lam) {
+  const rtol = 1e-10, atol = 1e-13;
+  let t = T0, y = t * t / (2 * lam), v = t / lam, h = 1e-6;
+  const T = [t], Y = [y], V = [v];
+  const ky = new Float64Array(7), kv = new Float64Array(7);
+  let vueltas = 0;
+  while (t < T1 && vueltas++ < 400000) {
+    if (t + h > T1) h = T1 - t;
+    for (let s = 0; s < 7; s++) {
+      let yy = y, vv = v;
+      const fila = DP_A[s];
+      for (let j = 0; j < s; j++) { yy += h * fila[j] * ky[j]; vv += h * fila[j] * kv[j]; }
+      const ts = t + DP_C[s] * h;
+      ky[s] = vv;
+      kv[s] = (1 - yy / (ts * (1 - ts))) / lam;
+    }
+    let y5 = y, v5 = v, y4 = y, v4 = v;
+    for (let s = 0; s < 7; s++) {
+      y5 += h * DP_B5[s] * ky[s]; v5 += h * DP_B5[s] * kv[s];
+      y4 += h * DP_B4[s] * ky[s]; v4 += h * DP_B4[s] * kv[s];
+    }
+    const ey = Math.abs(y5 - y4) / (atol + rtol * Math.max(Math.abs(y), Math.abs(y5)));
+    const ev = Math.abs(v5 - v4) / (atol + rtol * Math.max(Math.abs(v), Math.abs(v5)));
+    const err = Math.max(ey, ev);
+    if (err <= 1) {
+      t += h; y = y5; v = v5;
+      T.push(t); Y.push(y); V.push(v);
+    }
+    h *= Math.min(5, Math.max(0.2, 0.9 * Math.pow(err || 1e-16, -0.2)));
+  }
+  return { lam, T, Y, V };
+}
+/* Valor en cualquier tau: interpolación cúbica de Hermite entre pasos */
+function evaluar(sol, t) {
+  const { T, Y, V, lam } = sol;
+  if (t <= T[0]) return t * t / (2 * lam);
+  const n = T.length - 1;
+  if (t >= T[n]) return Y[n];
+  let lo = 0, hi = n;
+  while (hi - lo > 1) { const m = (lo + hi) >> 1; if (T[m] <= t) lo = m; else hi = m; }
+  const h = T[hi] - T[lo], s = (t - T[lo]) / h, s2 = s * s, s3 = s2 * s;
+  return (2 * s3 - 3 * s2 + 1) * Y[lo] + (s3 - 2 * s2 + s) * h * V[lo]
+       + (-2 * s3 + 3 * s2) * Y[hi] + (s3 - s2) * h * V[hi];
+}
+const pDe = lam => (1 + Math.sqrt(1 + 4 / lam)) / 2;
+function llegadaGauss(lam) {
+  if (Math.abs(lam - 0.5) < 1e-9) return 1 / 3;
+  return lam * Math.sin(PI * pDe(lam)) / (PI * (1 - 2 * lam));
+}
+function smithN(lam) {
+  for (let n = 2; n <= 80; n++) {
+    const l = 1 / (n * (n + 1));
+    if (Math.abs(lam - l) <= 1e-9 * l) return n;
+  }
+  return 0;
+}
+function smithCercano(lam) {
+  let mejor = 2, d0 = Infinity;
+  for (let n = 2; n <= 80; n++) {
+    const d = Math.abs(Math.log(lam * n * (n + 1)));
+    if (d < d0) { d0 = d; mejor = n; }
+  }
+  return { n: mejor, d: d0 };
+}
+
+/* =====================================================================
+   Estado
+   ===================================================================== */
+const CLAVE = "consola-caso2-v1";
+const estado = {
+  lam: 0.25,
+  tau: 0.85,
+  vistas: { refs: true, particular: false, final: true, fuerza: true },
+  duracion: 6,
+  repetir: true,
+  lento: true
+};
+let calc = {};
+
+function recalcular() {
+  const lam = estado.lam;
+  const sol = integrar(lam);
+  const n = sol.Y.length - 1;
+  calc.sol = sol;
+  calc.y1 = sol.Y[n];
+  calc.v1 = sol.V[n];
+  calc.y1g = llegadaGauss(lam);
+  calc.n = smithN(lam);
+  calc.medio = Math.abs(lam - 0.5) < 1e-9;
+  calc.llega = calc.n > 0 || Math.abs(calc.y1) < 1e-7;
+  const T = [], Y = [];
+  for (let i = 0; i < 1500; i++) { const t = i / 1500; T.push(t); Y.push(evaluar(sol, t)); }
+  for (const t of [0.9993, 0.9997, 0.9999, 0.99999]) { T.push(t); Y.push(evaluar(sol, t)); }
+  T.push(1); Y.push(calc.llega ? 0 : calc.y1);
+  calc.T = T; calc.Y = Y;
+  let im = 0, imin = 0;
+  for (let i = 1; i < Y.length; i++) { if (Y[i] > Y[im]) im = i; if (Y[i] < Y[imin]) imin = i; }
+  calc.max = { t: T[im], y: Y[im] };
+  calc.min = { t: T[imin], y: Y[imin] };
+  calc.lim = {
+    arriba: Math.min(-0.06, 1.35 * calc.min.y - 0.02),
+    abajo: Math.max(0.3, 1.12 * calc.max.y)
+  };
+}
+const yEn = t => (t >= 1 ? (calc.llega ? 0 : calc.y1) : evaluar(calc.sol, t));
+function fuerza(t) {
+  if (t <= 0) return { F: 0, izq: 0, der: 0 };
+  if (t >= 1) {
+    if (calc.llega) return { F: -calc.v1, izq: 0, der: -calc.v1 };
+    const s = Math.sign(calc.y1);
+    return { F: s * Infinity, izq: calc.y1, der: s * Infinity };
+  }
+  const y = evaluar(calc.sol, t);
+  return { F: y / (t * (1 - t)), izq: y / t, der: y / (1 - t) };
+}
+
+/* =====================================================================
+   Utilidades de dibujo
+   ===================================================================== */
+const NS = "http://www.w3.org/2000/svg";
+const $ = s => document.querySelector(s);
+function el(tag, attrs, parent) {
+  const e = document.createElementNS(NS, tag);
+  if (attrs) for (const k in attrs) e.setAttribute(k, attrs[k]);
+  if (parent) parent.appendChild(e);
+  return e;
+}
+function set(e, attrs) { for (const k in attrs) e.setAttribute(k, attrs[k]); }
+function vaciar(g) { while (g.firstChild) g.removeChild(g.firstChild); }
+function escala(d0, d1, r0, r1) {
+  const k = (r1 - r0) / (d1 - d0);
+  const f = v => r0 + (v - d0) * k;
+  f.inv = p => d0 + (p - r0) / k;
+  f.r = [r0, r1];
+  return f;
+}
+function escalaLog(d0, d1, r0, r1) {
+  const l0 = Math.log10(d0), l1 = Math.log10(d1);
+  const k = (r1 - r0) / (l1 - l0);
+  const f = v => r0 + (Math.log10(v) - l0) * k;
+  f.inv = p => Math.pow(10, l0 + (p - r0) / k);
+  f.r = [r0, r1];
+  return f;
+}
+function puntos(pts, X, Y) {
+  let s = "";
+  for (let i = 0; i < pts.length; i++) {
+    s += (i ? " " : "") + X(pts[i][0]).toFixed(1) + "," + Y(pts[i][1]).toFixed(1);
+  }
+  return s;
+}
+function marcas(d0, d1, paso) {
+  const out = [];
+  const i0 = Math.ceil(d0 / paso - 1e-9), i1 = Math.floor(d1 / paso + 1e-9);
+  for (let i = i0; i <= i1; i++) out.push(+(i * paso).toFixed(10));
+  return out;
+}
+function num(v, d = 3) {
+  if (!isFinite(v)) return v > 0 ? "+∞" : (v < 0 ? "−∞" : "—");
+  let s = v.toFixed(d);
+  if (/^-0\.?0*$/.test(s)) s = s.slice(1);
+  return s.replace(".", ",").replace("-", "−");
+}
+function numSigno(v, d = 4) {
+  const s = num(v, d);
+  return (v > 0 && /[1-9]/.test(s)) ? "+" + s : s;
+}
+function numEje(v) {
+  const r = Math.round(v * 100000) / 100000;
+  return String(r).replace(".", ",").replace("-", "−");
+}
+const SUP = { "-": "⁻", "0": "⁰", "1": "¹", "2": "²", "3": "³", "4": "⁴", "5": "⁵", "6": "⁶", "7": "⁷", "8": "⁸", "9": "⁹" };
+function cientifico(v) {
+  if (v === 0) return "0";
+  const [m, e] = v.toExponential(0).split("e");
+  return m + "·10" + String(parseInt(e, 10)).split("").map(c => SUP[c] || c).join("");
+}
+function textoLam(lam) {
+  const n = smithN(lam);
+  if (n) return "1/" + n * (n + 1);
+  if (Math.abs(lam - 0.5) < 1e-9) return "1/2";
+  return String(Number(lam.toPrecision(3))).replace(".", ",");
+}
+function texto(g, x, y, s, attrs) {
+  const t = el("text", Object.assign({ x, y }, attrs || {}), g);
+  t.textContent = s;
+  return t;
+}
+function grilla(g, X, Y, xMay, xMen, yMay, yMen) {
+  const [xa, xb] = X.r, [ya, yb] = Y.r;
+  const y0 = Math.min(ya, yb), y1 = Math.max(ya, yb), x0 = Math.min(xa, xb), x1 = Math.max(xa, xb);
+  for (const v of xMen) el("line", { x1: X(v), x2: X(v), y1: y0, y2: y1, class: "g-mm", "shape-rendering": "crispEdges" }, g);
+  for (const v of yMen) el("line", { x1: x0, x2: x1, y1: Y(v), y2: Y(v), class: "g-mm", "shape-rendering": "crispEdges" }, g);
+  for (const v of xMay) el("line", { x1: X(v), x2: X(v), y1: y0, y2: y1, class: "g-mm-mayor", "shape-rendering": "crispEdges" }, g);
+  for (const v of yMay) el("line", { x1: x0, x2: x1, y1: Y(v), y2: Y(v), class: "g-mm-mayor", "shape-rendering": "crispEdges" }, g);
+}
+function pasoEje(rango) {
+  const bruto = rango / 5;
+  const p10 = Math.pow(10, Math.floor(Math.log10(bruto)));
+  const m = bruto / p10;
+  return (m < 1.5 ? 1 : m < 3.5 ? 2 : m < 7.5 ? 5 : 10) * p10;
+}
+function crearTip(svg) {
+  const g = el("g", { class: "g-tip", visibility: "hidden", "pointer-events": "none" }, svg);
+  const linea = el("line", { class: "g-cruz" }, g);
+  const rect = el("rect", { rx: 3, ry: 3 }, g);
+  const txt = el("text", null, g);
+  return { g, linea, rect, txt };
+}
+function mostrarTip(tip, x, y, s, area, linea) {
+  tip.txt.textContent = s;
+  tip.g.setAttribute("visibility", "visible");
+  if (linea) set(tip.linea, linea); else set(tip.linea, { x1: 0, x2: 0, y1: 0, y2: 0 });
+  const w = tip.txt.getComputedTextLength() + 14, h = 22;
+  let tx = x + 12, ty = y - h - 8;
+  if (tx + w > area.x1) tx = x - w - 12;
+  if (tx < area.x0) tx = area.x0 + 2;
+  if (ty < area.y0) ty = y + 12;
+  if (ty + h > area.y1) ty = area.y1 - h - 2;
+  set(tip.rect, { x: tx, y: ty, width: w, height: h });
+  set(tip.txt, { x: tx + 7, y: ty + 15 });
+}
+function ocultarTip(tip) { tip.g.setAttribute("visibility", "hidden"); }
+function posPuntero(svg, e) {
+  const r = svg.getBoundingClientRect();
+  return { x: e.clientX - r.left, y: e.clientY - r.top };
+}
+function arrastrable(obj, alMover) {
+  const svg = obj.svg;
+  obj.arrastre = false;
+  svg.addEventListener("pointerdown", e => {
+    obj.arrastre = true;
+    try { svg.setPointerCapture(e.pointerId); } catch (_) {}
+    alMover(posPuntero(svg, e));
+  });
+  svg.addEventListener("pointermove", e => {
+    const p = posPuntero(svg, e);
+    if (obj.arrastre) alMover(p);
+    obj.hover(p);
+  });
+  const fin = () => { obj.arrastre = false; };
+  svg.addEventListener("pointerup", fin);
+  svg.addEventListener("pointercancel", fin);
+  svg.addEventListener("pointerleave", () => ocultarTip(obj.tip));
+}
+function ejeVertical(g, Y, area, valores, titulo) {
+  for (const v of valores) {
+    el("line", { x1: area.x0 - 4, x2: area.x0, y1: Y(v), y2: Y(v), class: "g-eje" }, g);
+    texto(g, area.x0 - 7, Y(v) + 4, numEje(v), { class: "g-tick", "text-anchor": "end" });
+  }
+  const ty = texto(g, 0, 0, titulo, { class: "g-titulo-eje", "text-anchor": "middle" });
+  ty.setAttribute("transform", `translate(14 ${(area.y0 + area.y1) / 2}) rotate(-90)`);
+}
+function marco(g, area) {
+  el("line", { x1: area.x0, x2: area.x0, y1: area.y0, y2: area.y1, class: "g-eje" }, g);
+  el("line", { x1: area.x0, x2: area.x1, y1: area.y1, y2: area.y1, class: "g-eje" }, g);
+}
+const ML = 56, MR = 18;
+
+/* =====================================================================
+   Instrumento 1: cuerda y trayectoria
+   ===================================================================== */
+const cuerda = {
+  host: $("#lienzo-cuerda"),
+  init() {
+    const svg = this.svg = el("svg", { class: "grafico", role: "img", "aria-label": "Forma de la cuerda sin masa y trayectoria de la partícula" }, this.host);
+    const clip = el("clipPath", { id: "clip-cuerda" }, el("defs", null, svg));
+    this.clipRect = el("rect", null, clip);
+    const recorte = { "clip-path": "url(#clip-cuerda)" };
+    this.gGrilla = el("g", null, svg);
+    this.gEjes = el("g", null, svg);
+    this.gRef = el("g", recorte, svg);
+    this.gDin = el("g", recorte, svg);
+    this.gRot = el("g", null, svg);
+    this.cuasi = el("polyline", { class: "g-cuasi" }, this.gRef);
+    this.caida = el("polyline", { class: "g-caida" }, this.gRef);
+    this.part = el("polyline", { class: "g-particular" }, this.gRef);
+    this.trayTenue = el("polyline", { class: "g-tray-tenue" }, this.gRef);
+    this.salto = el("line", { class: "g-salto" }, this.gDin);
+    this.tray = el("polyline", { class: "g-tray" }, this.gDin);
+    this.cuerdaL = el("polyline", { class: "g-cuerda" }, this.gDin);
+    this.llegada = el("circle", { r: 5.5, class: "g-llegada" }, this.gDin);
+    this.particula = el("circle", { r: 6.5, class: "g-particula" }, this.gDin);
+    this.lblLlegada = el("text", { class: "g-rotulo-suave g-halo", "text-anchor": "end" }, this.gRot);
+    this.tip = crearTip(svg);
+    arrastrable(this, p => { detener(); fijarTau(this.X.inv(p.x)); });
+  },
+  hover(p) {
+    if (!this.X) return;
+    const x = this.X.inv(p.x);
+    if (x < 0 || x > 1) { ocultarTip(this.tip); return; }
+    const t = estado.tau, yp = yEn(t);
+    const wc = x <= t ? (t > 0 ? yp * x / t : 0) : (t < 1 ? yp * (1 - x) / (1 - t) : 0);
+    mostrarTip(this.tip, this.X(x), this.Y(wc), `x = ${num(x, 3)} L   cuerda ȳ = ${num(wc, 4)}`, this.area,
+      { x1: this.X(x), x2: this.X(x), y1: this.area.y0, y2: this.area.y1 });
+  },
+  layout() {
+    const W = this.host.clientWidth;
+    if (!W) return false;
+    const H = Math.round(Math.max(240, Math.min(370, W * 0.42)));
+    set(this.svg, { width: W, height: H, viewBox: `0 0 ${W} ${H}` });
+    this.area = { x0: ML, x1: W - MR, y0: 10, y1: H - 34 };
+    set(this.clipRect, { x: this.area.x0, y: this.area.y0, width: this.area.x1 - this.area.x0, height: this.area.y1 - this.area.y0 });
+    this.X = escala(0, 1.035, this.area.x0, this.area.x1);
+    return true;
+  },
+  fijo() {
+    const lim = calc.lim, a0 = this.area, X = this.X;
+    const Y = this.Y = escala(lim.arriba, lim.abajo, a0.y0, a0.y1);
+    const paso = pasoEje(lim.abajo - lim.arriba);
+    const yMay = marcas(lim.arriba, lim.abajo, paso);
+    vaciar(this.gGrilla);
+    grilla(this.gGrilla, X, Y, marcas(0, 1, 0.1), marcas(0, 1, 0.02), yMay, marcas(lim.arriba, lim.abajo, paso / 5));
+    vaciar(this.gEjes);
+    const g = this.gEjes;
+    marco(g, a0);
+    el("line", { x1: a0.x0, x2: a0.x1, y1: Y(0), y2: Y(0), class: "g-cero" }, g);
+    for (const v of marcas(0, 1, 0.2)) {
+      el("line", { x1: X(v), x2: X(v), y1: a0.y1, y2: a0.y1 + 4, class: "g-eje" }, g);
+      texto(g, X(v), a0.y1 + 17, numEje(v), { class: "g-tick", "text-anchor": "middle" });
+    }
+    texto(g, X(1), a0.y1 + 30, "x/L", { class: "g-titulo-eje", "text-anchor": "end" });
+    ejeVertical(g, Y, a0, yMay, "ȳ = Nu/(PL) (hacia abajo)");
+    for (const xa of [0, 1]) el("path", { d: `M${X(xa)},${Y(0)} l-6,10 h12 z`, class: "g-apoyo" }, g);
+    // referencias
+    const lam = estado.lam, cq = [], cl = [], cp = [];
+    for (let i = 0; i <= 200; i++) {
+      const t = i / 200;
+      cq.push([t, t * (1 - t)]);
+      cp.push([t, t * (1 - t) / (1 - 2 * lam)]);
+    }
+    for (let i = 0; i <= 200; i++) {
+      const t = i / 200, y = t * t / (2 * lam);
+      cl.push([t, y]);
+      if (y > lim.abajo) break;
+    }
+    this.cuasi.setAttribute("points", puntos(cq, X, Y));
+    this.caida.setAttribute("points", puntos(cl, X, Y));
+    this.part.setAttribute("points", puntos(cp, X, Y));
+    const verRef = estado.vistas.refs;
+    this.cuasi.setAttribute("visibility", verRef ? "visible" : "hidden");
+    this.caida.setAttribute("visibility", verRef ? "visible" : "hidden");
+    const verPart = estado.vistas.particular && lam < 0.5 - 1e-9;
+    this.part.setAttribute("visibility", verPart ? "visible" : "hidden");
+    this.trayTenue.setAttribute("points", puntos(calc.T.map((t, i) => [t, calc.Y[i]]), X, Y));
+    // llegada
+    const y1 = calc.llega ? 0 : calc.y1;
+    set(this.llegada, { cx: X(1), cy: Y(y1) });
+    if (calc.llega) this.salto.setAttribute("visibility", "hidden");
+    else set(this.salto, { x1: X(1), x2: X(1), y1: Y(0), y2: Y(y1), visibility: "visible" });
+    this.lblLlegada.textContent = calc.llega ? "llega al apoyo" : `llega en ȳ(1) = ${numSigno(calc.y1, 3)}`;
+    const yl = Math.abs(Y(y1) - Y(0)) < 16 ? Y(y1) + (calc.y1 >= 0 ? 18 : -10) : Y(y1) + 4;
+    set(this.lblLlegada, { x: X(1) - 12, y: yl });
+    // aviso
+    let aviso = "";
+    if (estado.vistas.particular && lam >= 0.5 - 1e-9) {
+      aviso = "Con λ ≥ 1/2 la solución particular ya no es una forma estática bajo una fuerza mayor que P, porque la serie de correcciones de la inercia diverge. Por eso no se dibuja.";
+    }
+    if (calc.medio) aviso = (aviso ? aviso + " " : "") + "Con λ = 1/2 la fórmula general queda 0/0, pero la ecuación se integra sin problema: la partícula llega a ȳ(1) = 1/3.";
+    const av = $("#aviso-cuerda");
+    av.textContent = aviso;
+    av.hidden = !aviso;
+  },
+  instante() {
+    const t = estado.tau, X = this.X, Y = this.Y, yp = yEn(t);
+    this.cuerdaL.setAttribute("points", puntos([[0, 0], [t, yp], [1, 0]], X, Y));
+    set(this.particula, { cx: X(t), cy: Y(yp) });
+    const pts = [];
+    for (let i = 0; i < calc.T.length && calc.T[i] <= t + 1e-12; i++) pts.push([calc.T[i], calc.Y[i]]);
+    pts.push([t, yp]);
+    this.tray.setAttribute("points", puntos(pts, X, Y));
+  }
+};
+
+/* =====================================================================
+   Instrumento 2: tramo final ampliado
+   ===================================================================== */
+const final = {
+  host: $("#lienzo-final"),
+  x0: 0.9,
+  init() {
+    const svg = this.svg = el("svg", { class: "grafico", role: "img", "aria-label": "Último tramo de la cuerda y llegada de la partícula al apoyo final" }, this.host);
+    const clip = el("clipPath", { id: "clip-final" }, el("defs", null, svg));
+    this.clipRect = el("rect", null, clip);
+    const recorte = { "clip-path": "url(#clip-final)" };
+    this.gGrilla = el("g", null, svg);
+    this.gEjes = el("g", null, svg);
+    this.gDin = el("g", recorte, svg);
+    this.trayTenue = el("polyline", { class: "g-tray-tenue" }, this.gDin);
+    this.salto = el("line", { class: "g-salto" }, this.gDin);
+    this.tray = el("polyline", { class: "g-tray" }, this.gDin);
+    this.cuerdaL = el("polyline", { class: "g-cuerda" }, this.gDin);
+    this.llegada = el("circle", { r: 5.5, class: "g-llegada" }, this.gDin);
+    this.particula = el("circle", { r: 6.5, class: "g-particula" }, this.gDin);
+    this.tip = crearTip(svg);
+    arrastrable(this, p => { detener(); fijarTau(Math.max(this.x0, this.X.inv(p.x))); });
+  },
+  hover(p) {
+    if (!this.X) return;
+    const t = this.X.inv(p.x);
+    if (t < this.x0 || t > 1) { ocultarTip(this.tip); return; }
+    const y = yEn(t);
+    mostrarTip(this.tip, this.X(t), this.Y(y), `τ = ${num(t, 4)}   ȳ = ${num(y, 4)}`, this.area,
+      { x1: this.X(t), x2: this.X(t), y1: this.area.y0, y2: this.area.y1 });
+  },
+  layout() {
+    const W = this.host.clientWidth;
+    if (!W) return false;
+    const H = Math.round(Math.max(220, Math.min(320, W * 0.66)));
+    set(this.svg, { width: W, height: H, viewBox: `0 0 ${W} ${H}` });
+    this.area = { x0: ML, x1: W - MR, y0: 10, y1: H - 34 };
+    set(this.clipRect, { x: this.area.x0, y: this.area.y0, width: this.area.x1 - this.area.x0, height: this.area.y1 - this.area.y0 });
+    this.X = escala(this.x0, 1.006, this.area.x0, this.area.x1);
+    return true;
+  },
+  fijo() {
+    const lim = calc.lim, a0 = this.area, X = this.X;
+    const Y = this.Y = escala(lim.arriba, lim.abajo, a0.y0, a0.y1);
+    const paso = pasoEje(lim.abajo - lim.arriba);
+    const yMay = marcas(lim.arriba, lim.abajo, paso);
+    vaciar(this.gGrilla);
+    grilla(this.gGrilla, X, Y, marcas(this.x0, 1, 0.02), marcas(this.x0, 1, 0.005), yMay, marcas(lim.arriba, lim.abajo, paso / 5));
+    vaciar(this.gEjes);
+    const g = this.gEjes;
+    marco(g, a0);
+    el("line", { x1: a0.x0, x2: a0.x1, y1: Y(0), y2: Y(0), class: "g-cero" }, g);
+    for (const v of marcas(this.x0, 1, 0.02)) {
+      el("line", { x1: X(v), x2: X(v), y1: a0.y1, y2: a0.y1 + 4, class: "g-eje" }, g);
+      texto(g, X(v), a0.y1 + 17, numEje(v), { class: "g-tick", "text-anchor": "middle" });
+    }
+    texto(g, X(1), a0.y1 + 30, "x/L", { class: "g-titulo-eje", "text-anchor": "end" });
+    ejeVertical(g, Y, a0, yMay, "ȳ (hacia abajo)");
+    el("path", { d: `M${X(1)},${Y(0)} l-6,10 h12 z`, class: "g-apoyo" }, g);
+    const pts = [];
+    for (let i = 0; i < calc.T.length; i++) if (calc.T[i] >= this.x0 - 0.002) pts.push([calc.T[i], calc.Y[i]]);
+    this.trayTenue.setAttribute("points", puntos(pts, X, Y));
+    const y1 = calc.llega ? 0 : calc.y1;
+    set(this.llegada, { cx: X(1), cy: Y(y1) });
+    if (calc.llega) this.salto.setAttribute("visibility", "hidden");
+    else set(this.salto, { x1: X(1), x2: X(1), y1: Y(0), y2: Y(y1), visibility: "visible" });
+  },
+  instante() {
+    const t = estado.tau, X = this.X, Y = this.Y, yp = yEn(t);
+    this.cuerdaL.setAttribute("points", puntos([[0, 0], [t, yp], [1, 0]], X, Y));
+    set(this.particula, { cx: X(t), cy: Y(yp), visibility: t >= this.x0 - 0.004 ? "visible" : "hidden" });
+    const pts = [];
+    for (let i = 0; i < calc.T.length && calc.T[i] <= t + 1e-12; i++) if (calc.T[i] >= this.x0 - 0.002) pts.push([calc.T[i], calc.Y[i]]);
+    if (t >= this.x0 - 0.002) pts.push([t, yp]);
+    this.tray.setAttribute("points", puntos(pts, X, Y));
+    const pie = $("#pie-final");
+    if (t < this.x0) {
+      pie.innerHTML = `La partícula entra a esta ventana en τ = 0,9. ${calc.llega ? "Con este λ llega justo al apoyo." : `Llegará a ȳ(1) = <b>${numSigno(calc.y1, 4)}</b>, ${calc.y1 > 0 ? "bajo" : "sobre"} el nivel del apoyo.`}`;
+    } else if (t >= 1) {
+      pie.innerHTML = calc.llega
+        ? `Llegó al apoyo con el tramo derecho de inclinación finita, ${num(-calc.v1, 3)}: la trayectoria es continua.`
+        : `Llegó a ȳ(1) = <b>${numSigno(calc.y1, 4)}</b>: el tramo derecho es vertical y la trayectoria es discontinua en x = L.`;
+    } else {
+      const pend = yp / (1 - t);
+      const destino = calc.llega ? `Con un valor de Smith tiende a un valor finito, ${num(-calc.v1, 3)}.`
+        : `Tiende a ${calc.y1 > 0 ? "+∞" : "−∞"} al llegar al apoyo.`;
+      pie.innerHTML = `Inclinación del tramo derecho, ȳ/(1 − τ) = <b>${num(pend, Math.abs(pend) > 100 ? 0 : 2)}</b>. ${destino}`;
+    }
+  }
+};
+
+/* =====================================================================
+   Instrumento 3: fuerza de la cuerda sobre la partícula
+   ===================================================================== */
+const FMIN = -2, FMAX = 5;
+const panelF = {
+  host: $("#lienzo-fuerza"),
+  init() {
+    const svg = this.svg = el("svg", { class: "grafico", role: "img", "aria-label": "Fuerza de la cuerda sobre la partícula en función de su posición" }, this.host);
+    const clip = el("clipPath", { id: "clip-fuerza" }, el("defs", null, svg));
+    this.clipRect = el("rect", null, clip);
+    const recorte = { "clip-path": "url(#clip-fuerza)" };
+    this.gFondo = el("g", recorte, svg);
+    this.gGrilla = el("g", null, svg);
+    this.gEjes = el("g", null, svg);
+    this.gDin = el("g", recorte, svg);
+    this.gRot = el("g", null, svg);
+    this.neg = el("rect", { class: "g-negativa" }, this.gFondo);
+    this.curva = el("polyline", { class: "g-fuerza" }, this.gDin);
+    this.ahora = el("line", { class: "g-ahora" }, this.gDin);
+    this.punto = el("circle", { r: 5, class: "g-punto" }, this.gDin);
+    this.lblFin = el("text", { class: "g-rotulo g-halo", "text-anchor": "end" }, this.gRot);
+    this.gRotFijo = el("g", null, svg);
+    this.tip = crearTip(svg);
+    arrastrable(this, p => { detener(); fijarTau(this.X.inv(p.x)); });
+  },
+  hover(p) {
+    if (!this.X) return;
+    const t = this.X.inv(p.x);
+    if (t < 0 || t > 1) { ocultarTip(this.tip); return; }
+    const f = fuerza(t).F;
+    mostrarTip(this.tip, this.X(t), this.Y(Math.max(FMIN, Math.min(FMAX, f))), `τ = ${num(t, 3)}   F = ${num(f, 2)} P`, this.area,
+      { x1: this.X(t), x2: this.X(t), y1: this.area.y0, y2: this.area.y1 });
+  },
+  layout() {
+    const W = this.host.clientWidth;
+    if (!W) return false;
+    const H = Math.round(Math.max(220, Math.min(320, W * 0.66)));
+    set(this.svg, { width: W, height: H, viewBox: `0 0 ${W} ${H}` });
+    const a0 = this.area = { x0: ML - 12, x1: W - MR, y0: 10, y1: H - 34 };
+    set(this.clipRect, { x: a0.x0, y: a0.y0, width: a0.x1 - a0.x0, height: a0.y1 - a0.y0 });
+    const X = this.X = escala(0, 1, a0.x0, a0.x1);
+    const Y = this.Y = escala(FMIN, FMAX, a0.y1, a0.y0);
+    set(this.neg, { x: a0.x0, y: Y(0), width: a0.x1 - a0.x0, height: Y(FMIN) - Y(0) });
+    vaciar(this.gGrilla);
+    grilla(this.gGrilla, X, Y, marcas(0, 1, 0.1), marcas(0, 1, 0.02), marcas(FMIN, FMAX, 1), marcas(FMIN, FMAX, 0.25));
+    vaciar(this.gEjes);
+    const g = this.gEjes;
+    marco(g, a0);
+    el("line", { x1: a0.x0, x2: a0.x1, y1: Y(0), y2: Y(0), class: "g-eje" }, g);
+    el("line", { x1: a0.x0, x2: a0.x1, y1: Y(1), y2: Y(1), class: "g-ref" }, g);
+    vaciar(this.gRotFijo);
+    texto(this.gRotFijo, a0.x0 + 6, Y(1) - 5, "peso P (cuasiestática)", { class: "g-rotulo-suave g-halo" });
+    texto(this.gRotFijo, a0.x0 + 6, Y(0) + 15, "la cuerda tira hacia abajo", { class: "g-rotulo-suave g-halo" });
+    for (const v of marcas(0, 1, 0.2)) {
+      el("line", { x1: X(v), x2: X(v), y1: a0.y1, y2: a0.y1 + 4, class: "g-eje" }, g);
+      texto(g, X(v), a0.y1 + 17, numEje(v), { class: "g-tick", "text-anchor": "middle" });
+    }
+    texto(g, X(1), a0.y1 + 30, "τ = vt/L", { class: "g-titulo-eje", "text-anchor": "end" });
+    ejeVertical(g, Y, a0, marcas(FMIN, FMAX, 1), "F/P");
+    return true;
+  },
+  fijo() {
+    const X = this.X, Y = this.Y, pts = [];
+    let salida = 1;
+    for (let i = 0; i < calc.T.length; i++) {
+      const t = calc.T[i];
+      if (t >= 1) break;
+      const f = t <= 0 ? 0 : calc.Y[i] / (t * (1 - t));
+      if (salida === 1 && t > 0.5 && (f > FMAX || f < FMIN)) salida = t;
+      pts.push([t, Math.max(FMIN - 1, Math.min(FMAX + 1, f))]);
+      if (f > FMAX + 1 || f < FMIN - 1) break;
+    }
+    if (calc.llega) pts.push([1, -calc.v1]);
+    this.curva.setAttribute("points", puntos(pts, X, Y));
+    if (calc.llega) {
+      this.lblFin.textContent = `llega con F = ${num(-calc.v1, 2)} P`;
+      set(this.lblFin, { x: this.area.x1 - 4, y: Y(Math.max(FMIN + 0.3, Math.min(FMAX - 0.3, -calc.v1))) - 10 });
+    } else {
+      this.lblFin.textContent = calc.y1 > 0 ? "→ +∞ al final" : "→ −∞ al final";
+      set(this.lblFin, { x: Math.max(this.area.x0 + 120, X(salida) - 8), y: calc.y1 > 0 ? this.area.y0 + 14 : this.area.y1 - 8 });
+    }
+  },
+  instante() {
+    const t = estado.tau, X = this.X, Y = this.Y, a0 = this.area;
+    const f = fuerza(t).F;
+    set(this.ahora, { x1: X(t), x2: X(t), y1: a0.y0, y2: a0.y1 });
+    if (isFinite(f) && f >= FMIN && f <= FMAX) set(this.punto, { cx: X(t), cy: Y(f), visibility: "visible" });
+    else this.punto.setAttribute("visibility", "hidden");
+    const pie = $("#pie-fuerza");
+    if (t < 0.02) pie.innerHTML = "Al entrar la fuerza es casi nula: el tramo izquierdo está casi horizontal y la partícula cae libremente.";
+    else if (!isFinite(f)) pie.innerHTML = "En x = L el tramo derecho queda vertical y la fuerza no tiene límite.";
+    else if (f < 0) pie.innerHTML = `F = <b>${num(f, 2)} P</b>: la cuerda tira de la partícula hacia abajo. Una partícula solo apoyada se despegaría; el modelo supone contacto permanente.`;
+    else pie.innerHTML = `F = <b>${num(f, 2)} P</b>: la cuerda empuja a la partícula hacia arriba${f > 1 ? " con más que su peso" : ""}.`;
+  }
+};
+
+/* =====================================================================
+   Instrumento 4: llegada al apoyo final en función de lam
+   ===================================================================== */
+const YL_ARR = -0.065, YL_ABA = 0.37;
+const llegada = {
+  host: $("#lienzo-llegada"),
+  curva: null,
+  init() {
+    const svg = this.svg = el("svg", { class: "grafico", role: "img", "aria-label": "Altura de llegada al apoyo final en función de lambda" }, this.host);
+    this.gGrilla = el("g", null, svg);
+    this.gEjes = el("g", null, svg);
+    this.gCurva = el("g", null, svg);
+    this.gMarca = el("g", null, svg);
+    this.marca = el("line", { class: "g-marca" }, this.gMarca);
+    this.punto = el("circle", { r: 5.5, class: "g-punto" }, this.gMarca);
+    this.txt = el("text", { class: "g-rotulo g-halo" }, this.gMarca);
+    this.tip = crearTip(svg);
+    const pts = [];
+    for (let i = 0; i <= 1200; i++) {
+      const lam = LAM_MIN * Math.pow(LAM_MAX / LAM_MIN, i / 1200);
+      pts.push([lam, llegadaGauss(lam)]);
+    }
+    pts.push([0.5, 1 / 3]);
+    pts.sort((p, q) => p[0] - q[0]);
+    this.curva = pts;
+    arrastrable(this, p => fijarLam(this.X.inv(p.x), { redondear: true }));
+  },
+  hover(p) {
+    if (!this.X) return;
+    const lam = this.X.inv(p.x);
+    if (lam < LAM_MIN || lam > LAM_MAX) { ocultarTip(this.tip); return; }
+    const y = llegadaGauss(lam);
+    mostrarTip(this.tip, this.X(lam), this.Y(y), `λ = ${textoLam(lam)}   ȳ(1) = ${numSigno(y, 4)}`, this.area,
+      { x1: this.X(lam), x2: this.X(lam), y1: this.area.y0, y2: this.area.y1 });
+  },
+  layout() {
+    const W = this.host.clientWidth;
+    if (!W) return false;
+    const H = Math.round(Math.max(220, Math.min(300, W * 0.32)));
+    set(this.svg, { width: W, height: H, viewBox: `0 0 ${W} ${H}` });
+    const a0 = this.area = { x0: ML, x1: W - MR, y0: 12, y1: H - 34 };
+    const angosto = (a0.x1 - a0.x0) < 520;
+    const X = this.X = escalaLog(LAM_MIN, LAM_MAX, a0.x0, a0.x1);
+    const Y = this.Y = escala(YL_ARR, YL_ABA, a0.y0, a0.y1);
+    const may = [0.005, 0.01, 0.02, 0.05, 0.1, 0.2, 0.5, 1, 2];
+    const men = [];
+    for (const d of [0.001, 0.01, 0.1, 1]) for (let k = 2; k <= 9; k++) { const v = d * k; if (v > LAM_MIN && v < LAM_MAX) men.push(v); }
+    vaciar(this.gGrilla);
+    grilla(this.gGrilla, X, Y, may, men, marcas(-0.05, 0.35, 0.05), marcas(YL_ARR, YL_ABA, 0.01));
+    vaciar(this.gEjes);
+    const g = this.gEjes;
+    marco(g, a0);
+    el("line", { x1: a0.x0, x2: a0.x1, y1: Y(0), y2: Y(0), class: "g-cero" }, g);
+    for (const v of (angosto ? [0.01, 0.05, 0.1, 0.5, 1, 2] : may)) {
+      el("line", { x1: X(v), x2: X(v), y1: a0.y1, y2: a0.y1 + 4, class: "g-eje" }, g);
+      texto(g, X(v), a0.y1 + 17, numEje(v), { class: "g-tick", "text-anchor": "middle" });
+    }
+    texto(g, a0.x1, a0.y1 + 30, "λ = mv²/(LN), escala logarítmica", { class: "g-titulo-eje", "text-anchor": "end" });
+    ejeVertical(g, Y, a0, marcas(-0.05, 0.35, 0.05), "ȳ(1)");
+    vaciar(this.gCurva);
+    const gc = this.gCurva;
+    el("polyline", { points: puntos(this.curva, X, Y), class: "g-curva-llegada" }, gc);
+    for (let n = 2; n <= 80; n++) {
+      const l = 1 / (n * (n + 1));
+      if (l < LAM_MIN) break;
+      el("circle", { cx: X(l), cy: Y(0), r: n <= 4 ? 4.5 : 3.5, class: "g-smith" }, gc);
+      if (n <= 4 && X(l) - X(1 / ((n + 1) * (n + 2))) > 28) texto(gc, X(l), Y(0) - 9, "1/" + n * (n + 1), { class: "g-tick", "text-anchor": "middle" });
+    }
+    el("circle", { cx: X(0.5), cy: Y(1 / 3), r: 4.5, class: "g-llegada" }, gc);
+    texto(gc, X(0.5) - 10, Y(1 / 3) + 4, angosto ? "1/2 → 1/3" : "λ = 1/2: la fórmula da 0/0; el límite es 1/3", { class: "g-rotulo-suave g-halo", "text-anchor": "end" });
+    if (!angosto) {
+      texto(gc, X(0.1219), Y(-0.049) - 6, "mínimo −0,049 en λ ≈ 0,122", { class: "g-rotulo-suave g-halo", "text-anchor": "middle" });
+      texto(gc, X(LAM_MIN) + 6, Y(0.07), "bajo el apoyo ↓", { class: "g-rotulo-suave g-halo" });
+      texto(gc, X(LAM_MIN) + 6, Y(-0.035), "sobre el apoyo ↑", { class: "g-rotulo-suave g-halo" });
+    }
+    return true;
+  },
+  instante() {
+    const lam = estado.lam, X = this.X, Y = this.Y, a0 = this.area;
+    const y = calc.y1g;
+    set(this.marca, { x1: X(lam), x2: X(lam), y1: a0.y0, y2: a0.y1 });
+    set(this.punto, { cx: X(lam), cy: Y(y) });
+    const der = X(lam) + 150 < a0.x1;
+    set(this.txt, { x: X(lam) + (der ? 9 : -9), y: Math.min(a0.y1 - 6, Math.max(a0.y0 + 14, Y(y) + (y > 0.25 ? -10 : 20))), "text-anchor": der ? "start" : "end" });
+    this.txt.textContent = `ȳ(1) = ${numSigno(y, 4)}`;
+    const pie = $("#pie-llegada");
+    pie.innerHTML = `Valores de Smith λₙ = 1/[n(n + 1)]: <b>1/6, 1/12, 1/20, 1/30</b>… Solo en ellos la partícula llega justo al apoyo. Para λ &gt; 1/6 siempre llega bajo el apoyo, con un máximo de 0,339 en λ ≈ 0,589.`;
+  }
+};
+
+/* =====================================================================
+   Lecturas
+   ===================================================================== */
+function lecturas() {
+  const t = estado.tau, lam = estado.lam;
+  const pl = $("#l-llegada"), pls = $("#l-llegada-sub");
+  const cerca = smithCercano(lam);
+  const u = 4 * Math.abs(calc.y1);
+  if (calc.llega) {
+    pl.textContent = "Justo en el apoyo";
+    pl.className = "pastilla lleno";
+    pls.innerHTML = calc.n ? `Valor de Smith, n = ${calc.n}: trayectoria polinomial` : "ȳ(1) = 0";
+  } else {
+    pl.textContent = calc.y1 > 0 ? "Bajo el apoyo" : "Sobre el apoyo";
+    pl.className = "pastilla";
+    let s = `ȳ(1) = ${numSigno(calc.y1, 4)} · u = ${num(u, 2)} w<sub>0</sub> ${calc.y1 > 0 ? "bajo" : "sobre"} el apoyo`;
+    if (calc.medio) s = `λ = 1/2: ȳ(1) = 1/3 · u = 1,33 w<sub>0</sub> bajo el apoyo`;
+    else if (cerca.d < 0.03) s += ` · cerca del valor de Smith 1/${cerca.n * (cerca.n + 1)}`;
+    pls.innerHTML = s;
+  }
+  const yp = yEn(t);
+  $("#l-particula").textContent = `ȳ = ${num(yp, 4)}`;
+  $("#l-particula-sub").textContent = `Máximo ${num(calc.max.y, 4)} en τ = ${num(calc.max.t, 3)}`;
+  const f = fuerza(t), lf = $("#l-fuerza"), lfs = $("#l-fuerza-sub");
+  if (t <= 0) {
+    lf.textContent = "F = 0";
+    lfs.textContent = "Entra en caída libre";
+  } else if (!isFinite(f.F)) {
+    lf.textContent = `F → ${f.F > 0 ? "+∞" : "−∞"}`;
+    lfs.textContent = "El tramo derecho queda vertical";
+  } else {
+    lf.textContent = `F = ${num(f.F, 2)} P`;
+    lfs.textContent = f.F < 0
+      ? "La cuerda tira hacia abajo"
+      : `Tramo izquierdo ${num(f.izq, 2)} P · derecho ${num(f.der, 2)} P`;
+  }
+  $("#l-comprobacion").textContent = `ȳ(1) = ${num(calc.y1, 6)}`;
+  const dif = Math.abs(calc.y1 - calc.y1g);
+  $("#l-comprobacion-sub").textContent = `Fórmula de Gauss ${num(calc.y1g, 6)} · diferencia ${cientifico(dif)}`;
+}
+
+/* =====================================================================
+   Coordinación
+   ===================================================================== */
+let listo = false;
+const paneles = () => [cuerda, final, panelF, llegada];
+function visible(p) {
+  if (p === final) return estado.vistas.final;
+  if (p === panelF) return estado.vistas.fuerza;
+  return true;
+}
+function dibujarTodo() {
+  if (!listo) return;
+  for (const p of paneles()) {
+    if (!visible(p)) { p.ok = false; continue; }
+    p.ok = p.layout();
+    if (p.ok && p.fijo) p.fijo();
+  }
+  dibujarInstante();
+}
+function dibujarInstante() {
+  for (const p of paneles()) if (p.ok && visible(p)) p.instante();
+  lecturas();
+  $("#tau-valor").textContent = `τ = ${num(estado.tau, 3)}`;
+  const tr = $("#tau-rango");
+  if (document.activeElement !== tr) tr.value = estado.tau;
+  tr.setAttribute("aria-valuetext", `τ = ${num(estado.tau, 3)}`);
+}
+function fijarTau(t) {
+  estado.tau = Math.min(1, Math.max(0, t));
+  if (listo) dibujarInstante();
+}
+function fijarLam(lam, opciones = {}) {
+  if (!isFinite(lam)) return;
+  lam = Math.min(LAM_MAX, Math.max(LAM_MIN, lam));
+  if (opciones.redondear) lam = Number(lam.toPrecision(3));
+  estado.lam = lam;
+  const r = $("#lam-rango");
+  if (opciones.desde !== "rango") r.value = Math.log10(lam);
+  r.setAttribute("aria-valuetext", `λ = ${textoLam(lam)}`);
+  if (opciones.desde !== "texto") $("#lam-texto").value = textoLam(lam);
+  $("#lam-valor").textContent = `λ = ${textoLam(lam)}`;
+  $("#insignia-lam").textContent = `λ = ${textoLam(lam)}`;
+  for (const b of document.querySelectorAll(".chip[data-lam]")) {
+    b.setAttribute("aria-pressed", Math.abs(leerLam(b.dataset.lam) - lam) < 1e-12 ? "true" : "false");
+  }
+  recalcular();
+  dibujarTodo();
+  guardar();
+}
+function leerLam(s) {
+  s = String(s).trim().replace(",", ".");
+  if (s.includes("/")) {
+    const [p, q] = s.split("/").map(Number);
+    return q ? p / q : NaN;
+  }
+  return parseFloat(s);
+}
+function aplicarVistas() {
+  for (const li of document.querySelectorAll("[data-vista]")) li.hidden = !estado.vistas[li.dataset.vista];
+  $("#panel-final").hidden = !estado.vistas.final;
+  $("#panel-fuerza").hidden = !estado.vistas.fuerza;
+}
+
+/* ---------- Reproducción ---------- */
+let reproduciendo = false, tPrev = null, pausaFinal = 0;
+function cuadro(ts) {
+  if (!reproduciendo) return;
+  if (tPrev === null) tPrev = ts;
+  const dt = Math.min(0.1, (ts - tPrev) / 1000);
+  tPrev = ts;
+  if (pausaFinal > 0) {
+    pausaFinal -= dt;
+    if (pausaFinal <= 0) {
+      if (estado.repetir) estado.tau = 0;
+      else { detener(); return; }
+    }
+  } else {
+    const factor = estado.lento && estado.tau >= 0.9 ? 0.2 : 1;
+    estado.tau = Math.min(1, estado.tau + factor * dt / estado.duracion);
+    if (estado.tau >= 1) pausaFinal = 1.2;
+  }
+  dibujarInstante();
+  requestAnimationFrame(cuadro);
+}
+function reproducir() {
+  if (estado.tau >= 1) estado.tau = 0;
+  reproduciendo = true;
+  tPrev = null;
+  pausaFinal = 0;
+  botonPlay();
+  requestAnimationFrame(cuadro);
+}
+function detener() {
+  if (!reproduciendo) return;
+  reproduciendo = false;
+  botonPlay();
+}
+function botonPlay() {
+  $("#btn-play").setAttribute("aria-pressed", reproduciendo ? "true" : "false");
+  $("#txt-play").textContent = reproduciendo ? "Pausar" : "Reproducir";
+  $("#icono-play").innerHTML = reproduciendo
+    ? '<path d="M2.5 1.5h3.2v11H2.5zM8.3 1.5h3.2v11H8.3z"/>'
+    : '<path d="M3 1.5v11l9-5.5z"/>';
+}
+
+/* ---------- Preferencias del visitante (solo en este navegador) ---------- */
+function guardar() {
+  try {
+    localStorage.setItem(CLAVE, JSON.stringify({
+      lam: estado.lam, vistas: estado.vistas, duracion: estado.duracion,
+      repetir: estado.repetir, lento: estado.lento
+    }));
+  } catch (_) {}
+}
+function cargarGuardado() {
+  try { return JSON.parse(localStorage.getItem(CLAVE) || "null"); } catch (_) { return null; }
+}
+function aplicarDatos(d) {
+  if (!d || typeof d !== "object") return;
+  if (isFinite(d.lam)) estado.lam = Math.min(LAM_MAX, Math.max(LAM_MIN, +d.lam));
+  if (isFinite(d.tau)) estado.tau = Math.min(1, Math.max(0, +d.tau));
+  if (d.vistas && typeof d.vistas === "object") {
+    for (const k of Object.keys(estado.vistas)) if (typeof d.vistas[k] === "boolean") estado.vistas[k] = d.vistas[k];
+  }
+  if ([3, 6, 12, 24].includes(d.duracion)) estado.duracion = d.duracion;
+  if (typeof d.repetir === "boolean") estado.repetir = d.repetir;
+  if (typeof d.lento === "boolean") estado.lento = d.lento;
+}
+
+/* ---------- Controles ---------- */
+function conectar() {
+  $("#lam-rango").addEventListener("input", e => fijarLam(Math.pow(10, parseFloat(e.target.value)), { desde: "rango", redondear: true }));
+  const campo = $("#lam-texto");
+  const confirmar = () => {
+    const lam = leerLam(campo.value);
+    if (isFinite(lam) && lam > 0) fijarLam(lam, { desde: "texto" });
+    else campo.value = textoLam(estado.lam);
+  };
+  campo.addEventListener("change", confirmar);
+  campo.addEventListener("keydown", e => { if (e.key === "Enter") { e.preventDefault(); confirmar(); } });
+  for (const b of document.querySelectorAll(".chip[data-lam]")) {
+    b.addEventListener("click", () => fijarLam(leerLam(b.dataset.lam)));
+  }
+  $("#tau-rango").addEventListener("input", e => { detener(); fijarTau(parseFloat(e.target.value)); });
+  $("#btn-play").addEventListener("click", () => reproduciendo ? detener() : reproducir());
+  $("#btn-inicio").addEventListener("click", () => fijarTau(0));
+  $("#duracion").addEventListener("change", e => { estado.duracion = parseInt(e.target.value, 10); guardar(); });
+  $("#repetir").addEventListener("change", e => { estado.repetir = e.target.checked; guardar(); });
+  $("#lento").addEventListener("change", e => { estado.lento = e.target.checked; guardar(); });
+  const mapa = { "v-refs": "refs", "v-particular": "particular", "v-final": "final", "v-fuerza": "fuerza" };
+  for (const id in mapa) {
+    $("#" + id).addEventListener("change", e => {
+      estado.vistas[mapa[id]] = e.target.checked;
+      aplicarVistas();
+      dibujarTodo();
+      guardar();
+    });
+  }
+  document.addEventListener("keydown", e => {
+    if (e.key !== " " && e.code !== "Space") return;
+    const tg = e.target;
+    if (tg && (tg.closest("button, input[type=text], select, summary, label, a") || tg.isContentEditable)) return;
+    e.preventDefault();
+    reproduciendo ? detener() : reproducir();
+  });
+}
+function sincronizarControles() {
+  $("#v-refs").checked = estado.vistas.refs;
+  $("#v-particular").checked = estado.vistas.particular;
+  $("#v-final").checked = estado.vistas.final;
+  $("#v-fuerza").checked = estado.vistas.fuerza;
+  $("#duracion").value = String(estado.duracion);
+  $("#repetir").checked = estado.repetir;
+  $("#lento").checked = estado.lento;
+  aplicarVistas();
+}
+
+/* ---------- Arranque ---------- */
+function arrancar(datos) {
+  aplicarDatos(datos);
+  for (const p of paneles()) p.init();
+  conectar();
+  sincronizarControles();
+  listo = true;
+  fijarLam(estado.lam);
+  let pendiente = false;
+  const ro = new ResizeObserver(() => {
+    if (pendiente) return;
+    pendiente = true;
+    requestAnimationFrame(() => { pendiente = false; dibujarTodo(); });
+  });
+  for (const p of paneles()) ro.observe(p.host);
+}
+
+const hot = window.claude && window.claude.hot;
+if (hot && typeof hot.snapshot === "function") {
+  hot.snapshot(() => ({
+    lam: estado.lam, tau: estado.tau, vistas: estado.vistas, duracion: estado.duracion,
+    repetir: estado.repetir, lento: estado.lento
+  }));
+}
+const guardado = cargarGuardado();
+if (hot && typeof hot.ready === "function") hot.ready(d => arrancar((d && Object.keys(d).length ? d : guardado) || {}));
+else arrancar((hot && hot.data) || guardado || {});
+
+/* Para pruebas fuera de la página */
+window.__caso2 = { integrar, evaluar, llegadaGauss, smithN, textoLam };
+})();
+</script>
+
+</body></html>

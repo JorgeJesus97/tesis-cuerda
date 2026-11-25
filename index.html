@@ -1,871 +1,441 @@
 <!DOCTYPE html>
-<html lang="es" data-theme="auto">
+<html lang="es">
 <head>
 <meta charset="utf-8">
-<meta name="viewport" content="width=device-width,initial-scale=1,maximum-scale=1,user-scalable=no">
-<title>Caso III</title>
-<link rel="icon" href="data:,">
+<meta name="viewport" content="width=device-width, initial-scale=1">
+<title>Dinámica de una cuerda tensa bajo cargas móviles</title>
+<meta name="description" content="Material interactivo del trabajo de titulación «Dinámica de una cuerda tensa bajo cargas móviles»: consolas, apps y un juego que corren en el navegador.">
+<meta name="color-scheme" content="light dark">
+<meta name="theme-color" content="#f6f8fa" media="(prefers-color-scheme: light)">
+<meta name="theme-color" content="#0c1721" media="(prefers-color-scheme: dark)">
+<link rel="icon" href="data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' viewBox='0 0 32 32'%3E%3Cpath d='M3 11 19 22 29 11' fill='none' stroke='%231e5dba' stroke-width='2.6' stroke-linecap='round' stroke-linejoin='round'/%3E%3Ccircle cx='19' cy='22' r='4.2' fill='%23e0522b'/%3E%3C/svg%3E">
+<link rel="preload" href="recursos/fuentes/stix-two-text-latin-400-normal.woff2" as="font" type="font/woff2" crossorigin>
 <style>
-/* VOICE  herramienta de bolsillo: una sola pantalla para explorar el Caso III
-   IDEA   el plano (α, μ) como mesa de trabajo: tocas un punto y la cuerda responde en números
-   PICTURE el mapa coloreado llena el espacio libre; el anillo marca el caso elegido
-   COLOUR fondo gris claro (azul noche en modo oscuro), tinta casi negra, acento azul; escalas de color de los mapas del avance
-   TYPE   la fuente del sistema (Roboto en Android), cifras tabulares
-   LAYOUT barra, mapa, resultados y, abajo al alcance del pulgar, los mandos; en horizontal, el mapa a la izquierda */
-:root{--fondo:#EEF1F4;--panel:#FFFFFF;--hundido:#F3F5F8;--tinta:#16202B;--tinta-2:#46515E;--tinta-3:#6F7985;--linea:#D8DEE5;--acento:#1F6FD1;--acento-suave:#E2ECFA;--ok:#11784F;--ok-suave:#DFF2E8;--alerta:#B4470F;--alerta-suave:#FCE8DA;--neutro:#FFFFFF;--curva:#16202B;--curva-halo:rgba(255,255,255,.8);--borde-c:#0B4AA8;--borde-halo:rgba(255,255,255,.85);--rejilla:rgba(0,0,0,.12);--sombra:0 1px 2px rgba(16,24,40,.06),0 1px 4px rgba(16,24,40,.07);color-scheme:light}
-:root[data-theme="dark"]{--fondo:#0B1016;--panel:#151C24;--hundido:#1B242E;--tinta:#E4E9EF;--tinta-2:#A9B4C0;--tinta-3:#86919D;--linea:#2A3542;--acento:#5B9DF0;--acento-suave:#1A2C44;--ok:#3CC48A;--ok-suave:#123022;--alerta:#F08A4B;--alerta-suave:#3A2416;--neutro:#1E2731;--curva:#E4E9EF;--curva-halo:rgba(0,0,0,.6);--borde-c:#74B3FA;--borde-halo:rgba(0,0,0,.6);--rejilla:rgba(255,255,255,.09);--sombra:0 1px 2px rgba(0,0,0,.35);color-scheme:dark}
-@media (prefers-color-scheme:dark){:root[data-theme="auto"]{--fondo:#0B1016;--panel:#151C24;--hundido:#1B242E;--tinta:#E4E9EF;--tinta-2:#A9B4C0;--tinta-3:#86919D;--linea:#2A3542;--acento:#5B9DF0;--acento-suave:#1A2C44;--ok:#3CC48A;--ok-suave:#123022;--alerta:#F08A4B;--alerta-suave:#3A2416;--neutro:#1E2731;--curva:#E4E9EF;--curva-halo:rgba(0,0,0,.6);--borde-c:#74B3FA;--borde-halo:rgba(0,0,0,.6);--rejilla:rgba(255,255,255,.09);--sombra:0 1px 2px rgba(0,0,0,.35);color-scheme:dark}}
-*,*::before,*::after{box-sizing:border-box;min-width:0}
-html,body{margin:0;height:100%}
-body{background:var(--fondo);color:var(--tinta);font:15px/1.4 system-ui,Roboto,"Segoe UI",Arial,sans-serif;-webkit-tap-highlight-color:transparent;-webkit-text-size-adjust:100%;overflow-x:hidden}
-button,input{font:inherit;color:inherit}
-.app{display:flex;flex-direction:column;gap:8px;min-height:100%;height:100%;padding:0 8px}
-.barra{display:flex;align-items:center;justify-content:space-between;gap:10px;padding:10px 4px 0;flex:none}
-.barra h1{margin:0;font-size:21px;font-weight:700;line-height:1.15;letter-spacing:-.01em}
-.barra p{margin:1px 0 0;font-size:12.5px;color:var(--tinta-2)}
-.icono{flex:none;width:42px;height:42px;border-radius:50%;border:1px solid var(--linea);background:var(--panel);font-size:18px;font-weight:700;font-style:italic;font-family:Georgia,serif;cursor:pointer}
-.tarjeta{background:var(--panel);border-radius:14px;box-shadow:var(--sombra);padding:9px}
-.mapa{flex:1 1 auto;display:flex;flex-direction:column}
-.selector{display:grid;grid-template-columns:repeat(4,minmax(0,1fr));gap:3px;padding:3px;border-radius:10px;background:var(--hundido);flex:none}
-.selector button{min-height:36px;border:0;border-radius:8px;background:transparent;color:var(--tinta-2);font-size:13.5px;font-weight:600;cursor:pointer;white-space:nowrap}
-.selector button[aria-pressed="true"]{background:var(--panel);color:var(--tinta);box-shadow:var(--sombra)}
-.fig{position:relative;flex:1 1 auto;min-height:180px;margin-top:4px;touch-action:none;user-select:none;-webkit-user-select:none}
-.fig canvas,.fig svg{position:absolute;top:0;right:0;bottom:0;left:0;width:100%;height:100%;display:block}
-.fig svg text{font-size:12px;fill:var(--tinta-2)}
-.fig svg .eje{font-size:12.5px;font-weight:600;fill:var(--tinta-2)}
-.fig svg .rot-curva{font-size:11.5px;font-weight:600;fill:var(--curva);paint-order:stroke;stroke:var(--curva-halo);stroke-width:3px;stroke-linejoin:round}
-.globo{position:absolute;left:0;top:0;z-index:2;pointer-events:none;background:var(--tinta);color:var(--panel);border-radius:7px;padding:4px 9px;font-size:13px;font-weight:600;font-variant-numeric:tabular-nums;white-space:nowrap;box-shadow:0 2px 8px rgba(0,0,0,.25)}
-.globo[hidden]{display:none}
-.escala{flex:none;margin:6px 2px 0}
-.escala-cab{display:flex;justify-content:space-between;align-items:baseline;gap:8px;font-size:12.5px;color:var(--tinta-2)}
-.escala-cab b{font-weight:600;color:var(--tinta)}
-.escala-cab .sin{display:inline-flex;align-items:center;gap:5px;white-space:nowrap}
-.escala-cab .sin i{display:inline-block;width:14px;height:10px;border-radius:2px;background:var(--neutro);box-shadow:inset 0 0 0 1px var(--linea)}
-.barra-color{position:relative;height:9px;border-radius:5px;margin-top:4px}
-.marcas{position:relative;height:16px;font-size:11.5px;color:var(--tinta-3);font-variant-numeric:tabular-nums}
-.marcas span{position:absolute;top:1px;transform:translateX(-50%);white-space:nowrap}
-.res{flex:none}
-.res-cab{display:flex;justify-content:space-between;align-items:center;gap:8px;margin:0 0 6px}
-.res-cab h2{margin:0;font-size:14px;font-weight:600}
-.vistas{display:inline-grid;grid-template-columns:repeat(2,auto);gap:2px;padding:2px;border-radius:9px;background:var(--hundido);flex:none}
-.vistas button{min-height:30px;padding:0 12px;border:0;border-radius:7px;background:transparent;color:var(--tinta-2);font-size:13.5px;font-weight:600;cursor:pointer}
-.vistas button[aria-pressed="true"]{background:var(--panel);color:var(--tinta);box-shadow:var(--sombra)}
-.vista[hidden]{display:none}
-.fig-cuerda{position:relative;height:118px;touch-action:pan-y;user-select:none;-webkit-user-select:none;transition:opacity .2s}
-.fig-cuerda svg{position:absolute;top:0;left:0;width:100%;height:100%;display:block}
-.res.calculando .fig-cuerda{opacity:.7}
-.play{position:absolute;left:0;bottom:0;width:40px;height:40px;border-radius:50%;border:1px solid var(--linea);background:var(--panel);color:var(--tinta);display:grid;place-items:center;cursor:pointer;box-shadow:var(--sombra);padding:0}
-.play svg{position:static;width:16px;height:16px}
-.tau{position:absolute;right:2px;bottom:4px;font-size:12.5px;color:var(--tinta-2);font-variant-numeric:tabular-nums;pointer-events:none}
-.tau.suelta{color:var(--alerta);font-weight:600}
-.resumen{margin:3px 2px 0;font-size:12.5px;color:var(--tinta-2);font-variant-numeric:tabular-nums;white-space:nowrap;overflow:hidden;text-overflow:ellipsis}
-.res-cab>span{font-size:12px;color:var(--tinta-3);font-variant-numeric:tabular-nums;white-space:nowrap;overflow:hidden;text-overflow:ellipsis;min-width:0}
-.tiles{display:grid;grid-template-columns:repeat(3,minmax(0,1fr));gap:6px;transition:opacity .2s}
-.res.calculando .tiles{opacity:.55}
-.tile{background:var(--hundido);border-radius:10px;padding:5px 9px 6px}
-.tile p{margin:0}
-.rot{font-size:12px;color:var(--tinta-2);white-space:nowrap;overflow:hidden;text-overflow:ellipsis}
-.val{font-size:19px;font-weight:600;line-height:1.3;font-variant-numeric:tabular-nums;white-space:nowrap}
-.val.chico{font-size:15px;font-size:clamp(13px,3.8vw,15.5px);line-height:1.55;letter-spacing:-.01em}
-.val.ok{color:var(--ok)}
-.val.alerta{color:var(--alerta)}
-.sub{font-size:12px;color:var(--tinta-3);white-space:nowrap;overflow:hidden;text-overflow:ellipsis;font-variant-numeric:tabular-nums}
-.mandos{flex:none;background:var(--panel);border-radius:16px 16px 0 0;box-shadow:0 -1px 4px rgba(16,24,40,.08);margin:0 -8px;padding:7px 14px calc(9px + env(safe-area-inset-bottom,0px))}
-.params{display:grid;grid-template-columns:repeat(2,minmax(0,1fr));gap:2px 14px}
-.param{display:grid;gap:3px;align-content:start}
-.param label{font-size:13.5px;font-weight:600;line-height:1.25}
-.param label span{font-size:12px;font-weight:400;color:var(--tinta-2);white-space:nowrap}
-.paso{display:grid;grid-template-columns:42px minmax(0,1fr) 42px;gap:5px;align-items:center}
-.pm{width:100%;height:40px;border-radius:12px;border:1px solid var(--linea);background:var(--hundido);font-size:24px;font-weight:500;line-height:1;cursor:pointer;user-select:none;-webkit-user-select:none;-webkit-touch-callout:none;touch-action:manipulation}
-.pm:active{background:var(--acento-suave);border-color:var(--acento)}
-.num{width:100%;height:40px;border-radius:12px;border:1px solid var(--linea);background:var(--panel);text-align:center;font-size:19px;font-weight:600;font-variant-numeric:tabular-nums;padding:0 4px}
-.num:focus{outline:2px solid var(--acento);outline-offset:1px;border-color:transparent}
-input[type=range]{width:100%;height:28px;margin:0;background:transparent;accent-color:var(--acento);touch-action:pan-y}
-.chips{display:flex;gap:6px;overflow-x:auto;margin:6px -14px 0;padding:2px 14px 2px;scrollbar-width:none}
-.chips::-webkit-scrollbar{display:none}
-.chips button{flex:none;display:grid;gap:0;text-align:left;padding:4px 11px;min-height:38px;border-radius:10px;border:1px solid var(--linea);background:var(--panel);cursor:pointer}
-.chips b{font-size:13px;font-weight:600;white-space:nowrap}
-.chips span{font-size:11.5px;color:var(--tinta-2);white-space:nowrap;font-variant-numeric:tabular-nums}
-.chips button[aria-pressed="true"]{background:var(--tinta);border-color:var(--tinta);color:var(--panel)}
-.chips button[aria-pressed="true"] span{color:var(--panel);opacity:.8}
-button:focus-visible{outline:2px solid var(--acento);outline-offset:2px}
-.hoja{position:fixed;top:0;right:0;bottom:0;left:0;z-index:10;display:flex;align-items:flex-end;background:rgba(5,10,15,.45)}
-.hoja[hidden]{display:none}
-.hoja-panel{width:100%;max-height:88%;overflow-y:auto;background:var(--panel);border-radius:18px 18px 0 0;padding:14px 18px 22px;box-shadow:0 -4px 20px rgba(0,0,0,.25)}
-.hoja-cab{display:flex;justify-content:space-between;align-items:center;gap:10px;margin-bottom:4px}
-.hoja h2{margin:0;font-size:18px}
-.hoja h3{margin:14px 0 4px;font-size:14.5px}
-.hoja p,.hoja li{font-size:14px;line-height:1.5;color:var(--tinta-2);margin:4px 0}
-.hoja ul{margin:4px 0;padding-left:18px}
-.hoja .cerrar{min-width:44px;height:40px;border-radius:12px;border:1px solid var(--linea);background:var(--hundido);font-weight:600;padding:0 12px;cursor:pointer}
-.hoja .version{margin-top:14px;font-size:12.5px;color:var(--tinta-3)}
-@media (orientation:landscape) and (min-width:640px){
-  .app{display:grid;height:auto;grid-template-columns:minmax(0,1.25fr) minmax(330px,1fr);grid-template-rows:auto auto 1fr;grid-template-areas:"mapa barra" "mapa res" "mapa mandos";column-gap:10px;row-gap:8px;padding:8px;align-items:start}
-  .barra{grid-area:barra;padding-top:0}.res{grid-area:res}
-  .mapa{grid-area:mapa;height:calc(100vh - 16px);position:sticky;top:8px}
-  .mandos{grid-area:mandos;margin:0;border-radius:14px;box-shadow:var(--sombra)}
+@font-face{font-family:"STIX Two Text";font-style:normal;font-weight:400;font-display:swap;src:url(recursos/fuentes/stix-two-text-greek-400-normal.woff2) format("woff2");unicode-range:U+0370-0377,U+037A-037F,U+0384-038A,U+038C,U+038E-03A1,U+03A3-03FF}
+@font-face{font-family:"STIX Two Text";font-style:italic;font-weight:400;font-display:swap;src:url(recursos/fuentes/stix-two-text-greek-400-italic.woff2) format("woff2");unicode-range:U+0370-0377,U+037A-037F,U+0384-038A,U+038C,U+038E-03A1,U+03A3-03FF}
+@font-face{font-family:"STIX Two Text";font-style:normal;font-weight:600;font-display:swap;src:url(recursos/fuentes/stix-two-text-greek-600-normal.woff2) format("woff2");unicode-range:U+0370-0377,U+037A-037F,U+0384-038A,U+038C,U+038E-03A1,U+03A3-03FF}
+@font-face{font-family:"STIX Two Text";font-style:normal;font-weight:400;font-display:swap;src:url(recursos/fuentes/stix-two-text-latin-ext-400-normal.woff2) format("woff2");unicode-range:U+0100-02BA,U+02BD-02C5,U+02C7-02CC,U+02CE-02D7,U+02DD-02FF,U+0304,U+0308,U+0329,U+1D00-1DBF,U+1E00-1E9F,U+1EF2-1EFF,U+2020,U+20A0-20AB,U+20AD-20C0,U+2113,U+2C60-2C7F,U+A720-A7FF}
+@font-face{font-family:"STIX Two Text";font-style:italic;font-weight:400;font-display:swap;src:url(recursos/fuentes/stix-two-text-latin-ext-400-italic.woff2) format("woff2");unicode-range:U+0100-02BA,U+02BD-02C5,U+02C7-02CC,U+02CE-02D7,U+02DD-02FF,U+0304,U+0308,U+0329,U+1D00-1DBF,U+1E00-1E9F,U+1EF2-1EFF,U+2020,U+20A0-20AB,U+20AD-20C0,U+2113,U+2C60-2C7F,U+A720-A7FF}
+@font-face{font-family:"STIX Two Text";font-style:normal;font-weight:600;font-display:swap;src:url(recursos/fuentes/stix-two-text-latin-ext-600-normal.woff2) format("woff2");unicode-range:U+0100-02BA,U+02BD-02C5,U+02C7-02CC,U+02CE-02D7,U+02DD-02FF,U+0304,U+0308,U+0329,U+1D00-1DBF,U+1E00-1E9F,U+1EF2-1EFF,U+2020,U+20A0-20AB,U+20AD-20C0,U+2113,U+2C60-2C7F,U+A720-A7FF}
+@font-face{font-family:"STIX Two Text";font-style:normal;font-weight:400;font-display:swap;src:url(recursos/fuentes/stix-two-text-latin-400-normal.woff2) format("woff2");unicode-range:U+0000-00FF,U+0131,U+0152-0153,U+02BB-02BC,U+02C6,U+02DA,U+02DC,U+0304,U+0308,U+0329,U+2000-206F,U+20AC,U+2122,U+2191,U+2193,U+2212,U+2215,U+FEFF,U+FFFD}
+@font-face{font-family:"STIX Two Text";font-style:italic;font-weight:400;font-display:swap;src:url(recursos/fuentes/stix-two-text-latin-400-italic.woff2) format("woff2");unicode-range:U+0000-00FF,U+0131,U+0152-0153,U+02BB-02BC,U+02C6,U+02DA,U+02DC,U+0304,U+0308,U+0329,U+2000-206F,U+20AC,U+2122,U+2191,U+2193,U+2212,U+2215,U+FEFF,U+FFFD}
+@font-face{font-family:"STIX Two Text";font-style:normal;font-weight:600;font-display:swap;src:url(recursos/fuentes/stix-two-text-latin-600-normal.woff2) format("woff2");unicode-range:U+0000-00FF,U+0131,U+0152-0153,U+02BB-02BC,U+02C6,U+02DA,U+02DC,U+0304,U+0308,U+0329,U+2000-206F,U+20AC,U+2122,U+2191,U+2193,U+2212,U+2215,U+FEFF,U+FFFD}
+:root {
+  --papel: #f6f8fa;
+  --tinta: #0f2333;
+  --tinta-2: #4b6072;
+  --tenue: #8a9bab;
+  --linea: #d6dfe7;
+  --cuerda: #1e5dba;
+  --particula: #e0522b;
 }
-@media (prefers-reduced-motion:reduce){.tiles{transition:none}}
+@media (prefers-color-scheme: dark) {
+  :root {
+    --papel: #0c1721;
+    --tinta: #e4ecf2;
+    --tinta-2: #9db0bf;
+    --tenue: #5f7486;
+    --linea: #233849;
+    --cuerda: #74a9ff;
+    --particula: #ff7b52;
+  }
+}
+*, *::before, *::after { box-sizing: border-box; }
+html { -webkit-text-size-adjust: 100%; text-size-adjust: 100%; }
+body {
+  margin: 0;
+  background: var(--papel);
+  color: var(--tinta);
+  font: 400 1.0625rem/1.6 "STIX Two Text", "STIX Two", Georgia, "Times New Roman", serif;
+  font-kerning: normal;
+}
+a { color: inherit; }
+:focus-visible { outline: 2px solid var(--cuerda); outline-offset: 3px; border-radius: 2px; }
+
+.hoja {
+  max-width: 58rem;
+  margin: 0 auto;
+  padding: clamp(2rem, 6vw, 4.5rem) clamp(1.25rem, 4vw, 2.5rem) 2.5rem;
+}
+
+h1 {
+  margin: 0;
+  max-width: 21ch;
+  font-weight: 600;
+  font-size: clamp(2.15rem, 1.25rem + 3.7vw, 3.6rem);
+  line-height: 1.06;
+  letter-spacing: -0.012em;
+  text-wrap: balance;
+}
+.bajada {
+  margin: 1.1rem 0 0;
+  max-width: 37rem;
+  color: var(--tinta-2);
+  font-size: 1.15rem;
+  line-height: 1.55;
+}
+
+.escena { margin: clamp(1.75rem, 5vw, 3rem) 0 0; }
+.escena canvas {
+  display: block;
+  width: 100%;
+  height: clamp(150px, 25vw, 230px);
+}
+.escena figcaption {
+  display: flex;
+  align-items: flex-start;
+  justify-content: space-between;
+  gap: 1.25rem;
+  margin-top: .6rem;
+  color: var(--tinta-2);
+  font-size: .97rem;
+  line-height: 1.5;
+}
+.escena figcaption p { margin: 0; max-width: 40rem; }
+.pausa {
+  flex: none;
+  margin-top: -.1rem;
+  padding: .2rem .85rem .25rem;
+  border: 1px solid var(--linea);
+  border-radius: 999px;
+  background: none;
+  color: var(--tinta);
+  font: inherit;
+  font-size: .95rem;
+  cursor: pointer;
+}
+.pausa:hover { border-color: var(--tinta-2); }
+
+.indice { max-width: 46rem; margin-top: clamp(2.75rem, 8vw, 4.75rem); }
+.indice h2 {
+  margin: 0;
+  font-weight: 600;
+  font-size: 1.9rem;
+  line-height: 1.2;
+}
+.intro { margin: .4rem 0 0; color: var(--tinta-2); }
+.leyenda {
+  display: grid;
+  grid-template-columns: repeat(auto-fit, minmax(17rem, 1fr));
+  gap: .2rem 2rem;
+  margin: .9rem 0 0;
+  color: var(--tinta-2);
+  font-size: .97rem;
+}
+.leyenda div { display: flex; gap: .65rem; }
+.leyenda dt { flex: none; width: 1.1rem; color: var(--tinta); }
+.leyenda dd { margin: 0; }
+
+.grupo { margin-top: 2.5rem; }
+.grupo h3 {
+  margin: 0;
+  font-weight: 600;
+  font-size: 1.3rem;
+  line-height: 1.3;
+}
+.grupo > p { margin: .15rem 0 0; color: var(--tinta-2); }
+.grupo ul { margin: .65rem 0 0; padding: 0; list-style: none; }
+
+.entrada {
+  display: grid;
+  grid-template-columns: auto minmax(1.25rem, 1fr) auto;
+  column-gap: .55rem;
+  align-items: baseline;
+  padding: .6rem 0 .65rem;
+  text-decoration: none;
+}
+.entrada .titulo { font-size: 1.16rem; line-height: 1.35; }
+.entrada .guia {
+  align-self: baseline;
+  height: 1px;
+  border-bottom: 2px dotted var(--tenue);
+  transform: translateY(-.28em);
+}
+.entrada .param { white-space: nowrap; color: var(--tinta-2); }
+.entrada .desc {
+  grid-column: 1 / -1;
+  max-width: 38rem;
+  margin-top: .15rem;
+  color: var(--tinta-2);
+  font-size: 1rem;
+  line-height: 1.5;
+}
+.entrada:hover .titulo {
+  text-decoration: underline;
+  text-decoration-thickness: 1px;
+  text-underline-offset: .2em;
+}
+.entrada:hover .guia { border-bottom-color: var(--cuerda); }
+
+footer {
+  margin-top: clamp(3rem, 8vw, 5rem);
+  padding-top: 1.1rem;
+  border-top: 1px solid var(--linea);
+  color: var(--tinta-2);
+  font-size: .95rem;
+}
+footer p { margin: 0; max-width: 40rem; }
+
+@media (max-width: 30rem) {
+  .escena figcaption { flex-direction: column; gap: .6rem; }
+  .entrada .titulo { font-size: 1.1rem; }
+}
 </style>
 </head>
 <body>
-<div class="app">
-  <header class="barra">
-    <div>
-      <h1>Caso III</h1>
-      <p>Cuerda con carga móvil · solución por ondas</p>
-    </div>
-    <button class="icono" id="b-info" type="button" aria-label="Qué muestra la app">i</button>
+<main class="hoja">
+  <header>
+    <h1>Dinámica de una cuerda tensa bajo cargas móviles</h1>
+    <p class="bajada">Material interactivo del trabajo de titulación. Cada página corre en el navegador: se mueven los parámetros y se ven la cuerda, el recorrido de la carga y la fuerza de contacto.</p>
   </header>
 
-  <section class="tarjeta mapa" aria-label="Mapa">
-    <div class="selector" id="selector" role="group" aria-label="Qué colorea el mapa">
-      <button type="button" data-v="tc">Contacto</button>
-      <button type="button" data-v="y1">Llegada</button>
-      <button type="button" data-v="D">D</button>
-      <button type="button" data-v="ymax">ȳ máx</button>
+  <figure class="escena">
+    <canvas id="lienzo" role="img" aria-label="Animación: una fuerza cruza una cuerda tensa fija en sus extremos; la cuerda se deforma y, después de que la fuerza sale, queda vibrando."></canvas>
+    <figcaption>
+      <p>Caso I con <i>α</i> = 0,5: la fuerza cruza a la mitad de la velocidad de las ondas. Las ondas se adelantan, rebotan en el apoyo y vuelven; cuando la fuerza sale, la cuerda queda vibrando.</p>
+      <button type="button" class="pausa" id="pausa">Pausar</button>
+    </figcaption>
+  </figure>
+
+  <section class="indice" aria-labelledby="t-indice">
+    <h2 id="t-indice">Índice</h2>
+    <p class="intro">A la derecha de cada entrada van los parámetros que se mueven en esa página.</p>
+    <dl class="leyenda">
+      <div><dt><i>α</i></dt><dd>velocidad de la carga sobre la de las ondas, <i>v</i>/<i>c</i></dd></div>
+      <div><dt><i>μ</i></dt><dd>masa de la carga sobre la de la cuerda, <i>m</i>/(<i>ρAL</i>)</dd></div>
+      <div><dt><i>λ</i></dt><dd><i>α</i>²<i>μ</i>, el parámetro del Caso II</dd></div>
+      <div><dt><i>n</i></dt><dd>número de modos de la solución modal</dd></div>
+    </dl>
+
+    <div class="grupo">
+      <h3>Consolas</h3>
+      <p>Cuatro páginas enlazadas entre sí: el mapa que une los casos y una consola por caso.</p>
+      <ul>
+        <li><a class="entrada" href="mapa/"><span class="titulo">Mapa de los tres casos</span><span class="guia" aria-hidden="true"></span><span class="param"><i>α</i>, <i>μ</i></span><span class="desc">Cómo se conectan los casos: el plano (<i>α</i>, <i>μ</i>), las ecuaciones de cada uno y sus límites.</span></a></li>
+        <li><a class="entrada" href="caso1/"><span class="titulo">Caso I: fuerza sin masa</span><span class="guia" aria-hidden="true"></span><span class="param"><i>α</i></span><span class="desc">Una fuerza recorre una cuerda con masa: el frente de onda que genera, las regiones que forman sus rebotes y la amplificación según la velocidad.</span></a></li>
+        <li><a class="entrada" href="caso2/"><span class="titulo">Caso II: cuerda sin masa</span><span class="guia" aria-hidden="true"></span><span class="param"><i>λ</i></span><span class="desc">El problema de Smith: cómo llega la partícula al apoyo final según <i>λ</i>.</span></a></li>
+        <li><a class="entrada" href="caso3/"><span class="titulo">Caso III: caso general</span><span class="guia" aria-hidden="true"></span><span class="param"><i>α</i>, <i>μ</i></span><span class="desc">Masa en la carga y en la cuerda: el plano (<i>α</i>, <i>μ</i>) completo y la zona donde la partícula pierde el contacto.</span></a></li>
+      </ul>
     </div>
-    <div class="fig" id="fig">
-      <canvas id="cv" aria-hidden="true"></canvas>
-      <svg id="sv" role="img" aria-label="Mapa del caso III en el plano de la velocidad α y la razón de masas μ; toca o arrastra para elegir un caso"></svg>
-      <div class="globo" id="globo" hidden></div>
+
+    <div class="grupo">
+      <h3>Consola modal</h3>
+      <p>Una página aparte con el Caso III resuelto como suma de modos.</p>
+      <ul>
+        <li><a class="entrada" href="consola-modal/"><span class="titulo">Consola modal del Caso III</span><span class="guia" aria-hidden="true"></span><span class="param"><i>α</i>, <i>μ</i>, <i>n</i></span><span class="desc">La cuerda, la trayectoria, la fuerza de contacto y las amplitudes de los modos en cada instante, comparadas con los casos I y II.</span></a></li>
+      </ul>
     </div>
-    <div class="escala" id="escala"></div>
+
+    <div class="grupo">
+      <h3>Apps</h3>
+      <p>Hechas para el teléfono; también se usan en el computador.</p>
+      <ul>
+        <li><a class="entrada" href="app-ondas/"><span class="titulo">Caso III por ondas</span><span class="guia" aria-hidden="true"></span><span class="param"><i>α</i>, <i>μ</i></span><span class="desc">Se toca un punto del mapa y se ve la cuerda animada, cómo llega la partícula al apoyo y si pierde el contacto.</span></a></li>
+        <li><a class="entrada" href="app-modal/"><span class="titulo">Caso III modal</span><span class="guia" aria-hidden="true"></span><span class="param"><i>α</i>, <i>μ</i>, <i>n</i></span><span class="desc">La misma idea con la solución modal de 100, 200 o 400 modos, y un acercamiento a la llegada al apoyo.</span></a></li>
+      </ul>
+    </div>
+
+    <div class="grupo">
+      <h3>Juego</h3>
+      <p>Para jugar solo o de a dos.</p>
+      <ul>
+        <li><a class="entrada" href="ruleta/"><span class="titulo">Ruleta del Caso III</span><span class="guia" aria-hidden="true"></span><span class="param"><i>α</i>, <i>μ</i></span><span class="desc">Dos ruletas eligen <i>α</i> y <i>μ</i>, y la partícula recorre la cuerda: ganas si llega al apoyo sin despegarse.</span></a></li>
+      </ul>
+    </div>
   </section>
 
-  <section class="tarjeta res" id="res" aria-label="Resultados" aria-live="polite">
-    <div class="res-cab">
-      <div class="vistas" id="vistas" role="group" aria-label="Qué mostrar del punto elegido">
-        <button type="button" data-v="cuerda">Cuerda</button>
-        <button type="button" data-v="numeros">Números</button>
-      </div>
-      <span id="estado">calculando…</span>
-    </div>
-    <div class="vista" id="v-cuerda">
-      <div class="fig-cuerda" id="fig-cuerda">
-        <svg id="sv-cuerda" role="img" aria-label="Forma de la cuerda y trayectoria de la partícula; arrastra para mover la partícula"></svg>
-        <button class="play" id="b-play" type="button" aria-label="Pausar"></button>
-        <span class="tau" id="t-tau"></span>
-      </div>
-      <p class="resumen" id="resumen">&nbsp;</p>
-    </div>
-    <div class="vista tiles" id="v-numeros">
-      <div class="tile"><p class="rot">λ = α²μ</p><p class="val" id="t-lam">–</p><p class="sub">de Smith</p></div>
-      <div class="tile"><p class="rot">τ* = 2α/(1+α)</p><p class="val" id="t-ts">–</p><p class="sub">onda reflejada</p></div>
-      <div class="tile"><p class="rot">D</p><p class="val" id="t-D">–</p><p class="sub">amplificación</p></div>
-      <div class="tile"><p class="rot">Contacto</p><p class="val chico" id="t-cont">–</p><p class="sub" id="t-cont-sub">&nbsp;</p></div>
-      <div class="tile"><p class="rot">Llegada ȳ(1)</p><p class="val" id="t-y1">–</p><p class="sub" id="t-y1-sub">&nbsp;</p></div>
-      <div class="tile"><p class="rot">ȳ máx</p><p class="val" id="t-ymax">–</p><p class="sub" id="t-ymax-sub">&nbsp;</p></div>
-    </div>
-  </section>
+  <footer>
+    <p>Cada página es un archivo HTML que corre en el navegador, sin instalar nada. Los archivos están en el repositorio <a href="https://github.com/JorgeJesus97/tesis-cuerda">JorgeJesus97/tesis-cuerda</a> de GitHub.</p>
+  </footer>
+</main>
 
-  <section class="mandos" aria-label="Parámetros">
-    <div class="params">
-    <div class="param">
-      <label for="v-alfa">Velocidad <span>α = v/c</span></label>
-      <div class="paso">
-        <button class="pm" type="button" data-p="a" data-d="-1" aria-label="Bajar α">−</button>
-        <input class="num" id="v-alfa" type="text" inputmode="decimal" autocomplete="off" spellcheck="false" enterkeyhint="done">
-        <button class="pm" type="button" data-p="a" data-d="1" aria-label="Subir α">+</button>
-      </div>
-      <input type="range" id="r-alfa" min="0.05" max="1" step="0.005" aria-label="Velocidad α">
-    </div>
-    <div class="param">
-      <label for="v-mu">Razón de masas <span>μ = m/(ρAL)</span></label>
-      <div class="paso">
-        <button class="pm" type="button" data-p="m" data-d="-1" aria-label="Bajar μ">−</button>
-        <input class="num" id="v-mu" type="text" inputmode="decimal" autocomplete="off" spellcheck="false" enterkeyhint="done">
-        <button class="pm" type="button" data-p="m" data-d="1" aria-label="Subir μ">+</button>
-      </div>
-      <input type="range" id="r-mu" min="-1.30103" max="2" step="0.005" aria-label="Razón de masas μ, en escala logarítmica">
-    </div>
-    </div>
-    <div class="chips" id="casos" role="group" aria-label="Casos de ejemplo"></div>
-  </section>
-</div>
-
-<div class="hoja" id="hoja" role="dialog" aria-modal="true" aria-labelledby="hoja-t" hidden>
-  <div class="hoja-panel">
-    <div class="hoja-cab"><h2 id="hoja-t">Qué muestra la app</h2><button class="cerrar" id="b-cerrar" type="button">Cerrar</button></div>
-    <p>Una cuerda tensa de largo L, con tensión N y masa ρA por unidad de largo, recorrida a velocidad constante v por una partícula de masa m y peso P. Es el Caso III: tienen masa la cuerda y la partícula.</p>
-    <h3>Parámetros</h3>
-    <ul>
-      <li><b>α = v/c</b>, la velocidad de la partícula en unidades de la velocidad de las ondas, c = √(N/ρA).</li>
-      <li><b>μ = m/(ρAL)</b>, la masa de la partícula en unidades de la masa de la cuerda.</li>
-      <li><b>λ = α²μ</b>, el parámetro de la cuerda sin masa de Smith (Caso II).</li>
-    </ul>
-    <h3>Resultados</h3>
-    <ul>
-      <li><b>Contacto</b>: primer instante τ = vt/L en que la fuerza de contacto se vuelve negativa, es decir, en que la partícula se separaría de la cuerda.</li>
-      <li><b>Llegada ȳ(1)</b>: deflexión de la partícula al llegar al apoyo, con ȳ = Nu/(PL); si es positiva, llega bajo el nivel de los apoyos.</li>
-      <li><b>ȳ máx</b>: mayor deflexión de la partícula y el instante en que ocurre.</li>
-      <li><b>D</b>: mayor deflexión del centro de la cuerda dividida por la deflexión estática PL/(4N).</li>
-      <li><b>τ* = 2α/(1 + α)</b>: instante en que la onda reflejada en el apoyo de llegada alcanza a la partícula.</li>
-    </ul>
-    <h3>La cuerda</h3>
-    <p>La vista Cuerda muestra la forma de la cuerda en el instante τ, calculada con la misma solución por ondas, y la trayectoria que va dejando la partícula (azul). Si la partícula pierde el contacto, desde ese instante la trayectoria sigue segmentada en naranjo: la solución supone contacto, pero la fuerza ya es negativa. El botón pausa o sigue la animación, y arrastrar sobre la cuerda mueve la partícula. La escala vertical es la misma en todos los casos, para poder compararlos; la deflexión va hacia abajo.</p>
-    <h3>Cómo se calcula</h3>
-    <p>Los números se calculan en el teléfono para el punto exacto, con la solución por ondas: la forma cerrada de Gao hasta la primera reflexión y, después, la ecuación por imágenes integrada en s = −ln(1 − τ) hasta 1 − τ ≈ 8·10⁻⁷. En α = 1 se usa la solución crítica cerrada.</p>
-    <p>El mapa se precalculó con la misma solución en una grilla de 77 × 41 puntos, con α de 0,05 a 1 y μ de 0,05 a 100; entre los puntos, los colores se interpolan. El borde azul encierra la zona en que se pierde el contacto. Curvas negras: λ = 1/6 (continua) y λ = 1/12 (segmentada).</p>
-    <h3>Casos de ejemplo</h3>
-    <ul id="lista-casos"></ul>
-    <h3>Cómo se usa</h3>
-    <p>Toca o arrastra el mapa para elegir α y μ, usa los botones − y + (si los mantienes presionados, avanzan solos), mueve las barras o toca un valor para escribirlo. El anillo se pega a los casos de ejemplo.</p>
-    <p class="version">Versión 1.2 · 25 de noviembre de 2026</p>
-  </div>
-</div>
-
-<script type="text/plain" id="motor">
-// Motor de la consola del Caso III: solución por ondas (Gao + imágenes en s = -ln(1 - tau)),
-// forma de la cuerda por imágenes y soluciones cerradas (caso I, crítico).
-"use strict";
-function gaoPesos(kappa) {
-  const th = [1];
-  let k = 1, mx = 1;
-  for (;;) {
-    const nxt = -th[th.length - 1] * Math.pow(kappa, k + 1) / (1 - Math.pow(kappa, k));
-    th.push(nxt);
-    mx = Math.max(mx, Math.abs(nxt));
-    if ((Math.abs(nxt) < 1e-30 * mx && k > 3) || k > 6000) break;
-    k++;
-  }
-  let prod = 1;
-  for (let j = 2; Math.pow(kappa, j) > 1e-18; j++) prod *= 1 - Math.pow(kappa, j);
-  return th.map(t => t / prod);
-}
-function resolverOndas(alpha, mu, opc = {}) {
-  const sMax = opc.sMax || 14;
-  const kappa = (1 - alpha) / (1 + alpha), lam = mu * alpha * alpha;
-  const a = 2 * alpha / (1 + alpha), b = a / kappa;
-  const rigidez = 2 * kappa / (alpha * mu);
-  const ds = opc.ds || Math.min(1e-3, 0.5 / rigidez);
-  const ak = gaoPesos(kappa), K = ak.length;
-  const rk = new Float64Array(K);
-  for (let k = 0; k < K; k++) rk[k] = (2 / (mu * alpha)) * Math.pow(kappa, k);
-  function cerrada(t) {
-    let f = 1, yp = 0, yb = 0;
-    for (let k = 0; k < K; k++) {
-      const E = Math.exp(-rk[k] * t);
-      f -= ak[k] * E;
-      yp += ak[k] * (1 - E) / rk[k];
-      yb += ak[k] * (t / rk[k] - (1 - E) / (rk[k] * rk[k]));
-    }
-    return { y: yb / lam, z: yp / lam, f };
-  }
-  const s0 = -Math.log(1 - a);
-  const N = Math.ceil((sMax - s0) / ds) + 2;
-  const Y = new Float64Array(N), Z = new Float64Array(N), F = new Float64Array(N);
-  let n = 0;
-  const c0 = cerrada(a);
-  Y[0] = c0.y; Z[0] = c0.z; F[0] = (1 - a) * c0.f; n = 1;
-  function hist(phi, cual) {
-    if (phi <= a) { const c = cerrada(phi); return cual === 0 ? c.z : c.f; }
-    const x = (-Math.log(1 - phi) - s0) / ds;
-    let i0 = Math.floor(x) - 1;
-    if (i0 > n - 4) i0 = n - 4;
-    if (i0 < 0) i0 = 0;
-    const arr = cual === 0 ? Z : F;
-    const d0 = x - i0, d1 = d0 - 1, d2 = d0 - 2, d3 = d0 - 3;
-    const res = arr[i0] * (d1 * d2 * d3) / -6 + arr[i0 + 1] * (d0 * d2 * d3) / 2
-              + arr[i0 + 2] * (d0 * d1 * d3) / -2 + arr[i0 + 3] * (d0 * d1 * d2) / 6;
-    return cual === 0 ? res : res / (1 - phi);
-  }
-  function zDe(t, yb) {
-    let tot = t - 2 * alpha * yb;
-    let phi = kappa * t;
-    if (phi > 0) tot -= phi - lam * hist(phi, 0);
-    for (let k = 1; k * a <= t; k++) {
-      phi = (t - k * a) / kappa; if (phi > 0) tot -= phi - lam * hist(phi, 0);
-      phi = t - k * a; if (phi > 0) tot += phi - lam * hist(phi, 0);
-      if (k * b <= t) {
-        phi = t - k * b; if (phi > 0) tot += phi - lam * hist(phi, 0);
-        phi = kappa * t - k * a; if (phi > 0) tot -= phi - lam * hist(phi, 0);
-      }
-    }
-    return tot / lam;
-  }
-  function fDe(t, z) {
-    let tot = 2 * alpha * z;
-    let phi = kappa * t;
-    if (phi > 0) tot += kappa * hist(phi, 1);
-    for (let k = 1; k * a <= t; k++) {
-      phi = (t - k * a) / kappa; if (phi > 0) tot += hist(phi, 1) / kappa;
-      phi = t - k * a; if (phi > 0) tot -= hist(phi, 1);
-      if (k * b <= t) {
-        phi = t - k * b; if (phi > 0) tot -= hist(phi, 1);
-        phi = kappa * t - k * a; if (phi > 0) tot += kappa * hist(phi, 1);
-      }
-    }
-    return tot;
-  }
-  let s = s0, y = Y[0];
-  const h = ds;
-  while (s < sMax - 1e-12 && n < N) {
-    const r1 = (1 - (1 - Math.exp(-s))) * zDe(1 - Math.exp(-s), y);
-    const sm = s + h / 2, tm = 1 - Math.exp(-sm);
-    const r2 = (1 - tm) * zDe(tm, y + h / 2 * r1);
-    const r3 = (1 - tm) * zDe(tm, y + h / 2 * r2);
-    const se = s + h, te = 1 - Math.exp(-se);
-    const r4 = (1 - te) * zDe(te, y + h * r3);
-    y += h / 6 * (r1 + 2 * r2 + 2 * r3 + r4);
-    s = se;
-    const z = zDe(te, y);
-    Y[n] = y; Z[n] = z; F[n] = (1 - te) * fDe(te, z); n++;
-  }
-  const tauFin = 1 - Math.exp(-(s0 + (n - 1) * ds));
-  function yEn(t) {
-    if (t <= a) return cerrada(t).y;
-    if (t >= tauFin) return Y[n - 1];
-    const x = (-Math.log(1 - t) - s0) / ds;
-    const i = Math.min(Math.floor(x), n - 2), r = x - i;
-    return Y[i] * (1 - r) + Y[i + 1] * r;
-  }
-  function zEn(t) { return t >= tauFin ? Z[n - 1] : hist(t, 0); }
-  function fEn(t) { return t >= tauFin ? F[n - 1] / (1 - tauFin) : hist(t, 1); }
-  function cuerda(xi, t) {            // 2 alpha wbar = sum sigma_i G(phi_i)
-    if (t <= 0) return 0;
-    const G = q => q <= 0 ? 0 : q - lam * hist(q, 0);
-    const Kk = Math.ceil((t / alpha + 1) / 2) + 1;
-    let tot = 0;
-    for (let k = -Kk; k <= Kk; k++) {
-      const u1 = t - alpha * xi + 2 * k * alpha, u2 = t + alpha * xi - 2 * k * alpha;
-      tot += G(Math.min(u1 / (1 - alpha), u2 / (1 + alpha))) - G(Math.min(u1 / (1 + alpha), u2 / (1 - alpha)));
-    }
-    return tot / (2 * alpha);
-  }
-  return { alpha, mu, lam, kappa, a, b, ds, s0, n, Y, Z, F, tauFin, yFin: Y[n - 1], cerrada, yEn, zEn, fEn, cuerda };
-}
-// Caso I (mu = 0) en wbar = w/(4 w0)
-const G1 = (p, q) => Math.min(p, q) * (1 - Math.max(p, q));
-function reducir(s) { let r = (s + 1) % 2; if (r < 0) r += 2; return r - 1; }
-function G1ext(p, q) { const r = reducir(q); return r > 0 ? G1(p, r) : (r < 0 ? -G1(p, -r) : 0); }
-function cuerdaCaso1(alpha, xi, t) {
-  if (Math.abs(alpha - 1) < 1e-9) return xi < t ? xi / 2 : 0;
-  return (G1(xi, t) - alpha * G1ext(xi, t / alpha)) / (1 - alpha * alpha);
-}
-// Velocidad crítica (alpha = 1), solución por ondas
-function critico(mu) {
-  const y = t => mu === 0 ? t / 2 : t / 2 - mu / 4 * (1 - Math.exp(-2 * t / mu));
-  const z = t => mu === 0 ? 0.5 : (1 - Math.exp(-2 * t / mu)) / 2;
-  const f = t => mu === 0 ? 1 : 1 - Math.exp(-2 * t / mu);
-  const cuerda = (xi, t) => xi < t ? y((t + xi) / 2) - y((t - xi) / 2) : 0;
-  return { y, z, f, cuerda, yFin: y(1) };
-}
-// Análisis de un punto (alfa, mu), igual que plano_caso3.js; en alfa = 1, la solución crítica cerrada
-function analizar(al, mu) {
-  if (al >= 0.9995) {
-    const c = critico(mu);
-    let wmax = 0;
-    for (let k = 1; k <= 500; k++) { const t = k / 500; wmax = Math.max(wmax, c.cuerda(0.5, t)); }
-    return { y1: c.yFin, ymax: c.yFin, tmax: 1, D: 4 * wmax, tc: null, m: 0, cuadros: cuadrosCuerda(c.cuerda, c.y, 0.999) };
-  }
-  const kappa = (1 - al) / (1 + al), rig = 2 * kappa / (al * mu);
-  const s = resolverOndas(al, mu, { ds: Math.min(5e-4, 0.25 / rig), sMax: 14 });
-  let ymax = 0, tmax = 0, tc = null, m = Infinity;
-  for (let k = 1; k <= 600; k++) {
-    const t = s.a * k / 600, c = s.cerrada(t);
-    if (c.y > ymax) { ymax = c.y; tmax = t; }
-    if (tc === null && c.f < 0) tc = t;
-    if (t > 0.05) m = Math.min(m, (1 - t) * c.f);
-  }
-  for (let k = 0; k < s.n; k++) {
-    const t = 1 - Math.exp(-(s.s0 + k * s.ds));
-    if (s.Y[k] > ymax) { ymax = s.Y[k]; tmax = t; }
-    if (tc === null && s.F[k] < 0) tc = t;
-    m = Math.min(m, s.F[k]);
-  }
-  let wmax = 0;
-  for (let k = 1; k <= 500; k++) { const t = Math.min(k / 500, s.tauFin); const w = s.cuerda(0.5, t); if (w > wmax) wmax = w; }
-  return { y1: s.yFin, ymax, tmax, D: 4 * wmax, tc, m, cuadros: cuadrosCuerda(s.cuerda, s.yEn, Math.min(0.999, s.tauFin)) };
-}
-// Forma de la cuerda en F + 1 instantes (0 .. tmax) y NX puntos, con la trayectoria de la partícula
-function cuadrosCuerda(cuerda, yEn, tmax) {
-  const F = 200, NX = 81, w = new Float32Array((F + 1) * NX), y = new Float32Array(F + 1);
-  let lo = 0, hi = 0;
-  for (let k = 1; k <= F; k++) {
-    const t = tmax * k / F;
-    y[k] = yEn(t);
-    for (let i = 1; i < NX - 1; i++) {
-      const v = cuerda(i / (NX - 1), t);
-      w[k * NX + i] = v;
-      if (v < lo) lo = v;
-      if (v > hi) hi = v;
-    }
-  }
-  return { F, NX, tmax, w, y, lo, hi };
-}
-
-</script>
 <script>
-{
-const $ = id => document.getElementById(id);
-const DATOS = {"NA":77,"NM":41,"A0":0.05,"A1":1,"LM0":-1.3010299956639813,"LM1":2,"y1":[0,0,0,0,0,-0.0001,0,0.0002,0.0002,0,0,0.0005,0,-0.0001,0.0003,0,-0.0001,-0.0001,0.0002,0.0004,-0.0003,-0.002,0.0028,0,0,0,0,0,0.0001,0.0002,0.0003,0.0003,0.0004,0.0003,0.0002,0,-0.0003,-0.0007,-0.0012,-0.0018,-0.0024,-0.0031,-0.0037,-0.0043,-0.0047,-0.005,-0.005,-0.0048,-0.0041,-0.0031,-0.0014,0.0007,0.0035,0.007,0.0113,0.0163,0.0222,0.029,0.0368,0.0456,0.0555,0.0666,0.079,0.0927,0.108,0.125,0.1439,0.1648,0.188,0.2138,0.2423,0.274,0.3089,0.3475,0.39,0.4366,0.4875,0,0,0,0,0,0,-0.0001,0,0.0001,0.0002,-0.0002,0.0006,0,0,-0.0001,0,-0.0001,0.0001,0.0005,0.0004,-0.0012,-0.0018,0.0031,-0.0001,0,0,0.0001,0.0002,0.0003,0.0004,0.0005,0.0005,0.0004,0.0002,-0.0001,-0.0006,-0.0011,-0.0018,-0.0025,-0.0033,-0.004,-0.0047,-0.0053,-0.0057,-0.0059,-0.0057,-0.0052,-0.0042,-0.0026,-0.0005,0.0022,0.0057,0.0099,0.0149,0.0208,0.0275,0.0352,0.0438,0.0534,0.064,0.0758,0.0888,0.103,0.1185,0.1355,0.1539,0.174,0.1958,0.2194,0.245,0.2725,0.3022,0.3341,0.3683,0.4048,0.4437,0.4849,0,0,0.0001,0.0001,-0.0001,0.0001,0,-0.0003,-0.0003,0.0003,-0.0001,0.0001,-0.0001,0.0002,-0.0011,-0.0001,0,0.0004,0.0006,-0.0002,-0.0025,-0.0005,0.003,0,0,0.0001,0.0003,0.0004,0.0005,0.0006,0.0006,0.0004,0.0001,-0.0004,-0.001,-0.0017,-0.0026,-0.0035,-0.0044,-0.0052,-0.006,-0.0065,-0.0068,-0.0068,-0.0063,-0.0054,-0.0039,-0.0018,0.001,0.0045,0.0087,0.0138,0.0197,0.0265,0.0342,0.0428,0.0523,0.0628,0.0743,0.0869,0.1005,0.1151,0.1309,0.1479,0.166,0.1854,0.206,0.2278,0.251,0.2754,0.3012,0.3282,0.3565,0.3861,0.4169,0.4488,0.4817,0,0,0,0.0001,0.0001,0,0.0001,-0.0006,-0.0006,0.0001,0.0002,-0.0005,-0.0001,0.0005,-0.002,-0.0001,0.0003,0.0007,0.0004,-0.0015,-0.0034,0.0018,0.0027,0.0001,0.0002,0.0004,0.0006,0.0007,0.0007,0.0006,0.0003,-0.0001,-0.0008,-0.0016,-0.0026,-0.0036,-0.0047,-0.0057,-0.0066,-0.0074,-0.0078,-0.0079,-0.0075,-0.0067,-0.0052,-0.0031,-0.0003,0.0033,0.0077,0.0129,0.0189,0.0259,0.0337,0.0425,0.0521,0.0627,0.0742,0.0866,0.0999,0.1141,0.1292,0.1453,0.1622,0.18,0.1987,0.2182,0.2385,0.2597,0.2816,0.3042,0.3275,0.3514,0.3758,0.4008,0.4262,0.4519,0.4779,0,-0.0001,0,-0.0001,0.0001,-0.0002,0,-0.0006,-0.0003,-0.0005,0.0008,-0.0008,0,0.0007,-0.002,0.0001,0.0007,0.0008,-0.0005,-0.0033,-0.0029,0.0044,0.0023,0.0003,0.0006,0.0008,0.0009,0.0009,0.0007,0.0002,-0.0005,-0.0014,-0.0025,-0.0037,-0.005,-0.0062,-0.0073,-0.0083,-0.0089,-0.0091,-0.0089,-0.0081,-0.0067,-0.0045,-0.0016,0.0021,0.0066,0.0121,0.0184,0.0256,0.0338,0.0428,0.0527,0.0635,0.0752,0.0877,0.101,0.115,0.1298,0.1453,0.1615,0.1784,0.1958,0.2137,0.2322,0.2511,0.2705,0.2901,0.3101,0.3303,0.3507,0.3712,0.3918,0.4123,0.4328,0.4531,0.4733,0,0,0,-0.0001,-0.0001,-0.0001,0,-0.0001,0.0003,-0.0008,0.001,-0.0004,0.0003,0.0002,-0.0008,0.0006,0.001,0.0002,-0.0024,-0.0047,-0.0004,0.0066,0.0022,0.0008,0.0011,0.0012,0.001,0.0006,-0.0001,-0.0011,-0.0023,-0.0037,-0.0052,-0.0067,-0.008,-0.0092,-0.0101,-0.0105,-0.0104,-0.0097,-0.0083,-0.0061,-0.0031,0.0008,0.0056,0.0114,0.0181,0.0257,0.0343,0.0438,0.0541,0.0653,0.0773,0.0901,0.1035,0.1177,0.1324,0.1477,0.1634,0.1796,0.1962,0.2131,0.2303,0.2477,0.2652,0.2829,0.3005,0.3182,0.3358,0.3532,0.3705,0.3875,0.4043,0.4207,0.4368,0.4525,0.4677,0,0.0001,0,0.0001,0.0001,0.0001,0.0001,0.0005,0.0007,-0.0002,0.0001,0.0004,0.0007,-0.0013,0.0016,0.0012,0.0007,-0.0016,-0.0048,-0.0041,0.0037,0.0082,0.0024,0.0014,0.0014,0.0011,0.0004,-0.0006,-0.002,-0.0036,-0.0053,-0.0071,-0.0088,-0.0102,-0.0114,-0.0121,-0.0122,-0.0116,-0.0102,-0.0079,-0.0047,-0.0006,0.0046,0.0108,0.018,0.0262,0.0353,0.0454,0.0563,0.068,0.0805,0.0937,0.1075,0.1219,0.1367,0.1519,0.1675,0.1834,0.1994,0.2156,0.2319,0.2481,0.2643,0.2805,0.2964,0.3122,0.3277,0.3429,0.3578,0.3723,0.3864,0.4,0.4132,0.4259,0.4381,0.4498,0.4609,-0.0001,0,-0.0001,-0.0001,0.0001,-0.0001,-0.0002,0.0011,0.0007,0.0006,-0.002,0.0011,0.0011,-0.0028,0.004,0.0011,-0.0008,-0.0044,-0.0059,-0.0005,0.0084,0.0089,0.0026,0.0016,0.001,0,-0.0015,-0.0032,-0.0052,-0.0073,-0.0094,-0.0113,-0.0128,-0.0138,-0.0141,-0.0137,-0.0123,-0.01,-0.0066,-0.0021,0.0035,0.0103,0.0181,0.0269,0.0368,0.0476,0.0592,0.0717,0.0848,0.0986,0.1129,0.1276,0.1427,0.158,0.1736,0.1893,0.2049,0.2206,0.2362,0.2516,0.2668,0.2817,0.2963,0.3106,0.3245,0.338,0.351,0.3635,0.3756,0.3871,0.3981,0.4086,0.4185,0.4279,0.4367,0.445,0.4527,0.0001,0,0,-0.0001,-0.0004,-0.0005,-0.0003,0.0009,0.0003,0.0009,-0.0036,0.002,0.0008,-0.0031,0.0053,-0.0001,-0.0037,-0.0065,-0.0036,0.0054,0.0121,0.0087,0.0023,0.0008,-0.0007,-0.0027,-0.0049,-0.0074,-0.0099,-0.0123,-0.0142,-0.0156,-0.0163,-0.016,-0.0147,-0.0123,-0.0087,-0.0038,0.0024,0.0097,0.0183,0.028,0.0387,0.0504,0.063,0.0763,0.0902,0.1047,0.1196,0.1348,0.1503,0.1659,0.1815,0.1971,0.2125,0.2278,0.2428,0.2575,0.2718,0.2858,0.2993,0.3123,0.3249,0.3369,0.3484,0.3593,0.3697,0.3795,0.3888,0.3975,0.4056,0.4131,0.4202,0.4266,0.4325,0.438,0.4429,-0.0001,0,0.0001,0,-0.0003,0.0004,-0.0005,-0.0001,-0.0001,0.0001,-0.003,0.0031,-0.0012,-0.0014,0.0046,-0.003,-0.0066,-0.0056,0.0022,0.0117,0.0138,0.0071,0.0007,-0.0017,-0.0043,-0.0072,-0.0102,-0.0131,-0.0157,-0.0176,-0.0187,-0.0187,-0.0175,-0.015,-0.0111,-0.0057,0.001,0.0092,0.0187,0.0294,0.0412,0.0539,0.0675,0.0819,0.0967,0.1121,0.1277,0.1435,0.1594,0.1753,0.191,0.2066,0.2219,0.2368,0.2513,0.2654,0.279,0.2921,0.3046,0.3165,0.3278,0.3386,0.3487,0.3583,0.3672,0.3755,0.3833,0.3904,0.397,0.403,0.4085,0.4135,0.4179,0.4219,0.4253,0.4284,0.4309,0,-0.0002,0.0006,0,0.0005,0.0014,0,-0.0003,-0.0006,-0.0013,0.0006,0.003,-0.0038,0.0012,0.0016,-0.0064,-0.0068,-0.0004,0.0097,0.0157,0.0126,0.0037,-0.0029,-0.0065,-0.0101,-0.0137,-0.017,-0.0197,-0.0213,-0.0218,-0.0208,-0.0182,-0.0139,-0.008,-0.0005,0.0087,0.0192,0.0311,0.0442,0.0582,0.073,0.0885,0.1044,0.1207,0.1371,0.1536,0.17,0.1862,0.2021,0.2177,0.2328,0.2474,0.2614,0.2749,0.2878,0.3,0.3115,0.3224,0.3326,0.3422,0.3511,0.3593,0.3669,0.3739,0.3802,0.386,0.3912,0.3959,0.4,0.4037,0.4068,0.4094,0.4117,0.4135,0.4149,0.4159,0.4166,0,0.0001,-0.0001,0.0007,0.0008,0.0007,0.0022,0.0006,-0.0014,-0.0017,0.0053,0,-0.0049,0.0026,-0.0026,-0.0074,-0.0024,0.0076,0.0157,0.016,0.0081,-0.0022,-0.0093,-0.0139,-0.0181,-0.0217,-0.0242,-0.0252,-0.0244,-0.0218,-0.0173,-0.0107,-0.0022,0.008,0.0199,0.0332,0.0477,0.0631,0.0794,0.0961,0.1133,0.1306,0.1479,0.1651,0.182,0.1985,0.2145,0.2301,0.2449,0.2592,0.2727,0.2855,0.2976,0.309,0.3195,0.3294,0.3385,0.3468,0.3545,0.3615,0.3678,0.3735,0.3786,0.3831,0.387,0.3904,0.3932,0.3957,0.3976,0.3991,0.4002,0.4009,0.4013,0.4013,0.4011,0.4005,0.3996,0,0.0001,-0.0008,0,0.0002,-0.0015,0.0027,0.0009,-0.0017,0.0004,0.0067,-0.0046,-0.0042,0.0016,-0.0052,-0.0038,0.0057,0.0148,0.0174,0.0113,-0.0002,-0.0113,-0.0186,-0.0235,-0.027,-0.0289,-0.0286,-0.0261,-0.0211,-0.0138,-0.0043,0.0073,0.0206,0.0355,0.0517,0.0688,0.0865,0.1047,0.1231,0.1416,0.1598,0.1776,0.195,0.2118,0.228,0.2434,0.258,0.2718,0.2847,0.2968,0.3081,0.3185,0.328,0.3367,0.3447,0.3519,0.3583,0.364,0.3691,0.3735,0.3773,0.3805,0.3832,0.3854,0.3871,0.3883,0.3892,0.3896,0.3896,0.3894,0.3888,0.3879,0.3867,0.3853,0.3837,0.3818,0.3798,0.0001,-0.0004,-0.0004,-0.0012,-0.0018,-0.0019,-0.0009,0.0001,-0.0004,0.0036,0.0033,-0.008,-0.0029,0.0004,-0.0029,0.0042,0.0136,0.0174,0.0125,0.0009,-0.0126,-0.0233,-0.0297,-0.0327,-0.0332,-0.0309,-0.0256,-0.0176,-0.0069,0.0062,0.0213,0.038,0.056,0.0749,0.0944,0.1142,0.134,0.1535,0.1726,0.1911,0.209,0.226,0.2421,0.2573,0.2715,0.2847,0.297,0.3082,0.3185,0.3279,0.3363,0.3439,0.3506,0.3565,0.3617,0.3662,0.37,0.3731,0.3757,0.3777,0.3791,0.3801,0.3807,0.3808,0.3806,0.38,0.3791,0.3779,0.3764,0.3746,0.3727,0.3705,0.3681,0.3656,0.3629,0.3601,0.3572,0,0.0006,0.0013,0.0003,-0.0017,0.0005,-0.0046,-0.0006,0.0024,0.004,-0.0032,-0.0092,-0.0007,0.0029,0.0045,0.0124,0.0163,0.0116,-0.0001,-0.0148,-0.0277,-0.0356,-0.0381,-0.0363,-0.0309,-0.0221,-0.0101,0.0046,0.0216,0.0404,0.0605,0.0814,0.1028,0.1242,0.1454,0.1661,0.186,0.2052,0.2234,0.2405,0.2564,0.2713,0.285,0.2975,0.3089,0.3192,0.3284,0.3366,0.3439,0.3502,0.3556,0.3603,0.3641,0.3673,0.3698,0.3717,0.373,0.3738,0.3741,0.3739,0.3734,0.3725,0.3712,0.3696,0.3678,0.3657,0.3634,0.3609,0.3582,0.3553,0.3523,0.3492,0.3459,0.3426,0.3392,0.3357,0.3321,0.0001,0.0002,0.0001,0.0013,0.0012,0.002,-0.0045,0.0003,0.0044,-0.0004,-0.0091,-0.0061,0.0053,0.0098,0.012,0.0141,0.0088,-0.0035,-0.0186,-0.032,-0.0402,-0.0417,-0.037,-0.0276,-0.0143,0.0022,0.0214,0.0424,0.0648,0.0879,0.1112,0.1344,0.157,0.1789,0.1997,0.2194,0.2378,0.2548,0.2705,0.2849,0.2979,0.3095,0.32,0.3291,0.3372,0.3442,0.3501,0.3551,0.3592,0.3625,0.365,0.3669,0.3681,0.3687,0.3688,0.3684,0.3675,0.3663,0.3647,0.3628,0.3606,0.3581,0.3554,0.3526,0.3495,0.3463,0.3429,0.3394,0.3358,0.3322,0.3285,0.3247,0.3208,0.317,0.3131,0.3091,0.3052,0.0001,-0.0006,-0.0009,0.0002,0.0027,0.0001,-0.0005,0.0027,0.0012,-0.0074,-0.0088,0.0032,0.0144,0.0153,0.0115,0.004,-0.009,-0.024,-0.0365,-0.043,-0.0421,-0.0339,-0.0198,-0.0015,0.0199,0.0435,0.0683,0.0938,0.1193,0.1443,0.1685,0.1915,0.2131,0.2332,0.2517,0.2686,0.2839,0.2976,0.3097,0.3204,0.3297,0.3377,0.3445,0.3501,0.3547,0.3583,0.361,0.3629,0.3641,0.3646,0.3646,0.3639,0.3628,0.3613,0.3594,0.3571,0.3545,0.3517,0.3486,0.3453,0.3418,0.3382,0.3345,0.3307,0.3267,0.3227,0.3186,0.3145,0.3104,0.3062,0.302,0.2979,0.2937,0.2895,0.2854,0.2813,0.2772,-0.0008,-0.0003,0,-0.0008,0.0011,-0.0023,0.0057,0.0009,-0.0066,-0.0088,0.0011,0.0155,0.0191,0.0107,-0.0021,-0.0163,-0.0304,-0.0405,-0.0437,-0.0387,-0.0259,-0.0069,0.0167,0.0429,0.0705,0.0986,0.1264,0.1534,0.1792,0.2033,0.2257,0.2462,0.2647,0.2813,0.296,0.309,0.3201,0.3297,0.3378,0.3445,0.3499,0.3541,0.3573,0.3594,0.3608,0.3613,0.3612,0.3604,0.3591,0.3573,0.355,0.3524,0.3495,0.3462,0.3427,0.3391,0.3352,0.3312,0.3271,0.3228,0.3185,0.3141,0.3097,0.3052,0.3008,0.2963,0.2918,0.2874,0.2829,0.2785,0.2742,0.2698,0.2655,0.2613,0.2571,0.253,0.2489,0.0001,0.0001,0.0001,0.0011,-0.0036,0.0016,0.0065,-0.0074,-0.0093,0.0013,0.0152,0.0204,0.0106,-0.0074,-0.0245,-0.037,-0.0433,-0.0415,-0.031,-0.0128,0.0116,0.04,0.0704,0.1014,0.1318,0.161,0.1885,0.2139,0.237,0.2579,0.2764,0.2926,0.3067,0.3187,0.3289,0.3372,0.344,0.3493,0.3533,0.356,0.3578,0.3585,0.3585,0.3577,0.3562,0.3542,0.3517,0.3488,0.3455,0.3419,0.338,0.3339,0.3296,0.3251,0.3206,0.3159,0.3112,0.3065,0.3016,0.2968,0.292,0.2872,0.2824,0.2777,0.273,0.2683,0.2637,0.2591,0.2546,0.2502,0.2458,0.2415,0.2373,0.2331,0.229,0.225,0.2211,0.0005,0.0006,-0.0012,0.0003,-0.003,0.0065,-0.0032,-0.0115,0.0011,0.0162,0.0198,0.0089,-0.0118,-0.0315,-0.0428,-0.0442,-0.0361,-0.0191,0.0053,0.0349,0.0676,0.1014,0.1347,0.1663,0.1958,0.2226,0.2466,0.2679,0.2864,0.3022,0.3156,0.3267,0.3357,0.3428,0.3483,0.3521,0.3547,0.356,0.3563,0.3557,0.3543,0.3522,0.3495,0.3463,0.3427,0.3387,0.3344,0.3299,0.3251,0.3203,0.3153,0.3102,0.305,0.2999,0.2946,0.2894,0.2843,0.2791,0.274,0.2689,0.2639,0.2589,0.254,0.2492,0.2445,0.2399,0.2353,0.2308,0.2265,0.2221,0.2179,0.2138,0.2098,0.2058,0.2019,0.1982,0.1945,0.0007,0.0016,0.0028,-0.0052,0.0057,-0.0004,-0.0117,-0.0008,0.017,0.0199,0.0058,-0.0165,-0.0367,-0.0464,-0.0428,-0.0275,-0.0034,0.0273,0.0619,0.0982,0.1343,0.1686,0.2004,0.2289,0.2541,0.2759,0.2945,0.31,0.3227,0.3329,0.3408,0.3466,0.3507,0.3532,0.3543,0.3542,0.3531,0.3511,0.3484,0.345,0.3412,0.3368,0.3322,0.3273,0.3221,0.3168,0.3113,0.3058,0.3001,0.2945,0.2889,0.2832,0.2777,0.2721,0.2666,0.2612,0.2559,0.2506,0.2454,0.2404,0.2354,0.2305,0.2258,0.2211,0.2165,0.2121,0.2077,0.2034,0.1993,0.1952,0.1913,0.1874,0.1837,0.18,0.1764,0.1729,0.1695,-0.0009,-0.0028,0.0011,-0.0003,0.0055,-0.0118,-0.0038,0.0168,0.0204,0.0034,-0.0213,-0.0407,-0.0473,-0.0383,-0.016,0.0154,0.0521,0.0911,0.1301,0.1674,0.2017,0.2324,0.259,0.2817,0.3005,0.3159,0.328,0.3373,0.3441,0.3488,0.3515,0.3526,0.3523,0.3508,0.3483,0.3451,0.3411,0.3366,0.3316,0.3263,0.3207,0.3149,0.309,0.3029,0.2968,0.2907,0.2846,0.2785,0.2724,0.2665,0.2606,0.2548,0.249,0.2435,0.238,0.2326,0.2274,0.2222,0.2172,0.2124,0.2076,0.203,0.1984,0.1941,0.1898,0.1856,0.1815,0.1776,0.1738,0.17,0.1664,0.1629,0.1595,0.1561,0.1529,0.1497,0.1466,0.0001,0.0012,-0.0059,0.0085,-0.0078,-0.0082,0.0148,0.0213,0.0023,-0.0251,-0.044,-0.0462,-0.0313,-0.0021,0.036,0.0783,0.121,0.1618,0.1992,0.2324,0.261,0.2849,0.3044,0.3199,0.3317,0.3402,0.3461,0.3495,0.3509,0.3507,0.3491,0.3463,0.3425,0.338,0.3329,0.3273,0.3213,0.3151,0.3086,0.302,0.2954,0.2887,0.2821,0.2754,0.2689,0.2624,0.2561,0.2498,0.2437,0.2377,0.2319,0.2261,0.2206,0.2152,0.2099,0.2048,0.1998,0.195,0.1903,0.1857,0.1813,0.177,0.1728,0.1688,0.1648,0.161,0.1573,0.1538,0.1503,0.1469,0.1436,0.1405,0.1374,0.1344,0.1315,0.1287,0.126,0.0008,0.0026,0.0017,0.0006,-0.0122,0.0108,0.0221,0.003,-0.0272,-0.0461,-0.0443,-0.0227,0.0133,0.0576,0.1045,0.15,0.1917,0.2284,0.2597,0.2855,0.3061,0.322,0.3337,0.3418,0.3468,0.3492,0.3495,0.348,0.3451,0.341,0.336,0.3303,0.3241,0.3175,0.3106,0.3035,0.2962,0.289,0.2817,0.2745,0.2674,0.2603,0.2534,0.2467,0.2401,0.2336,0.2273,0.2212,0.2153,0.2095,0.2039,0.1985,0.1933,0.1882,0.1833,0.1785,0.1739,0.1694,0.1651,0.161,0.1569,0.153,0.1493,0.1456,0.1421,0.1387,0.1354,0.1322,0.1291,0.1261,0.1232,0.1204,0.1176,0.115,0.1124,0.11,0.1076,-0.0031,-0.0061,0.0086,-0.0127,0.0037,0.0228,0.0054,-0.0273,-0.0472,-0.042,-0.014,0.029,0.0789,0.1296,0.1771,0.2189,0.2542,0.2829,0.3054,0.3223,0.3344,0.3423,0.3467,0.3483,0.3475,0.3448,0.3407,0.3354,0.3292,0.3225,0.3152,0.3076,0.2998,0.2919,0.284,0.2761,0.2682,0.2606,0.253,0.2456,0.2384,0.2314,0.2246,0.218,0.2117,0.2055,0.1995,0.1937,0.1882,0.1828,0.1776,0.1726,0.1678,0.1631,0.1586,0.1543,0.1501,0.1461,0.1422,0.1385,0.1349,0.1314,0.128,0.1248,0.1217,0.1186,0.1157,0.1129,0.1102,0.1076,0.105,0.1025,0.1002,0.0979,0.0956,0.0935,0.0914,0.0046,0.0007,-0.0036,-0.0066,0.0214,0.0104,-0.0254,-0.0475,-0.0401,-0.0064,0.0433,0.0987,0.1528,0.2015,0.2427,0.276,0.3017,0.3206,0.3337,0.3419,0.3461,0.347,0.3453,0.3416,0.3363,0.3299,0.3226,0.3148,0.3065,0.298,0.2893,0.2807,0.2721,0.2636,0.2553,0.2472,0.2392,0.2316,0.2241,0.2169,0.21,0.2033,0.1968,0.1906,0.1847,0.1789,0.1734,0.1681,0.163,0.1581,0.1533,0.1488,0.1445,0.1403,0.1363,0.1324,0.1287,0.1251,0.1217,0.1184,0.1152,0.1121,0.1092,0.1063,0.1036,0.1009,0.0984,0.0959,0.0936,0.0913,0.0891,0.0869,0.0849,0.0829,0.081,0.0791,0.0773,-0.002,0.0091,-0.0138,0.0144,0.0172,-0.0199,-0.0472,-0.0395,-0.0009,0.0551,0.1158,0.1731,0.2227,0.2629,0.2938,0.3163,0.3315,0.3407,0.3451,0.3457,0.3434,0.3387,0.3325,0.3249,0.3166,0.3076,0.2984,0.289,0.2795,0.2701,0.2609,0.2519,0.2431,0.2346,0.2263,0.2183,0.2107,0.2033,0.1963,0.1895,0.183,0.1768,0.1708,0.1651,0.1597,0.1544,0.1494,0.1447,0.1401,0.1357,0.1315,0.1275,0.1236,0.1199,0.1163,0.1129,0.1097,0.1065,0.1035,0.1006,0.0979,0.0952,0.0926,0.0901,0.0878,0.0855,0.0833,0.0812,0.0791,0.0771,0.0752,0.0734,0.0716,0.0699,0.0683,0.0667,0.0651,-0.0051,-0.0032,-0.001,0.0229,-0.0101,-0.0452,-0.0409,0.0011,0.0632,0.1294,0.19,0.2403,0.2794,0.3078,0.3269,0.3385,0.3439,0.3448,0.342,0.3367,0.3294,0.3209,0.3115,0.3015,0.2912,0.2809,0.2706,0.2605,0.2507,0.2411,0.2318,0.2229,0.2143,0.2061,0.1983,0.1908,0.1836,0.1767,0.1702,0.164,0.1581,0.1524,0.1471,0.1419,0.137,0.1324,0.1279,0.1237,0.1196,0.1157,0.112,0.1085,0.1051,0.1019,0.0988,0.0958,0.093,0.0903,0.0877,0.0852,0.0828,0.0805,0.0783,0.0761,0.0741,0.0721,0.0702,0.0684,0.0667,0.065,0.0633,0.0618,0.0603,0.0588,0.0574,0.056,0.0547,0.0076,-0.0139,0.0196,0.0045,-0.04,-0.0442,-0.0014,0.0665,0.1386,0.2029,0.2543,0.2923,0.3183,0.3342,0.3422,0.3441,0.3415,0.3357,0.3277,0.3182,0.3077,0.2966,0.2854,0.2741,0.263,0.2521,0.2416,0.2314,0.2217,0.2123,0.2034,0.195,0.1869,0.1793,0.172,0.1651,0.1586,0.1524,0.1465,0.1409,0.1356,0.1305,0.1258,0.1212,0.1169,0.1128,0.1089,0.1051,0.1016,0.0982,0.095,0.0919,0.089,0.0862,0.0835,0.081,0.0785,0.0762,0.0739,0.0718,0.0697,0.0678,0.0659,0.064,0.0623,0.0606,0.059,0.0575,0.056,0.0545,0.0532,0.0518,0.0505,0.0493,0.0481,0.047,0.0459,0.0042,-0.0007,0.0198,-0.0279,-0.048,-0.0092,0.0637,0.1425,0.2114,0.2647,0.3021,0.3258,0.3387,0.3432,0.3418,0.3362,0.3276,0.3172,0.3056,0.2935,0.2811,0.2688,0.2568,0.2451,0.2338,0.223,0.2128,0.203,0.1938,0.185,0.1767,0.1689,0.1615,0.1546,0.148,0.1418,0.1359,0.1304,0.1252,0.1202,0.1155,0.1111,0.1069,0.1029,0.0992,0.0956,0.0922,0.089,0.0859,0.083,0.0802,0.0776,0.0751,0.0727,0.0704,0.0682,0.0661,0.0641,0.0622,0.0603,0.0586,0.0569,0.0553,0.0537,0.0523,0.0508,0.0495,0.0481,0.0469,0.0457,0.0445,0.0434,0.0423,0.0413,0.0403,0.0393,0.0383,-0.0119,0.02,-0.0059,-0.0483,-0.0221,0.0534,0.1399,0.2151,0.2714,0.309,0.3309,0.341,0.3424,0.3379,0.3293,0.3183,0.3057,0.2924,0.2789,0.2655,0.2524,0.2397,0.2276,0.2162,0.2053,0.195,0.1854,0.1763,0.1678,0.1597,0.1522,0.1452,0.1386,0.1323,0.1265,0.121,0.1158,0.1109,0.1064,0.102,0.098,0.0941,0.0905,0.087,0.0838,0.0807,0.0778,0.075,0.0724,0.0699,0.0675,0.0652,0.0631,0.061,0.0591,0.0572,0.0554,0.0537,0.0521,0.0506,0.0491,0.0476,0.0463,0.045,0.0437,0.0425,0.0414,0.0403,0.0392,0.0382,0.0372,0.0362,0.0353,0.0345,0.0336,0.0328,0.032,-0.0088,0.0194,-0.0374,-0.0378,0.0345,0.1294,0.213,0.2742,0.3132,0.3341,0.3418,0.3404,0.333,0.3218,0.3084,0.2939,0.2791,0.2644,0.2501,0.2363,0.2233,0.2109,0.1994,0.1885,0.1784,0.1689,0.16,0.1518,0.1441,0.1369,0.1302,0.1239,0.1181,0.1126,0.1075,0.1027,0.0982,0.0939,0.09,0.0862,0.0827,0.0794,0.0763,0.0733,0.0705,0.0679,0.0654,0.063,0.0608,0.0586,0.0566,0.0547,0.0529,0.0511,0.0495,0.0479,0.0464,0.045,0.0436,0.0423,0.041,0.0398,0.0387,0.0376,0.0365,0.0355,0.0345,0.0336,0.0327,0.0318,0.031,0.0302,0.0295,0.0287,0.028,0.0273,0.0267,0.013,-0.0073,-0.0488,0.0069,0.1087,0.2039,0.2728,0.3149,0.3358,0.3417,0.3377,0.3276,0.314,0.2985,0.2823,0.2661,0.2503,0.2352,0.221,0.2077,0.1952,0.1836,0.1729,0.1629,0.1536,0.1451,0.1371,0.1298,0.123,0.1166,0.1107,0.1052,0.1001,0.0954,0.0909,0.0868,0.0829,0.0792,0.0758,0.0726,0.0696,0.0668,0.0641,0.0616,0.0592,0.0569,0.0548,0.0528,0.0509,0.0491,0.0474,0.0458,0.0442,0.0428,0.0413,0.04,0.0387,0.0375,0.0364,0.0353,0.0342,0.0332,0.0323,0.0313,0.0304,0.0296,0.0288,0.028,0.0272,0.0265,0.0258,0.0252,0.0245,0.0239,0.0233,0.0227,0.0222,0.0233,-0.0387,-0.0258,0.0757,0.1851,0.2659,0.314,0.3364,0.3412,0.335,0.3224,0.3064,0.2889,0.2711,0.2536,0.2369,0.2213,0.2066,0.193,0.1805,0.169,0.1584,0.1486,0.1397,0.1314,0.1238,0.1168,0.1103,0.1044,0.0988,0.0937,0.089,0.0845,0.0804,0.0766,0.073,0.0697,0.0666,0.0637,0.0609,0.0584,0.056,0.0537,0.0515,0.0495,0.0476,0.0458,0.0441,0.0425,0.041,0.0396,0.0382,0.0369,0.0357,0.0345,0.0334,0.0323,0.0313,0.0303,0.0294,0.0285,0.0277,0.0269,0.0261,0.0253,0.0246,0.0239,0.0233,0.0227,0.0221,0.0215,0.0209,0.0204,0.0199,0.0194,0.0189,0.0184,0.005,-0.0485,0.0292,0.1532,0.2513,0.3096,0.3358,0.3407,0.3328,0.3179,0.2996,0.2801,0.2607,0.242,0.2245,0.2082,0.1933,0.1795,0.167,0.1556,0.1451,0.1356,0.127,0.119,0.1117,0.1051,0.099,0.0934,0.0882,0.0834,0.079,0.0749,0.0711,0.0676,0.0643,0.0613,0.0585,0.0558,0.0533,0.051,0.0488,0.0468,0.0449,0.0431,0.0414,0.0398,0.0383,0.0368,0.0355,0.0342,0.033,0.0318,0.0307,0.0297,0.0287,0.0278,0.0269,0.0261,0.0252,0.0245,0.0237,0.023,0.0223,0.0217,0.0211,0.0205,0.0199,0.0194,0.0188,0.0183,0.0179,0.0174,0.0169,0.0165,0.0161,0.0157,0.0153,-0.0281,-0.0234,0.1032,0.225,0.3001,0.3339,0.3404,0.3315,0.3144,0.2939,0.2724,0.2514,0.2316,0.2132,0.1963,0.181,0.1672,0.1547,0.1433,0.1331,0.1238,0.1154,0.1078,0.1009,0.0946,0.0888,0.0835,0.0787,0.0742,0.0701,0.0664,0.0629,0.0597,0.0567,0.0539,0.0513,0.0489,0.0467,0.0446,0.0426,0.0408,0.0391,0.0374,0.0359,0.0345,0.0332,0.0319,0.0307,0.0296,0.0285,0.0275,0.0265,0.0256,0.0247,0.0239,0.0231,0.0224,0.0217,0.021,0.0203,0.0197,0.0191,0.0186,0.018,0.0175,0.017,0.0165,0.0161,0.0156,0.0152,0.0148,0.0144,0.0141,0.0137,0.0134,0.013,0.0127,-0.0486,0.0334,0.1803,0.2818,0.3293,0.3404,0.3314,0.3125,0.2897,0.2662,0.2434,0.2223,0.203,0.1856,0.17,0.156,0.1435,0.1323,0.1222,0.1132,0.1051,0.0978,0.0911,0.0851,0.0797,0.0747,0.0702,0.0661,0.0623,0.0588,0.0556,0.0526,0.0499,0.0474,0.045,0.0429,0.0408,0.0389,0.0372,0.0355,0.034,0.0326,0.0312,0.0299,0.0287,0.0276,0.0265,0.0255,0.0246,0.0237,0.0228,0.022,0.0213,0.0205,0.0199,0.0192,0.0186,0.018,0.0174,0.0169,0.0164,0.0159,0.0154,0.015,0.0145,0.0141,0.0137,0.0133,0.013,0.0126,0.0123,0.012,0.0117,0.0114,0.0111,0.0108,0.0105,-0.0368,0.1082,0.2476,0.3192,0.34,0.3328,0.3125,0.2874,0.2616,0.2371,0.2145,0.1943,0.1762,0.1602,0.146,0.1335,0.1223,0.1125,0.1037,0.0958,0.0888,0.0824,0.0767,0.0716,0.0669,0.0627,0.0589,0.0554,0.0521,0.0492,0.0465,0.044,0.0417,0.0396,0.0376,0.0357,0.034,0.0325,0.031,0.0296,0.0283,0.0271,0.026,0.0249,0.0239,0.023,0.0221,0.0212,0.0204,0.0197,0.019,0.0183,0.0177,0.0171,0.0165,0.0159,0.0154,0.0149,0.0145,0.014,0.0136,0.0132,0.0128,0.0124,0.012,0.0117,0.0114,0.0111,0.0108,0.0105,0.0102,0.0099,0.0097,0.0094,0.0092,0.009,0.0087,0.0097,0.1851,0.2976,0.3374,0.3356,0.3149,0.2875,0.2592,0.2325,0.2084,0.1869,0.1681,0.1516,0.1372,0.1246,0.1135,0.1038,0.0951,0.0875,0.0808,0.0747,0.0693,0.0644,0.06,0.0561,0.0525,0.0492,0.0463,0.0435,0.0411,0.0388,0.0367,0.0347,0.033,0.0313,0.0298,0.0283,0.027,0.0258,0.0246,0.0235,0.0225,0.0216,0.0207,0.0198,0.0191,0.0183,0.0176,0.017,0.0163,0.0158,0.0152,0.0147,0.0142,0.0137,0.0132,0.0128,0.0124,0.012,0.0116,0.0113,0.0109,0.0106,0.0103,0.01,0.0097,0.0094,0.0092,0.0089,0.0087,0.0084,0.0082,0.008,0.0078,0.0076,0.0074,0.0072,0.08,0.2516,0.3278,0.3388,0.3199,0.2905,0.2594,0.2301,0.204,0.1811,0.1613,0.1443,0.1295,0.1168,0.1057,0.096,0.0876,0.0802,0.0736,0.0678,0.0627,0.0581,0.0539,0.0502,0.0469,0.0439,0.0411,0.0386,0.0363,0.0342,0.0323,0.0306,0.0289,0.0274,0.026,0.0248,0.0236,0.0225,0.0214,0.0204,0.0196,0.0187,0.0179,0.0172,0.0165,0.0158,0.0152,0.0146,0.0141,0.0136,0.0131,0.0126,0.0122,0.0118,0.0114,0.011,0.0106,0.0103,0.01,0.0096,0.0093,0.0091,0.0088,0.0085,0.0083,0.008,0.0078,0.0076,0.0074,0.0072,0.007,0.0068,0.0066,0.0065,0.0063,0.0062,0.006,0.158,0.3003,0.3394,0.3272,0.2967,0.2625,0.2302,0.2017,0.1771,0.1561,0.1382,0.123,0.11,0.0989,0.0893,0.081,0.0737,0.0674,0.0618,0.0568,0.0525,0.0486,0.0451,0.0419,0.0391,0.0366,0.0343,0.0321,0.0302,0.0285,0.0269,0.0254,0.024,0.0228,0.0216,0.0206,0.0196,0.0186,0.0178,0.017,0.0162,0.0155,0.0149,0.0143,0.0137,0.0131,0.0126,0.0121,0.0117,0.0112,0.0108,0.0104,0.0101,0.0097,0.0094,0.0091,0.0088,0.0085,0.0082,0.008,0.0077,0.0075,0.0073,0.0071,0.0069,0.0067,0.0065,0.0063,0.0061,0.006,0.0058,0.0056,0.0055,0.0054,0.0052,0.0051,0.005],"ymax":[0.2626,0.2656,0.2634,0.273,0.2727,0.272,0.2818,0.2887,0.2923,0.2921,0.2858,0.2794,0.28,0.2914,0.3023,0.3126,0.3225,0.332,0.341,0.3496,0.3578,0.3656,0.3731,0.3802,0.387,0.3935,0.3996,0.4055,0.4111,0.4164,0.4215,0.4263,0.4309,0.4353,0.4394,0.4434,0.4472,0.4507,0.4541,0.4574,0.4604,0.4634,0.4661,0.4688,0.4713,0.4737,0.4759,0.478,0.48,0.4819,0.4837,0.4854,0.487,0.4884,0.4898,0.4911,0.4923,0.4933,0.4943,0.4952,0.496,0.4967,0.4973,0.4978,0.4982,0.4985,0.4986,0.4986,0.4985,0.4982,0.4977,0.4969,0.4959,0.4945,0.4927,0.4904,0.4875,0.2626,0.2656,0.2635,0.273,0.2722,0.2721,0.2818,0.2886,0.292,0.2914,0.2846,0.278,0.2805,0.2919,0.3028,0.3131,0.3231,0.3325,0.3416,0.3502,0.3584,0.3662,0.3737,0.3808,0.3876,0.3941,0.4002,0.4061,0.4117,0.417,0.4221,0.4269,0.4315,0.4358,0.44,0.4439,0.4477,0.4513,0.4547,0.458,0.4611,0.464,0.4668,0.4694,0.472,0.4743,0.4766,0.4788,0.4808,0.4827,0.4845,0.4862,0.4877,0.4892,0.4905,0.4918,0.4929,0.4939,0.4949,0.4957,0.4964,0.497,0.4975,0.4979,0.4981,0.4983,0.4982,0.498,0.4977,0.4971,0.4964,0.4953,0.494,0.4923,0.4903,0.4879,0.4849,0.2624,0.2656,0.2637,0.273,0.2716,0.2723,0.2817,0.2885,0.2915,0.2906,0.283,0.2762,0.281,0.2924,0.3034,0.3138,0.3237,0.3332,0.3422,0.3509,0.3591,0.3669,0.3744,0.3815,0.3883,0.3948,0.4009,0.4068,0.4123,0.4177,0.4227,0.4275,0.4321,0.4365,0.4407,0.4446,0.4484,0.452,0.4555,0.4587,0.4619,0.4648,0.4677,0.4703,0.4729,0.4753,0.4776,0.4797,0.4818,0.4837,0.4854,0.4871,0.4886,0.4901,0.4914,0.4925,0.4936,0.4946,0.4954,0.4961,0.4967,0.4972,0.4975,0.4977,0.4978,0.4977,0.4974,0.497,0.4964,0.4955,0.4945,0.4931,0.4915,0.4896,0.4874,0.4848,0.4817,0.2624,0.2655,0.2639,0.2729,0.2708,0.2724,0.2816,0.2882,0.2908,0.2895,0.2812,0.2742,0.2817,0.2932,0.3041,0.3145,0.3245,0.334,0.3431,0.3517,0.36,0.3678,0.3753,0.3824,0.3891,0.3956,0.4017,0.4076,0.4131,0.4184,0.4235,0.4283,0.4329,0.4373,0.4415,0.4456,0.4494,0.453,0.4565,0.4598,0.463,0.466,0.4689,0.4716,0.4742,0.4766,0.4789,0.481,0.483,0.4849,0.4866,0.4882,0.4897,0.4911,0.4923,0.4934,0.4943,0.4951,0.4958,0.4964,0.4968,0.497,0.4972,0.4971,0.4969,0.4966,0.496,0.4953,0.4944,0.4932,0.4919,0.4902,0.4884,0.4862,0.4838,0.481,0.4779,0.2622,0.2654,0.2642,0.2728,0.27,0.2727,0.2816,0.2878,0.29,0.2881,0.2792,0.2717,0.2825,0.294,0.305,0.3155,0.3255,0.335,0.3441,0.3528,0.361,0.3688,0.3762,0.3833,0.3901,0.3965,0.4026,0.4085,0.4141,0.4194,0.4245,0.4294,0.434,0.4385,0.4428,0.4468,0.4507,0.4545,0.458,0.4614,0.4646,0.4676,0.4705,0.4732,0.4758,0.4782,0.4805,0.4826,0.4845,0.4863,0.488,0.4895,0.4909,0.4921,0.4931,0.4941,0.4948,0.4955,0.4959,0.4962,0.4964,0.4964,0.4962,0.4959,0.4954,0.4947,0.4939,0.4928,0.4915,0.4901,0.4884,0.4865,0.4844,0.482,0.4793,0.4764,0.4733,0.2619,0.2654,0.2645,0.2724,0.2689,0.273,0.2815,0.2871,0.2891,0.2864,0.2768,0.2714,0.2835,0.2951,0.3061,0.3167,0.3267,0.3362,0.3453,0.3539,0.3621,0.3699,0.3773,0.3844,0.3911,0.3976,0.4037,0.4096,0.4153,0.4207,0.4259,0.4308,0.4356,0.4401,0.4445,0.4487,0.4526,0.4564,0.46,0.4634,0.4667,0.4697,0.4726,0.4753,0.4778,0.4802,0.4824,0.4844,0.4862,0.4879,0.4894,0.4907,0.4919,0.4929,0.4938,0.4944,0.4949,0.4953,0.4955,0.4955,0.4953,0.495,0.4945,0.4938,0.4929,0.4919,0.4907,0.4893,0.4877,0.4859,0.4839,0.4818,0.4794,0.4768,0.4739,0.4709,0.4677,0.2615,0.2652,0.2649,0.2725,0.267,0.2734,0.2811,0.2862,0.2879,0.2842,0.2738,0.2726,0.2848,0.2964,0.3075,0.3181,0.3281,0.3376,0.3466,0.3552,0.3633,0.3711,0.3785,0.3856,0.3924,0.399,0.4052,0.4112,0.417,0.4225,0.4279,0.4329,0.4378,0.4425,0.4469,0.4512,0.4552,0.4591,0.4627,0.4661,0.4693,0.4723,0.4752,0.4778,0.4802,0.4824,0.4844,0.4863,0.4879,0.4894,0.4906,0.4917,0.4926,0.4933,0.4938,0.4942,0.4944,0.4943,0.4941,0.4938,0.4932,0.4925,0.4916,0.4906,0.4893,0.4879,0.4863,0.4846,0.4826,0.4805,0.4783,0.4758,0.4732,0.4704,0.4674,0.4642,0.4609,0.2607,0.2651,0.2652,0.2718,0.2641,0.2737,0.2804,0.2852,0.2862,0.2813,0.2698,0.2741,0.2864,0.2981,0.3091,0.3196,0.3295,0.3389,0.3479,0.3565,0.3647,0.3725,0.38,0.3873,0.3942,0.4009,0.4074,0.4136,0.4195,0.4252,0.4307,0.436,0.441,0.4457,0.4502,0.4545,0.4586,0.4624,0.466,0.4694,0.4725,0.4754,0.478,0.4804,0.4827,0.4846,0.4864,0.4879,0.4893,0.4904,0.4913,0.492,0.4926,0.4929,0.493,0.4929,0.4927,0.4923,0.4916,0.4908,0.4899,0.4887,0.4874,0.4859,0.4843,0.4825,0.4805,0.4784,0.4761,0.4737,0.4711,0.4684,0.4655,0.4625,0.4594,0.4561,0.4527,0.2602,0.2645,0.2651,0.2705,0.2605,0.2738,0.2797,0.2839,0.2839,0.2774,0.2649,0.276,0.2882,0.2998,0.3107,0.3211,0.331,0.3404,0.3494,0.3581,0.3664,0.3745,0.3822,0.3897,0.3969,0.4039,0.4106,0.417,0.4232,0.429,0.4347,0.44,0.4451,0.4499,0.4545,0.4587,0.4627,0.4664,0.4698,0.473,0.4759,0.4785,0.4809,0.483,0.4849,0.4865,0.4879,0.489,0.4899,0.4906,0.4911,0.4913,0.4914,0.4912,0.4908,0.4903,0.4895,0.4886,0.4875,0.4863,0.4848,0.4832,0.4815,0.4795,0.4775,0.4753,0.4729,0.4705,0.4678,0.4651,0.4623,0.4593,0.4562,0.453,0.4497,0.4463,0.4429,0.2589,0.2633,0.2656,0.268,0.2613,0.274,0.2791,0.2822,0.2806,0.2725,0.2651,0.2779,0.29,0.3014,0.3123,0.3227,0.3326,0.3422,0.3515,0.3604,0.3691,0.3775,0.3856,0.3934,0.4009,0.4082,0.4152,0.4218,0.4281,0.4342,0.4399,0.4452,0.4503,0.455,0.4594,0.4635,0.4672,0.4707,0.4738,0.4766,0.4791,0.4814,0.4833,0.4849,0.4863,0.4874,0.4883,0.4889,0.4893,0.4894,0.4893,0.489,0.4885,0.4878,0.4869,0.4858,0.4845,0.4831,0.4814,0.4797,0.4777,0.4757,0.4734,0.4711,0.4686,0.466,0.4633,0.4605,0.4575,0.4545,0.4514,0.4482,0.4449,0.4415,0.438,0.4345,0.4309,0.2563,0.2614,0.2667,0.265,0.2637,0.2744,0.2784,0.2797,0.2763,0.2669,0.2671,0.2797,0.2917,0.3031,0.314,0.3246,0.3349,0.3449,0.3547,0.3641,0.3732,0.3821,0.3906,0.3988,0.4067,0.4142,0.4214,0.4281,0.4345,0.4405,0.4461,0.4513,0.4562,0.4606,0.4647,0.4684,0.4717,0.4747,0.4773,0.4796,0.4816,0.4833,0.4846,0.4856,0.4864,0.4869,0.4871,0.4871,0.4868,0.4863,0.4856,0.4847,0.4835,0.4822,0.4807,0.479,0.4771,0.4751,0.473,0.4707,0.4682,0.4657,0.463,0.4602,0.4573,0.4543,0.4512,0.4481,0.4448,0.4415,0.4381,0.4347,0.4311,0.4276,0.424,0.4203,0.4166,0.2583,0.2572,0.2672,0.2608,0.267,0.2764,0.2779,0.2762,0.2715,0.2609,0.2689,0.2814,0.2935,0.3052,0.3166,0.3278,0.3387,0.3494,0.3597,0.3698,0.3795,0.3888,0.3977,0.4062,0.4142,0.4218,0.429,0.4356,0.4419,0.4476,0.4529,0.4577,0.4621,0.4661,0.4696,0.4727,0.4754,0.4778,0.4797,0.4813,0.4826,0.4835,0.4841,0.4844,0.4844,0.4842,0.4837,0.4829,0.4819,0.4807,0.4793,0.4777,0.4758,0.4739,0.4717,0.4694,0.467,0.4644,0.4617,0.4589,0.4559,0.4529,0.4498,0.4466,0.4432,0.4399,0.4365,0.433,0.4294,0.4258,0.4222,0.4185,0.4148,0.411,0.4072,0.4034,0.3996,0.2598,0.2577,0.2673,0.2565,0.2703,0.2771,0.2757,0.2724,0.2666,0.2574,0.2707,0.2836,0.2963,0.3088,0.321,0.3331,0.3448,0.3562,0.3672,0.3778,0.3879,0.3975,0.4066,0.4152,0.4232,0.4306,0.4375,0.4438,0.4496,0.4548,0.4595,0.4637,0.4674,0.4706,0.4734,0.4757,0.4776,0.4791,0.4802,0.481,0.4814,0.4814,0.4812,0.4807,0.4798,0.4788,0.4774,0.4759,0.4741,0.4721,0.47,0.4676,0.4651,0.4625,0.4597,0.4568,0.4537,0.4506,0.4473,0.444,0.4406,0.4371,0.4335,0.4299,0.4262,0.4225,0.4187,0.4149,0.4111,0.4072,0.4033,0.3994,0.3955,0.3916,0.3877,0.3837,0.3798,0.2597,0.2598,0.2653,0.2596,0.2717,0.2752,0.2726,0.269,0.2624,0.2596,0.2736,0.2874,0.3012,0.3148,0.3281,0.3411,0.3536,0.3657,0.3772,0.3881,0.3984,0.408,0.4169,0.4252,0.4328,0.4398,0.4461,0.4517,0.4567,0.4612,0.4651,0.4684,0.4712,0.4734,0.4752,0.4766,0.4775,0.478,0.4781,0.4779,0.4773,0.4764,0.4753,0.4738,0.4721,0.4701,0.468,0.4656,0.463,0.4603,0.4573,0.4543,0.4511,0.4478,0.4444,0.4409,0.4372,0.4335,0.4298,0.426,0.4221,0.4181,0.4142,0.4102,0.4061,0.4021,0.398,0.3939,0.3898,0.3857,0.3816,0.3775,0.3734,0.3693,0.3653,0.3612,0.3572,0.2602,0.2614,0.2614,0.2619,0.2705,0.2726,0.2704,0.2664,0.2582,0.2634,0.2787,0.294,0.3091,0.3239,0.3382,0.352,0.3651,0.3775,0.3891,0.4,0.4101,0.4193,0.4278,0.4354,0.4423,0.4484,0.4538,0.4585,0.4626,0.466,0.4688,0.471,0.4727,0.4738,0.4745,0.4747,0.4745,0.4739,0.473,0.4717,0.4701,0.4682,0.466,0.4636,0.461,0.4581,0.4551,0.4519,0.4485,0.445,0.4414,0.4376,0.4338,0.4298,0.4258,0.4217,0.4176,0.4134,0.4091,0.4048,0.4006,0.3962,0.3919,0.3875,0.3832,0.3789,0.3745,0.3702,0.3659,0.3615,0.3573,0.353,0.3488,0.3446,0.3404,0.3362,0.3321,0.2592,0.2624,0.2561,0.2614,0.2689,0.2715,0.2692,0.2629,0.2532,0.2702,0.2872,0.304,0.3204,0.3361,0.3511,0.3653,0.3785,0.3908,0.4022,0.4126,0.4221,0.4306,0.4382,0.4449,0.4507,0.4558,0.46,0.4635,0.4663,0.4685,0.47,0.471,0.4714,0.4713,0.4708,0.4698,0.4684,0.4667,0.4646,0.4622,0.4595,0.4566,0.4535,0.4501,0.4465,0.4428,0.4389,0.4349,0.4308,0.4265,0.4222,0.4178,0.4133,0.4088,0.4042,0.3996,0.395,0.3904,0.3857,0.381,0.3764,0.3717,0.3671,0.3624,0.3578,0.3533,0.3487,0.3442,0.3397,0.3352,0.3308,0.3264,0.3221,0.3178,0.3136,0.3094,0.3052,0.2554,0.2609,0.2515,0.2609,0.2694,0.2715,0.2664,0.2559,0.2616,0.2806,0.2992,0.3172,0.3345,0.3507,0.366,0.3801,0.3931,0.4049,0.4156,0.4252,0.4337,0.4411,0.4476,0.453,0.4576,0.4613,0.4642,0.4663,0.4677,0.4685,0.4686,0.4682,0.4673,0.4659,0.464,0.4618,0.4592,0.4562,0.453,0.4495,0.4458,0.4419,0.4377,0.4334,0.429,0.4244,0.4198,0.415,0.4102,0.4052,0.4003,0.3953,0.3903,0.3853,0.3802,0.3752,0.3701,0.3651,0.3601,0.3551,0.3502,0.3452,0.3403,0.3355,0.3307,0.3259,0.3212,0.3166,0.312,0.3074,0.3029,0.2985,0.2941,0.2898,0.2855,0.2813,0.2772,0.2544,0.257,0.2539,0.2631,0.2711,0.272,0.2645,0.2527,0.2738,0.2944,0.3143,0.3331,0.3507,0.3671,0.3821,0.3957,0.4081,0.419,0.4287,0.4371,0.4444,0.4505,0.4555,0.4595,0.4626,0.4648,0.4661,0.4667,0.4666,0.4659,0.4646,0.4627,0.4604,0.4576,0.4544,0.4509,0.4471,0.443,0.4386,0.4341,0.4293,0.4244,0.4193,0.4142,0.4089,0.4036,0.3982,0.3927,0.3873,0.3818,0.3763,0.3708,0.3653,0.3598,0.3544,0.349,0.3436,0.3383,0.333,0.3278,0.3226,0.3175,0.3125,0.3075,0.3025,0.2977,0.2929,0.2882,0.2835,0.279,0.2745,0.27,0.2656,0.2614,0.2571,0.253,0.2489,0.2549,0.2563,0.2559,0.2691,0.276,0.2716,0.2553,0.2665,0.2894,0.3112,0.3318,0.3509,0.3685,0.3845,0.399,0.4118,0.4231,0.4329,0.4413,0.4484,0.4541,0.4587,0.4621,0.4644,0.4658,0.4663,0.4661,0.465,0.4633,0.461,0.4581,0.4547,0.4509,0.4467,0.4422,0.4374,0.4323,0.427,0.4215,0.4159,0.4102,0.4043,0.3984,0.3924,0.3864,0.3804,0.3743,0.3683,0.3623,0.3563,0.3503,0.3444,0.3385,0.3327,0.327,0.3213,0.3157,0.3102,0.3048,0.2994,0.2941,0.2889,0.2838,0.2787,0.2738,0.2689,0.2642,0.2595,0.2549,0.2504,0.2459,0.2416,0.2373,0.2331,0.229,0.225,0.2211,0.2544,0.256,0.2627,0.2766,0.2765,0.2619,0.2585,0.2837,0.3078,0.3303,0.3512,0.3703,0.3875,0.4029,0.4165,0.4282,0.4383,0.4467,0.4535,0.4588,0.4627,0.4653,0.4667,0.467,0.4663,0.4648,0.4624,0.4594,0.4558,0.4517,0.4471,0.442,0.4367,0.431,0.4251,0.419,0.4128,0.4064,0.3999,0.3934,0.3868,0.3801,0.3735,0.3669,0.3603,0.3537,0.3472,0.3407,0.3344,0.3281,0.3218,0.3157,0.3096,0.3037,0.2978,0.292,0.2864,0.2808,0.2754,0.27,0.2648,0.2596,0.2546,0.2497,0.2449,0.2401,0.2355,0.231,0.2265,0.2222,0.218,0.2138,0.2098,0.2058,0.2019,0.1982,0.1945,0.2571,0.2518,0.2719,0.2788,0.2676,0.2496,0.2774,0.304,0.3289,0.3519,0.3727,0.3915,0.4079,0.4222,0.4342,0.4441,0.452,0.458,0.4623,0.4651,0.4664,0.4665,0.4654,0.4634,0.4605,0.4568,0.4524,0.4475,0.4421,0.4363,0.4301,0.4236,0.4169,0.41,0.403,0.3959,0.3887,0.3814,0.3742,0.3669,0.3597,0.3526,0.3455,0.3384,0.3315,0.3246,0.3179,0.3112,0.3047,0.2982,0.2919,0.2858,0.2797,0.2738,0.268,0.2623,0.2567,0.2513,0.246,0.2408,0.2357,0.2308,0.2259,0.2212,0.2166,0.2121,0.2077,0.2035,0.1993,0.1953,0.1913,0.1874,0.1837,0.18,0.1764,0.1729,0.1695,0.2613,0.2594,0.2772,0.2762,0.2554,0.2707,0.3001,0.3278,0.3531,0.3757,0.3955,0.4125,0.4269,0.4386,0.448,0.4551,0.4602,0.4634,0.465,0.4651,0.4638,0.4614,0.458,0.4537,0.4486,0.443,0.4368,0.4301,0.4232,0.4159,0.4084,0.4007,0.3929,0.3851,0.3772,0.3693,0.3614,0.3536,0.3458,0.3381,0.3305,0.3231,0.3157,0.3085,0.3014,0.2944,0.2876,0.2809,0.2744,0.2681,0.2619,0.2558,0.2499,0.2441,0.2385,0.233,0.2277,0.2225,0.2174,0.2125,0.2077,0.203,0.1985,0.1941,0.1898,0.1856,0.1816,0.1776,0.1738,0.17,0.1664,0.1629,0.1595,0.1561,0.1529,0.1497,0.1466,0.2599,0.2687,0.2805,0.2657,0.2619,0.2944,0.3249,0.3525,0.3768,0.3978,0.4154,0.4299,0.4415,0.4503,0.4567,0.4608,0.463,0.4633,0.4621,0.4595,0.4557,0.451,0.4453,0.4389,0.432,0.4246,0.4168,0.4087,0.4004,0.3919,0.3834,0.3748,0.3661,0.3575,0.349,0.3406,0.3322,0.324,0.316,0.308,0.3003,0.2927,0.2853,0.2781,0.271,0.2641,0.2574,0.2509,0.2445,0.2384,0.2324,0.2266,0.2209,0.2154,0.2101,0.2049,0.1999,0.195,0.1903,0.1857,0.1813,0.177,0.1728,0.1688,0.1648,0.161,0.1573,0.1538,0.1503,0.1469,0.1436,0.1405,0.1374,0.1344,0.1315,0.1287,0.126,0.2509,0.278,0.2755,0.249,0.2851,0.319,0.3493,0.3757,0.3983,0.4169,0.4319,0.4434,0.4519,0.4576,0.4608,0.4619,0.461,0.4585,0.4546,0.4494,0.4432,0.4361,0.4284,0.4201,0.4114,0.4024,0.3931,0.3838,0.3743,0.3649,0.3555,0.3462,0.337,0.3279,0.319,0.3102,0.3017,0.2933,0.2852,0.2773,0.2696,0.2621,0.2548,0.2477,0.2409,0.2343,0.2278,0.2216,0.2156,0.2097,0.2041,0.1986,0.1934,0.1883,0.1833,0.1785,0.1739,0.1695,0.1651,0.161,0.1569,0.153,0.1493,0.1456,0.1421,0.1387,0.1354,0.1322,0.1291,0.1261,0.1232,0.1204,0.1176,0.115,0.1124,0.11,0.1076,0.2631,0.281,0.2631,0.2715,0.3094,0.3433,0.3726,0.3973,0.4175,0.4334,0.4453,0.4537,0.4588,0.461,0.4608,0.4584,0.4543,0.4487,0.4419,0.4341,0.4255,0.4163,0.4066,0.3966,0.3864,0.3761,0.3658,0.3555,0.3453,0.3353,0.3254,0.3157,0.3062,0.2969,0.2879,0.2792,0.2707,0.2625,0.2545,0.2468,0.2393,0.2321,0.2251,0.2184,0.2119,0.2057,0.1997,0.1938,0.1882,0.1828,0.1776,0.1726,0.1678,0.1631,0.1586,0.1543,0.1501,0.1461,0.1422,0.1385,0.1349,0.1314,0.128,0.1248,0.1217,0.1186,0.1157,0.1129,0.1102,0.1076,0.105,0.1025,0.1002,0.0979,0.0956,0.0935,0.0914,0.2741,0.2769,0.2529,0.2956,0.3342,0.3675,0.3953,0.4177,0.4348,0.447,0.455,0.4593,0.4603,0.4586,0.4547,0.4489,0.4416,0.4331,0.4237,0.4136,0.403,0.392,0.3809,0.3696,0.3584,0.3472,0.3362,0.3253,0.3147,0.3044,0.2943,0.2845,0.2751,0.2659,0.257,0.2485,0.2403,0.2323,0.2247,0.2174,0.2103,0.2035,0.197,0.1908,0.1847,0.179,0.1734,0.1681,0.163,0.1581,0.1534,0.1488,0.1445,0.1403,0.1363,0.1324,0.1287,0.1251,0.1217,0.1184,0.1152,0.1121,0.1092,0.1063,0.1036,0.1009,0.0984,0.0959,0.0936,0.0913,0.0891,0.0869,0.0849,0.0829,0.081,0.0791,0.0773,0.2803,0.2643,0.2769,0.3213,0.3597,0.3913,0.4162,0.4347,0.4475,0.4554,0.4589,0.4589,0.4559,0.4504,0.443,0.434,0.4239,0.4128,0.4012,0.3892,0.377,0.3646,0.3523,0.3402,0.3282,0.3165,0.3052,0.2941,0.2834,0.2731,0.2631,0.2535,0.2443,0.2355,0.227,0.2188,0.2111,0.2036,0.1965,0.1896,0.1831,0.1769,0.1709,0.1652,0.1597,0.1545,0.1494,0.1447,0.1401,0.1357,0.1315,0.1275,0.1236,0.1199,0.1163,0.1129,0.1097,0.1065,0.1035,0.1006,0.0979,0.0952,0.0926,0.0901,0.0878,0.0855,0.0833,0.0812,0.0791,0.0771,0.0752,0.0734,0.0716,0.0699,0.0683,0.0667,0.0651,0.2802,0.252,0.3029,0.3474,0.384,0.4124,0.4332,0.4473,0.4555,0.4586,0.4576,0.4531,0.446,0.4368,0.426,0.4141,0.4014,0.3882,0.3748,0.3614,0.348,0.3347,0.3218,0.3092,0.297,0.2851,0.2738,0.2628,0.2523,0.2423,0.2327,0.2235,0.2148,0.2064,0.1985,0.1909,0.1837,0.1768,0.1703,0.1641,0.1581,0.1525,0.1471,0.1419,0.137,0.1324,0.1279,0.1237,0.1196,0.1157,0.112,0.1085,0.1051,0.1019,0.0988,0.0958,0.093,0.0903,0.0877,0.0852,0.0828,0.0805,0.0783,0.0761,0.0741,0.0721,0.0702,0.0684,0.0667,0.065,0.0633,0.0618,0.0603,0.0588,0.0574,0.056,0.0547,0.2716,0.2767,0.3291,0.3724,0.4061,0.4305,0.4465,0.4553,0.4581,0.456,0.4501,0.4414,0.4304,0.4178,0.4042,0.3898,0.3752,0.3604,0.3457,0.3313,0.3172,0.3035,0.2903,0.2777,0.2655,0.2539,0.2429,0.2323,0.2223,0.2128,0.2037,0.1952,0.1871,0.1794,0.1721,0.1651,0.1586,0.1524,0.1465,0.1409,0.1356,0.1305,0.1258,0.1212,0.1169,0.1128,0.1089,0.1051,0.1016,0.0982,0.095,0.0919,0.089,0.0862,0.0835,0.081,0.0785,0.0762,0.0739,0.0718,0.0697,0.0678,0.0659,0.064,0.0623,0.0606,0.059,0.0575,0.056,0.0545,0.0532,0.0518,0.0505,0.0493,0.0481,0.047,0.0459,0.2532,0.3027,0.3552,0.3961,0.4254,0.4444,0.4545,0.4575,0.4548,0.4476,0.4371,0.4243,0.4098,0.3944,0.3784,0.3622,0.3461,0.3302,0.3149,0.3,0.2857,0.272,0.259,0.2466,0.2349,0.2238,0.2132,0.2033,0.194,0.1852,0.1768,0.169,0.1616,0.1546,0.148,0.1418,0.1359,0.1304,0.1252,0.1202,0.1155,0.1111,0.1069,0.1029,0.0992,0.0956,0.0922,0.089,0.0859,0.083,0.0802,0.0776,0.0751,0.0727,0.0704,0.0682,0.0661,0.0641,0.0622,0.0603,0.0586,0.0569,0.0553,0.0537,0.0523,0.0508,0.0495,0.0481,0.0469,0.0457,0.0445,0.0434,0.0423,0.0413,0.0403,0.0393,0.0383,0.2657,0.3295,0.3802,0.4168,0.4406,0.4533,0.4571,0.4539,0.4455,0.4334,0.4187,0.4023,0.385,0.3673,0.3496,0.3321,0.3152,0.2989,0.2833,0.2684,0.2543,0.241,0.2285,0.2167,0.2057,0.1953,0.1855,0.1764,0.1678,0.1598,0.1522,0.1452,0.1386,0.1323,0.1265,0.121,0.1158,0.1109,0.1064,0.102,0.098,0.0941,0.0905,0.087,0.0838,0.0807,0.0778,0.075,0.0724,0.0699,0.0675,0.0652,0.0631,0.061,0.0591,0.0572,0.0554,0.0537,0.0521,0.0506,0.0491,0.0476,0.0463,0.045,0.0437,0.0425,0.0414,0.0403,0.0392,0.0382,0.0372,0.0362,0.0353,0.0345,0.0336,0.0328,0.032,0.2917,0.3558,0.4031,0.4341,0.451,0.4567,0.4536,0.4443,0.4305,0.4139,0.3955,0.3763,0.3568,0.3376,0.3188,0.3008,0.2836,0.2673,0.252,0.2375,0.224,0.2114,0.1997,0.1887,0.1785,0.1689,0.1601,0.1518,0.1441,0.1369,0.1302,0.124,0.1181,0.1126,0.1075,0.1027,0.0982,0.0939,0.09,0.0862,0.0827,0.0794,0.0763,0.0733,0.0705,0.0679,0.0654,0.063,0.0608,0.0586,0.0566,0.0547,0.0529,0.0511,0.0495,0.0479,0.0464,0.045,0.0436,0.0423,0.041,0.0398,0.0387,0.0376,0.0365,0.0355,0.0345,0.0336,0.0327,0.0318,0.031,0.0302,0.0295,0.0287,0.028,0.0273,0.0267,0.3186,0.3809,0.423,0.4468,0.456,0.454,0.4441,0.429,0.4104,0.39,0.3687,0.3474,0.3265,0.3064,0.2872,0.2692,0.2522,0.2364,0.2217,0.2081,0.1955,0.1838,0.1729,0.1629,0.1537,0.1451,0.1371,0.1298,0.123,0.1166,0.1107,0.1052,0.1001,0.0954,0.0909,0.0868,0.0829,0.0792,0.0758,0.0726,0.0696,0.0668,0.0641,0.0616,0.0592,0.0569,0.0548,0.0528,0.0509,0.0491,0.0474,0.0458,0.0442,0.0428,0.0413,0.04,0.0387,0.0375,0.0364,0.0353,0.0342,0.0332,0.0323,0.0313,0.0304,0.0296,0.0288,0.028,0.0272,0.0265,0.0258,0.0252,0.0245,0.0239,0.0233,0.0227,0.0222,0.3454,0.4039,0.4388,0.4542,0.4549,0.4453,0.4289,0.4085,0.3858,0.3624,0.3391,0.3165,0.295,0.2747,0.2558,0.2382,0.222,0.207,0.1933,0.1807,0.1691,0.1584,0.1487,0.1397,0.1314,0.1238,0.1168,0.1103,0.1044,0.0988,0.0937,0.089,0.0845,0.0804,0.0766,0.073,0.0697,0.0666,0.0637,0.0609,0.0584,0.056,0.0537,0.0515,0.0495,0.0476,0.0458,0.0441,0.0425,0.041,0.0396,0.0382,0.0369,0.0357,0.0345,0.0334,0.0323,0.0313,0.0303,0.0294,0.0285,0.0277,0.0269,0.0261,0.0253,0.0246,0.0239,0.0233,0.0227,0.0221,0.0215,0.0209,0.0204,0.0199,0.0194,0.0189,0.0184,0.3713,0.4237,0.4498,0.4558,0.4478,0.4308,0.4085,0.3836,0.3579,0.3324,0.308,0.2849,0.2634,0.2436,0.2254,0.2087,0.1935,0.1797,0.1671,0.1556,0.1452,0.1356,0.127,0.119,0.1117,0.1051,0.099,0.0934,0.0882,0.0834,0.079,0.0749,0.0711,0.0676,0.0643,0.0613,0.0585,0.0558,0.0533,0.051,0.0488,0.0468,0.0449,0.0431,0.0414,0.0398,0.0383,0.0368,0.0355,0.0342,0.033,0.0318,0.0307,0.0297,0.0287,0.0278,0.0269,0.0261,0.0252,0.0245,0.0237,0.023,0.0223,0.0217,0.0211,0.0205,0.0199,0.0194,0.0188,0.0183,0.0179,0.0174,0.0169,0.0165,0.0161,0.0157,0.0153,0.3954,0.4394,0.4552,0.4512,0.4346,0.4109,0.3837,0.3554,0.3276,0.3011,0.2763,0.2535,0.2326,0.2137,0.1966,0.1812,0.1673,0.1547,0.1434,0.1331,0.1238,0.1154,0.1078,0.1009,0.0946,0.0888,0.0835,0.0787,0.0742,0.0701,0.0664,0.0629,0.0597,0.0567,0.0539,0.0513,0.0489,0.0467,0.0446,0.0426,0.0408,0.0391,0.0374,0.0359,0.0345,0.0332,0.0319,0.0307,0.0296,0.0285,0.0275,0.0265,0.0256,0.0247,0.0239,0.0231,0.0224,0.0217,0.021,0.0203,0.0197,0.0191,0.0186,0.018,0.0175,0.017,0.0165,0.0161,0.0156,0.0152,0.0148,0.0144,0.0141,0.0137,0.0134,0.013,0.0127,0.4165,0.45,0.4545,0.4405,0.4161,0.3866,0.3556,0.325,0.2961,0.2694,0.2451,0.2231,0.2034,0.1858,0.1701,0.156,0.1435,0.1323,0.1222,0.1132,0.1051,0.0978,0.0911,0.0851,0.0797,0.0747,0.0702,0.0661,0.0623,0.0588,0.0556,0.0526,0.0499,0.0474,0.045,0.0429,0.0408,0.0389,0.0372,0.0355,0.034,0.0326,0.0312,0.0299,0.0287,0.0276,0.0265,0.0255,0.0246,0.0237,0.0228,0.022,0.0213,0.0205,0.0199,0.0192,0.0186,0.018,0.0174,0.0169,0.0164,0.0159,0.0154,0.015,0.0145,0.0141,0.0137,0.0133,0.013,0.0126,0.0123,0.012,0.0117,0.0114,0.0111,0.0108,0.0105,0.4339,0.4551,0.4477,0.4242,0.3928,0.3588,0.3252,0.2935,0.2645,0.2384,0.2152,0.1945,0.1763,0.1602,0.146,0.1335,0.1223,0.1125,0.1037,0.0958,0.0888,0.0824,0.0767,0.0716,0.0669,0.0627,0.0589,0.0554,0.0521,0.0492,0.0465,0.044,0.0417,0.0396,0.0376,0.0357,0.034,0.0325,0.031,0.0296,0.0283,0.0271,0.026,0.0249,0.0239,0.023,0.0221,0.0212,0.0204,0.0197,0.019,0.0183,0.0177,0.0171,0.0165,0.0159,0.0154,0.0149,0.0145,0.014,0.0136,0.0132,0.0128,0.0124,0.012,0.0117,0.0114,0.0111,0.0108,0.0105,0.0102,0.0099,0.0097,0.0094,0.0092,0.009,0.0087,0.4465,0.454,0.4349,0.4027,0.3657,0.3286,0.2937,0.2619,0.2337,0.2089,0.1871,0.1682,0.1516,0.1372,0.1246,0.1135,0.1038,0.0951,0.0875,0.0808,0.0747,0.0693,0.0644,0.06,0.0561,0.0525,0.0492,0.0463,0.0435,0.0411,0.0388,0.0367,0.0347,0.033,0.0313,0.0298,0.0283,0.027,0.0258,0.0246,0.0235,0.0225,0.0216,0.0207,0.0198,0.0191,0.0183,0.0176,0.017,0.0163,0.0158,0.0152,0.0147,0.0142,0.0137,0.0132,0.0128,0.0124,0.012,0.0116,0.0113,0.0109,0.0106,0.0103,0.01,0.0097,0.0094,0.0092,0.0089,0.0087,0.0084,0.0082,0.008,0.0078,0.0076,0.0074,0.0072,0.4537,0.4468,0.4166,0.3771,0.336,0.2971,0.2621,0.2312,0.2044,0.1813,0.1614,0.1443,0.1295,0.1168,0.1057,0.096,0.0876,0.0802,0.0736,0.0678,0.0627,0.0581,0.0539,0.0502,0.0469,0.0439,0.0411,0.0386,0.0363,0.0342,0.0323,0.0306,0.0289,0.0274,0.026,0.0248,0.0236,0.0225,0.0214,0.0204,0.0196,0.0187,0.0179,0.0172,0.0165,0.0158,0.0152,0.0146,0.0141,0.0136,0.0131,0.0126,0.0122,0.0118,0.0114,0.011,0.0106,0.0103,0.01,0.0096,0.0093,0.0091,0.0088,0.0085,0.0083,0.008,0.0078,0.0076,0.0074,0.0072,0.007,0.0068,0.0066,0.0065,0.0063,0.0062,0.006,0.4549,0.4335,0.3935,0.3483,0.3048,0.2655,0.2313,0.2021,0.1772,0.1561,0.1382,0.123,0.11,0.0989,0.0893,0.081,0.0737,0.0674,0.0618,0.0568,0.0525,0.0486,0.0451,0.0419,0.0391,0.0366,0.0343,0.0321,0.0302,0.0285,0.0269,0.0254,0.024,0.0228,0.0216,0.0206,0.0196,0.0186,0.0178,0.017,0.0162,0.0155,0.0149,0.0143,0.0137,0.0131,0.0126,0.0121,0.0117,0.0112,0.0108,0.0104,0.0101,0.0097,0.0094,0.0091,0.0088,0.0085,0.0082,0.008,0.0077,0.0075,0.0073,0.0071,0.0069,0.0067,0.0065,0.0063,0.0061,0.006,0.0058,0.0056,0.0055,0.0054,0.0052,0.0051,0.005],"D":[1.0274,1.0294,0.9384,1.0841,0.9888,0.9371,1.0436,1.1469,1.1077,1.0321,0.9654,0.8912,0.8587,0.9174,0.9771,1.038,1.1002,1.1637,1.2287,1.2947,1.3598,1.4259,1.4904,1.4954,1.4815,1.4679,1.4546,1.4415,1.4286,1.4159,1.4035,1.3913,1.3793,1.3674,1.3558,1.3444,1.3332,1.3222,1.3113,1.3009,1.2906,1.2806,1.2708,1.2611,1.2517,1.2424,1.2332,1.2242,1.2153,1.2065,1.1977,1.1891,1.1805,1.1719,1.1634,1.1549,1.1465,1.1383,1.1301,1.122,1.1141,1.1062,1.0985,1.0908,1.0832,1.0757,1.0684,1.0611,1.0539,1.0468,1.0398,1.0329,1.0261,1.0194,1.0128,1.0063,1,1.0321,1.0343,0.9399,1.0883,0.9837,0.9425,1.0494,1.1495,1.1037,1.0263,0.9623,0.8891,0.8638,0.923,0.9832,1.0446,1.1074,1.1716,1.237,1.3023,1.3667,1.434,1.4943,1.4954,1.4816,1.468,1.4546,1.4414,1.4285,1.4159,1.4034,1.3912,1.3791,1.3673,1.3557,1.3443,1.3331,1.3224,1.3118,1.3016,1.2915,1.2817,1.272,1.2625,1.2531,1.2439,1.2348,1.2258,1.2169,1.208,1.1992,1.1904,1.1816,1.1728,1.1641,1.1556,1.1472,1.1388,1.1306,1.1225,1.1145,1.1066,1.0988,1.0911,1.0835,1.0759,1.0685,1.0612,1.054,1.0468,1.0398,1.0329,1.0261,1.0194,1.0128,1.0063,1,1.0376,1.0411,0.9434,1.0912,0.9773,0.949,1.0562,1.1517,1.0985,1.0191,0.9582,0.8876,0.8701,0.9297,0.9906,1.0527,1.1162,1.1811,1.2464,1.3104,1.3752,1.4437,1.4977,1.4954,1.4815,1.4679,1.4545,1.4413,1.4284,1.4157,1.4032,1.3909,1.3789,1.3671,1.3556,1.3445,1.3338,1.3233,1.313,1.303,1.2931,1.2834,1.2739,1.2645,1.2552,1.246,1.2369,1.2277,1.2187,1.2096,1.2005,1.1914,1.1825,1.1736,1.1649,1.1563,1.1478,1.1394,1.1312,1.123,1.1149,1.107,1.0991,1.0913,1.0837,1.0761,1.0687,1.0613,1.0541,1.0469,1.0399,1.0329,1.0261,1.0194,1.0127,1.0063,0.9999,1.0442,1.0491,0.9482,1.0915,0.9694,0.9571,1.0645,1.1526,1.0918,1.0105,0.9528,0.8861,0.8776,0.938,0.9997,1.0627,1.1271,1.1922,1.2563,1.3198,1.3861,1.4543,1.5004,1.4953,1.4813,1.4676,1.4541,1.4409,1.428,1.4153,1.4028,1.3906,1.3787,1.3674,1.3564,1.3457,1.3353,1.3251,1.3151,1.3053,1.2956,1.2861,1.2766,1.2672,1.2578,1.2484,1.2391,1.2297,1.2202,1.2108,1.2016,1.1924,1.1834,1.1745,1.1657,1.157,1.1485,1.14,1.1317,1.1235,1.1153,1.1073,1.0994,1.0916,1.0839,1.0763,1.0688,1.0614,1.0541,1.047,1.0399,1.0329,1.026,1.0192,1.0126,1.0061,0.9997,1.0482,1.0565,0.9553,1.0882,0.9596,0.9669,1.0747,1.151,1.0833,1.0007,0.9476,0.8847,0.8869,0.9483,1.011,1.075,1.1401,1.2043,1.2672,1.3314,1.3995,1.4651,1.5023,1.4948,1.4807,1.467,1.4535,1.4403,1.4274,1.4148,1.4027,1.3911,1.3799,1.369,1.3584,1.3481,1.338,1.3281,1.3183,1.3086,1.299,1.2894,1.2798,1.2702,1.2605,1.2507,1.2409,1.2311,1.2215,1.212,1.2027,1.1934,1.1843,1.1753,1.1665,1.1577,1.1491,1.1406,1.1322,1.1239,1.1157,1.1076,1.0997,1.0918,1.0841,1.0764,1.0689,1.0615,1.0541,1.0469,1.0397,1.0326,1.0256,1.0188,1.0121,1.0055,0.999,1.046,1.0613,0.9663,1.0802,0.9481,0.9787,1.0869,1.1459,1.0723,0.9888,0.9436,0.8842,0.8983,0.9609,1.0249,1.09,1.1544,1.2171,1.2799,1.346,1.4148,1.475,1.5032,1.4938,1.4798,1.4661,1.4527,1.4397,1.4274,1.4155,1.4042,1.3932,1.3825,1.3722,1.362,1.3521,1.3422,1.3324,1.3226,1.3128,1.3029,1.293,1.2829,1.2727,1.2624,1.2523,1.2423,1.2325,1.2228,1.2132,1.2037,1.1944,1.1852,1.1762,1.1672,1.1584,1.1497,1.1411,1.1326,1.1243,1.116,1.1079,1.0999,1.092,1.0842,1.0765,1.0688,1.0612,1.0537,1.0462,1.0389,1.0317,1.0246,1.0176,1.0107,1.0039,0.9973,1.0345,1.0593,0.9799,1.0671,0.9408,0.9925,1.0991,1.1376,1.0587,0.974,0.94,0.8856,0.9125,0.9767,1.0419,1.1068,1.1694,1.2312,1.2954,1.3635,1.4308,1.4833,1.5032,1.4926,1.4788,1.4654,1.4528,1.4408,1.4293,1.4182,1.4076,1.3973,1.3872,1.3772,1.3673,1.3575,1.3475,1.3375,1.3273,1.317,1.3065,1.2957,1.2851,1.2745,1.2641,1.2539,1.2438,1.2338,1.224,1.2143,1.2048,1.1953,1.186,1.1769,1.1679,1.159,1.1502,1.1415,1.133,1.1246,1.1163,1.1081,1.0999,1.0918,1.0837,1.0757,1.0678,1.0599,1.0522,1.0445,1.0369,1.0294,1.0221,1.0148,1.0076,1.0006,0.9936,1.0185,1.0474,0.9953,1.0513,0.9358,1.0094,1.1089,1.1265,1.0418,0.9661,0.9362,0.8913,0.9303,0.996,1.0615,1.1242,1.1853,1.2478,1.3144,1.3832,1.4462,1.49,1.503,1.4919,1.479,1.4668,1.4552,1.4443,1.4337,1.4236,1.4136,1.4037,1.3939,1.384,1.3739,1.3636,1.3531,1.3423,1.3312,1.3199,1.3087,1.2978,1.2869,1.2762,1.2657,1.2553,1.2451,1.235,1.2251,1.2153,1.2057,1.1961,1.1868,1.1775,1.1684,1.1595,1.1506,1.1419,1.1332,1.1245,1.1158,1.1072,1.0986,1.0901,1.0817,1.0733,1.065,1.0567,1.0486,1.0405,1.0325,1.0246,1.0168,1.0091,1.0015,0.994,0.9866,1.0006,1.03,1.0144,1.0328,0.9349,1.0305,1.1146,1.112,1.0211,0.9613,0.9334,0.9037,0.9522,1.0186,1.0815,1.1418,1.203,1.268,1.3367,1.4041,1.4608,1.4961,1.5039,1.4935,1.482,1.4712,1.461,1.4511,1.4414,1.4317,1.422,1.412,1.4018,1.3912,1.3802,1.3688,1.357,1.3452,1.3336,1.3221,1.3108,1.2996,1.2886,1.2778,1.2671,1.2566,1.2463,1.2361,1.226,1.2162,1.2064,1.1968,1.1874,1.1781,1.1688,1.1595,1.1502,1.1409,1.1316,1.1224,1.1131,1.104,1.0948,1.0858,1.0768,1.0678,1.0589,1.0501,1.0414,1.0327,1.0242,1.0157,1.0073,0.999,0.9908,0.9827,0.9746,0.9772,1.0079,1.0374,1.0103,0.9413,1.0542,1.1161,1.0912,0.9958,0.9593,0.9353,0.9237,0.9779,1.0412,1.1008,1.1607,1.2243,1.2925,1.3621,1.426,1.4756,1.5035,1.5081,1.499,1.4892,1.4798,1.4705,1.4612,1.4516,1.4417,1.4313,1.4203,1.4088,1.3966,1.3841,1.3717,1.3595,1.3475,1.3357,1.324,1.3125,1.3012,1.2901,1.2791,1.2683,1.2577,1.2473,1.237,1.2268,1.2169,1.207,1.197,1.187,1.177,1.1669,1.1568,1.1468,1.1367,1.1266,1.1166,1.1066,1.0966,1.0867,1.0769,1.0671,1.0574,1.0477,1.0381,1.0286,1.0192,1.0099,1.0007,0.9915,0.9825,0.9735,0.9647,0.9559,0.9692,0.9799,1.0595,0.9849,0.9589,1.0797,1.1126,1.0639,0.9661,0.9619,0.9445,0.9488,1.0033,1.0622,1.1207,1.1832,1.2512,1.3223,1.391,1.4501,1.4926,1.5147,1.5174,1.5096,1.501,1.4921,1.4829,1.473,1.4624,1.451,1.4387,1.4256,1.4124,1.3995,1.3867,1.374,1.3616,1.3494,1.3374,1.3256,1.314,1.3025,1.2913,1.2802,1.2692,1.2583,1.2475,1.2368,1.2262,1.2157,1.2048,1.1938,1.1827,1.1716,1.1605,1.1494,1.1383,1.1271,1.1161,1.105,1.094,1.083,1.0721,1.0613,1.0505,1.0398,1.0292,1.0187,1.0083,0.998,0.9878,0.9777,0.9677,0.9578,0.948,0.9384,0.9288,0.9756,0.9648,1.069,0.963,0.9862,1.0998,1.1012,1.0324,0.9568,0.9703,0.9595,0.9738,1.0258,1.083,1.1446,1.2128,1.2859,1.3587,1.4249,1.4781,1.5139,1.531,1.532,1.5245,1.5157,1.506,1.4952,1.4832,1.47,1.456,1.4421,1.4284,1.415,1.4018,1.3888,1.376,1.3634,1.3509,1.3386,1.3263,1.3141,1.302,1.29,1.2781,1.2663,1.2547,1.2431,1.2317,1.2205,1.2092,1.1969,1.1845,1.172,1.1596,1.1471,1.1346,1.1222,1.1098,1.0975,1.0852,1.0729,1.0608,1.0488,1.0368,1.025,1.0133,1.0016,0.9901,0.9788,0.9675,0.9564,0.9454,0.9346,0.9238,0.9133,0.9028,0.8925,0.9999,0.9656,1.0599,0.953,1.0179,1.1069,1.0812,1.0044,0.9605,0.9818,0.975,0.9955,1.0475,1.1086,1.1778,1.2534,1.3306,1.403,1.4646,1.5108,1.5396,1.5513,1.5495,1.5405,1.5295,1.5168,1.5025,1.4877,1.4731,1.4587,1.4446,1.4306,1.4167,1.4028,1.3889,1.3752,1.3615,1.3479,1.3344,1.321,1.3077,1.2946,1.2816,1.2688,1.2561,1.2436,1.2313,1.2191,1.2071,1.1943,1.1803,1.1662,1.1521,1.1381,1.124,1.1101,1.0962,1.0824,1.0687,1.0551,1.0416,1.0283,1.0151,1.002,0.9891,0.9764,0.9638,0.9513,0.9391,0.9269,0.915,0.9032,0.8916,0.8802,0.8689,0.8578,0.8469,1.0296,0.9858,1.0338,0.9641,1.0461,1.1007,1.0591,0.9898,0.9703,0.9906,0.9878,1.0165,1.0752,1.1463,1.2256,1.3077,1.386,1.4546,1.5088,1.5462,1.5665,1.5716,1.565,1.5519,1.5365,1.5208,1.5053,1.4896,1.474,1.4583,1.4426,1.427,1.4114,1.396,1.3806,1.3654,1.3503,1.3353,1.3206,1.306,1.2916,1.2773,1.2633,1.2495,1.2359,1.2225,1.2094,1.1964,1.1834,1.1684,1.1525,1.1366,1.1208,1.105,1.0894,1.074,1.0587,1.0435,1.0285,1.0137,0.999,0.9846,0.9704,0.9563,0.9425,0.9289,0.9155,0.9023,0.8893,0.8765,0.864,0.8516,0.8395,0.8275,0.8158,0.8043,0.7929,1.04,1.0229,1.0005,0.9953,1.0582,1.0897,1.0425,0.984,0.9768,0.9941,1.002,1.046,1.1185,1.2025,1.2903,1.3747,1.4493,1.5095,1.5528,1.5788,1.5887,1.585,1.5714,1.5538,1.5361,1.5183,1.5004,1.4826,1.4648,1.447,1.4294,1.4119,1.3946,1.3774,1.3604,1.3437,1.3272,1.3109,1.2948,1.279,1.2635,1.2482,1.2332,1.2185,1.204,1.1898,1.1759,1.1622,1.1468,1.1296,1.1118,1.0942,1.0767,1.0595,1.0425,1.0257,1.0091,0.9928,0.9768,0.961,0.9454,0.9302,0.9152,0.9004,0.8859,0.8717,0.8578,0.8441,0.8307,0.8176,0.8047,0.792,0.7796,0.7675,0.7555,0.7439,0.7324,1.016,1.0495,0.9826,1.0254,1.0598,1.0834,1.0291,0.9766,0.9764,0.9996,1.029,1.0953,1.1842,1.2785,1.369,1.4488,1.5133,1.5602,1.589,1.6011,1.5985,1.5844,1.5641,1.5436,1.5232,1.5027,1.4823,1.4621,1.442,1.4222,1.4026,1.3832,1.3641,1.3453,1.3268,1.3087,1.2908,1.2733,1.2561,1.2392,1.2227,1.2065,1.1906,1.1751,1.1599,1.145,1.1304,1.1144,1.0965,1.0773,1.058,1.039,1.0203,1.0019,0.9838,0.966,0.9486,0.9315,0.9147,0.8983,0.8822,0.8665,0.8511,0.836,0.8212,0.8068,0.7927,0.7789,0.7654,0.7522,0.7392,0.7266,0.7143,0.7022,0.6904,0.6789,0.6676,0.9821,1.038,0.9881,1.0393,1.0672,1.0783,1.0086,0.963,0.9779,1.022,1.0815,1.1708,1.2718,1.3684,1.4527,1.5199,1.5681,1.5972,1.6087,1.605,1.5889,1.5656,1.542,1.5186,1.4953,1.4722,1.4494,1.4269,1.4047,1.3829,1.3615,1.3404,1.3198,1.2996,1.2797,1.2604,1.2414,1.2228,1.2047,1.187,1.1696,1.1527,1.1362,1.12,1.1042,1.0888,1.0718,1.0532,1.0333,1.0128,0.9924,0.9725,0.953,0.9338,0.9152,0.8969,0.8791,0.8616,0.8446,0.828,0.8118,0.796,0.7806,0.7656,0.7509,0.7366,0.7227,0.7091,0.6958,0.6829,0.6703,0.658,0.646,0.6343,0.6229,0.6118,0.6009,0.9912,1.015,0.9953,1.0506,1.0821,1.0589,0.9771,0.9535,0.9994,1.0755,1.1647,1.2694,1.3719,1.4598,1.5283,1.5758,1.6029,1.6116,1.6046,1.5848,1.558,1.5311,1.5045,1.4782,1.4523,1.4268,1.4019,1.3773,1.3533,1.3299,1.3069,1.2845,1.2626,1.2412,1.2204,1.2001,1.1803,1.161,1.1421,1.1238,1.1059,1.0885,1.0716,1.055,1.0385,1.0204,1.001,0.9806,0.9596,0.9384,0.9176,0.8972,0.8774,0.8582,0.8394,0.8212,0.8034,0.7861,0.7693,0.753,0.7371,0.7216,0.7066,0.692,0.6778,0.664,0.6505,0.6375,0.6247,0.6124,0.6003,0.5886,0.5772,0.5662,0.5554,0.5449,0.5346,1.017,1.011,0.9964,1.076,1.0837,1.0175,0.9485,0.969,1.0566,1.1641,1.2722,1.3784,1.4691,1.5376,1.5827,1.6058,1.6097,1.5975,1.5726,1.5419,1.5115,1.4817,1.4524,1.4237,1.3956,1.3681,1.3413,1.3152,1.2898,1.265,1.2409,1.2175,1.1947,1.1726,1.151,1.1301,1.1098,1.09,1.0708,1.0522,1.034,1.0164,0.9992,0.9813,0.9621,0.9419,0.9211,0.8999,0.8785,0.8573,0.8366,0.8164,0.7969,0.778,0.7597,0.7419,0.7247,0.708,0.6918,0.6761,0.6609,0.6461,0.6318,0.6179,0.6045,0.5914,0.5787,0.5665,0.5545,0.5429,0.5317,0.5208,0.5102,0.4999,0.4899,0.4802,0.4707,1.0178,1.0033,1.0169,1.1008,1.0522,0.9691,0.9482,1.0265,1.1524,1.2783,1.3877,1.4796,1.5468,1.5881,1.6057,1.6031,1.5844,1.5532,1.5187,1.4849,1.4517,1.4194,1.3879,1.3572,1.3274,1.2984,1.2703,1.243,1.2166,1.191,1.1661,1.1421,1.1188,1.0962,1.0743,1.0531,1.0326,1.0127,0.9935,0.9748,0.9567,0.9383,0.9189,0.8988,0.8781,0.8571,0.8358,0.8146,0.7935,0.7729,0.7528,0.7334,0.7147,0.6966,0.6791,0.6622,0.6459,0.6301,0.6148,0.6001,0.5858,0.572,0.5587,0.5458,0.5333,0.5212,0.5095,0.4981,0.4872,0.4765,0.4662,0.4562,0.4465,0.4371,0.428,0.4192,0.4106,1.0285,0.9828,1.0665,1.0921,0.9959,0.9457,0.9967,1.1277,1.2746,1.3984,1.4909,1.5556,1.5919,1.6027,1.5925,1.566,1.5286,1.4902,1.4528,1.4164,1.3811,1.3468,1.3136,1.2815,1.2505,1.2205,1.1916,1.1636,1.1366,1.1106,1.0854,1.0611,1.0377,1.015,0.9932,0.9721,0.9516,0.9319,0.9129,0.8937,0.8738,0.8534,0.8326,0.8117,0.7906,0.7696,0.7487,0.7282,0.708,0.6884,0.6694,0.6511,0.6335,0.6166,0.6003,0.5846,0.5694,0.5548,0.5407,0.5271,0.514,0.5014,0.4891,0.4774,0.466,0.455,0.4443,0.4341,0.4241,0.4145,0.4052,0.3962,0.3875,0.379,0.3709,0.3629,0.3553,1.0401,0.9922,1.1078,1.0395,0.9501,0.9748,1.0964,1.2576,1.4007,1.5024,1.5641,1.5943,1.5974,1.5787,1.5438,1.5006,1.4583,1.4173,1.3776,1.3393,1.3024,1.2668,1.2325,1.1995,1.1678,1.1373,1.108,1.0798,1.0527,1.0266,1.0015,0.9774,0.9541,0.9318,0.9102,0.8895,0.8694,0.8492,0.8286,0.8077,0.7866,0.7655,0.7445,0.7237,0.7031,0.6828,0.663,0.6436,0.6247,0.6065,0.5889,0.5721,0.5559,0.5403,0.5254,0.511,0.4972,0.4839,0.4711,0.4588,0.447,0.4356,0.4246,0.414,0.4037,0.3939,0.3844,0.3752,0.3663,0.3577,0.3495,0.3415,0.3337,0.3262,0.319,0.312,0.3052,1.0078,1.0506,1.097,0.9723,0.9529,1.0634,1.2303,1.391,1.5072,1.5724,1.5963,1.5908,1.5629,1.5191,1.4712,1.4248,1.3801,1.3371,1.2959,1.2563,1.2183,1.182,1.1472,1.1138,1.0819,1.0514,1.0222,0.9941,0.9673,0.9416,0.9169,0.8932,0.8705,0.8487,0.8276,0.8062,0.7847,0.7631,0.7416,0.7202,0.6991,0.6783,0.658,0.638,0.6185,0.5995,0.5811,0.5632,0.5459,0.5292,0.5133,0.498,0.4833,0.4693,0.4558,0.4429,0.4305,0.4186,0.4072,0.3962,0.3857,0.3755,0.3657,0.3563,0.3473,0.3385,0.3301,0.322,0.3142,0.3067,0.2994,0.2924,0.2856,0.279,0.2727,0.2665,0.2606,0.9721,1.1091,1.0336,0.9381,1.0211,1.1951,1.3706,1.5027,1.5764,1.5986,1.5844,1.5467,1.4946,1.442,1.3914,1.343,1.2966,1.2524,1.2101,1.1699,1.1315,1.095,1.0602,1.027,0.9954,0.9652,0.9364,0.909,0.8828,0.8577,0.8337,0.8108,0.7883,0.7656,0.743,0.7206,0.6985,0.6768,0.6555,0.6347,0.6144,0.5947,0.5755,0.5569,0.5389,0.5215,0.5047,0.4885,0.4729,0.458,0.4437,0.43,0.417,0.4045,0.3925,0.3811,0.3701,0.3596,0.3495,0.3398,0.3305,0.3216,0.313,0.3048,0.2968,0.2892,0.2818,0.2748,0.2679,0.2614,0.255,0.2489,0.243,0.2373,0.2318,0.2265,0.2214,1.002,1.1082,0.9631,0.9702,1.1438,1.3402,1.4896,1.5744,1.5992,1.5795,1.5318,1.4731,1.4163,1.3616,1.3092,1.2592,1.2115,1.1663,1.1234,1.0828,1.0444,1.0079,0.9734,0.9407,0.9096,0.8802,0.8521,0.8255,0.8001,0.7759,0.7521,0.7281,0.7044,0.6811,0.6583,0.6361,0.6145,0.5936,0.5734,0.5538,0.5348,0.5166,0.499,0.482,0.4657,0.4501,0.435,0.4206,0.4067,0.3935,0.3809,0.3688,0.3573,0.3463,0.3358,0.3258,0.3162,0.307,0.2982,0.2897,0.2816,0.2739,0.2664,0.2592,0.2524,0.2457,0.2394,0.2333,0.2274,0.2217,0.2162,0.2109,0.2059,0.2009,0.1962,0.1916,0.1872,1.0783,1.0437,0.9396,1.0703,1.2916,1.4679,1.5674,1.5976,1.5755,1.52,1.4559,1.3943,1.3353,1.2788,1.2249,1.1737,1.1252,1.0793,1.0361,0.9954,0.9571,0.921,0.887,0.8549,0.8246,0.796,0.7689,0.7433,0.7186,0.6939,0.6692,0.6449,0.6214,0.5987,0.5767,0.5556,0.5353,0.5157,0.497,0.479,0.4617,0.4452,0.4293,0.4142,0.3997,0.3858,0.3725,0.3597,0.3476,0.336,0.325,0.3145,0.3044,0.2949,0.2857,0.277,0.2687,0.2607,0.2531,0.2458,0.2388,0.2321,0.2257,0.2195,0.2136,0.2079,0.2024,0.1972,0.1921,0.1872,0.1825,0.178,0.1737,0.1695,0.1654,0.1615,0.1578,1.1193,0.967,0.9908,1.2136,1.4305,1.5558,1.5951,1.5728,1.5114,1.441,1.3737,1.3096,1.2488,1.1912,1.1366,1.0851,1.0366,0.9909,0.948,0.9078,0.8702,0.8349,0.8019,0.7708,0.7417,0.7142,0.6882,0.6626,0.6372,0.6124,0.5882,0.5648,0.5424,0.5209,0.5005,0.4809,0.4622,0.4444,0.4275,0.4113,0.3958,0.3811,0.3671,0.3537,0.3409,0.3287,0.3171,0.306,0.2955,0.2854,0.2759,0.2668,0.2581,0.2499,0.242,0.2345,0.2273,0.2205,0.2139,0.2077,0.2017,0.1959,0.1904,0.1851,0.1801,0.1752,0.1705,0.166,0.1617,0.1576,0.1536,0.1497,0.146,0.1425,0.139,0.1357,0.1325,1.082,0.9389,1.1084,1.3641,1.5339,1.5928,1.5732,1.507,1.4295,1.3557,1.2859,1.2202,1.1585,1.1006,1.0463,0.9953,0.9476,0.9029,0.861,0.822,0.7856,0.7516,0.7199,0.6902,0.6623,0.6351,0.6087,0.5831,0.5584,0.5346,0.5117,0.4899,0.4692,0.4495,0.4308,0.4131,0.3963,0.3804,0.3653,0.3509,0.3373,0.3244,0.3121,0.3004,0.2893,0.2787,0.2687,0.2591,0.25,0.2414,0.2332,0.2254,0.2179,0.2109,0.2041,0.1977,0.1916,0.1857,0.1801,0.1748,0.1697,0.1648,0.1601,0.1556,0.1513,0.1472,0.1432,0.1394,0.1358,0.1322,0.1289,0.1256,0.1225,0.1194,0.1165,0.1137,0.111,0.9998,0.9893,1.2601,1.4891,1.5869,1.5784,1.5089,1.4233,1.3424,1.2664,1.1952,1.1288,1.067,1.0096,0.9562,0.9065,0.8601,0.8169,0.7767,0.7393,0.7046,0.6722,0.6419,0.6127,0.5846,0.5578,0.5322,0.5078,0.4846,0.4624,0.4414,0.4215,0.4028,0.3851,0.3684,0.3526,0.3378,0.3237,0.3105,0.2979,0.286,0.2748,0.2641,0.254,0.2444,0.2354,0.2267,0.2185,0.2108,0.2034,0.1964,0.1897,0.1834,0.1774,0.1716,0.1662,0.161,0.156,0.1512,0.1467,0.1424,0.1382,0.1343,0.1305,0.1268,0.1233,0.12,0.1168,0.1137,0.1107,0.1078,0.1051,0.1024,0.0999,0.0974,0.0951,0.0928,0.9417,1.1087,1.4074,1.5676,1.5868,1.5195,1.4252,1.3362,1.2529,1.1753,1.1033,1.0368,0.9755,0.919,0.867,0.819,0.7746,0.7334,0.6953,0.66,0.6272,0.5958,0.5657,0.5372,0.5102,0.4848,0.4609,0.4383,0.417,0.3969,0.378,0.3602,0.3436,0.3279,0.3132,0.2994,0.2864,0.2742,0.2626,0.2518,0.2415,0.2318,0.2227,0.214,0.2058,0.198,0.1907,0.1837,0.1771,0.1708,0.1649,0.1592,0.1539,0.1488,0.1439,0.1393,0.1349,0.1307,0.1267,0.1228,0.1192,0.1157,0.1123,0.1091,0.106,0.1031,0.1003,0.0976,0.095,0.0925,0.0901,0.0878,0.0855,0.0834,0.0813,0.0793,0.0774,0.9572,1.2626,1.5201,1.5916,1.5389,1.4363,1.3379,1.2461,1.1612,1.083,1.0111,0.9453,0.8851,0.8303,0.7801,0.7343,0.6922,0.6534,0.6177,0.5843,0.5522,0.5218,0.4931,0.4662,0.4412,0.4178,0.396,0.3755,0.3564,0.3386,0.3218,0.3062,0.2915,0.2779,0.2651,0.2531,0.2418,0.2313,0.2213,0.212,0.2032,0.1949,0.1871,0.1797,0.1728,0.1662,0.1599,0.154,0.1484,0.1431,0.1381,0.1333,0.1288,0.1245,0.1204,0.1165,0.1128,0.1092,0.1058,0.1026,0.0995,0.0966,0.0938,0.0911,0.0885,0.086,0.0837,0.0814,0.0792,0.0771,0.0751,0.0732,0.0713,0.0695,0.0678,0.0661,0.0645,1.0523,1.4108,1.5811,1.5638,1.458,1.3482,1.2467,1.1536,1.0685,0.9909,0.9203,0.8562,0.7979,0.7451,0.6973,0.6539,0.6144,0.5781,0.5439,0.5114,0.4809,0.4523,0.4258,0.4013,0.3785,0.3575,0.338,0.3198,0.303,0.2872,0.2726,0.259,0.2463,0.2345,0.2234,0.2131,0.2035,0.1944,0.1859,0.178,0.1705,0.1634,0.1568,0.1506,0.1446,0.1391,0.1338,0.1288,0.1241,0.1196,0.1154,0.1114,0.1075,0.1039,0.1005,0.0972,0.0941,0.0911,0.0883,0.0856,0.083,0.0805,0.0782,0.0759,0.0738,0.0717,0.0697,0.0678,0.066,0.0642,0.0625,0.0609,0.0594,0.0579,0.0564,0.055,0.0537,1.1987,1.5227,1.5868,1.4936,1.3705,1.2571,1.1537,1.0601,0.9757,0.8998,0.8313,0.7697,0.7141,0.6641,0.6191,0.5784,0.5413,0.5064,0.4736,0.4432,0.415,0.3889,0.365,0.343,0.3227,0.3041,0.2869,0.271,0.2563,0.2426,0.23,0.2182,0.2073,0.1972,0.1877,0.1789,0.1707,0.163,0.1558,0.149,0.1427,0.1367,0.1311,0.1258,0.1209,0.1162,0.1117,0.1075,0.1036,0.0998,0.0962,0.0929,0.0897,0.0866,0.0838,0.081,0.0784,0.0759,0.0735,0.0713,0.0691,0.0671,0.0651,0.0632,0.0614,0.0597,0.058,0.0564,0.0549,0.0534,0.052,0.0507,0.0494,0.0481,0.0469,0.0457,0.0446,1.355,1.5817,1.5427,1.4074,1.2798,1.1642,1.0602,0.9672,0.8844,0.8109,0.7453,0.6869,0.6346,0.5878,0.5459,0.5075,0.4719,0.439,0.4087,0.3809,0.3555,0.3322,0.3109,0.2915,0.2737,0.2574,0.2424,0.2287,0.216,0.2042,0.1934,0.1833,0.174,0.1653,0.1573,0.1498,0.1428,0.1363,0.1302,0.1245,0.1192,0.1141,0.1094,0.105,0.1008,0.0969,0.0931,0.0896,0.0863,0.0831,0.0802,0.0773,0.0747,0.0721,0.0697,0.0674,0.0652,0.0632,0.0612,0.0593,0.0575,0.0558,0.0541,0.0525,0.051,0.0496,0.0482,0.0469,0.0456,0.0444,0.0432,0.0421,0.041,0.04,0.0389,0.038,0.0371,1.4847,1.5847,1.4626,1.3173,1.1866,1.0703,0.9673,0.8763,0.7961,0.7256,0.6636,0.6087,0.5601,0.5167,0.477,0.4407,0.4076,0.3774,0.3501,0.3252,0.3026,0.2821,0.2635,0.2465,0.2311,0.217,0.2041,0.1923,0.1814,0.1714,0.1621,0.1536,0.1456,0.1383,0.1315,0.1252,0.1193,0.1138,0.1087,0.1039,0.0994,0.0951,0.0912,0.0875,0.0839,0.0806,0.0775,0.0746,0.0718,0.0692,0.0667,0.0643,0.0621,0.06,0.058,0.056,0.0542,0.0525,0.0508,0.0493,0.0478,0.0463,0.045,0.0436,0.0424,0.0412,0.04,0.0389,0.0379,0.0368,0.0359,0.0349,0.034,0.0332,0.0323,0.0315,0.0307,1.5653,1.538,1.3745,1.2249,1.0926,0.9767,0.8758,0.788,0.7115,0.6449,0.5868,0.5359,0.4908,0.4499,0.4128,0.3793,0.3493,0.3223,0.298,0.2761,0.2563,0.2385,0.2223,0.2077,0.1944,0.1823,0.1713,0.1612,0.1519,0.1434,0.1356,0.1283,0.1217,0.1155,0.1097,0.1044,0.0995,0.0948,0.0905,0.0865,0.0827,0.0792,0.0759,0.0728,0.0698,0.0671,0.0645,0.062,0.0597,0.0575,0.0554,0.0535,0.0516,0.0498,0.0481,0.0466,0.045,0.0436,0.0422,0.0409,0.0397,0.0385,0.0373,0.0362,0.0352,0.0342,0.0332,0.0323,0.0314,0.0306,0.0298,0.029,0.0282,0.0275,0.0268,0.0261,0.0255,1.5891,1.4564,1.283,1.1307,0.9987,0.885,0.7873,0.7035,0.6314,0.5692,0.5154,0.4684,0.426,0.3881,0.3543,0.3242,0.2975,0.2737,0.2524,0.2333,0.2162,0.2008,0.1869,0.1744,0.1631,0.1528,0.1434,0.1348,0.127,0.1198,0.1132,0.1071,0.1015,0.0963,0.0914,0.087,0.0828,0.0789,0.0753,0.072,0.0688,0.0658,0.0631,0.0605,0.058,0.0557,0.0536,0.0515,0.0496,0.0477,0.046,0.0444,0.0428,0.0414,0.04,0.0386,0.0374,0.0362,0.035,0.0339,0.0329,0.0319,0.031,0.03,0.0292,0.0283,0.0275,0.0268,0.0261,0.0253,0.0247,0.024,0.0234,0.0228,0.0222,0.0217,0.0211,1.5596,1.3677,1.1896,1.0364,0.9062,0.796,0.7027,0.6237,0.5565,0.4991,0.4495,0.4055,0.3666,0.3323,0.3021,0.2755,0.2521,0.2313,0.2129,0.1964,0.1817,0.1686,0.1567,0.1461,0.1365,0.1277,0.1198,0.1126,0.1059,0.0999,0.0943,0.0892,0.0845,0.0801,0.0761,0.0723,0.0689,0.0656,0.0626,0.0598,0.0572,0.0547,0.0524,0.0502,0.0482,0.0463,0.0445,0.0428,0.0411,0.0396,0.0382,0.0368,0.0355,0.0343,0.0331,0.032,0.031,0.03,0.029,0.0281,0.0273,0.0265,0.0257,0.0249,0.0242,0.0235,0.0228,0.0222,0.0216,0.021,0.0204,0.0199,0.0194,0.0189,0.0184,0.018,0.0175,1.4872,1.2758,1.095,0.9431,0.8163,0.7108,0.6228,0.5492,0.4873,0.4346,0.3885,0.3483,0.3132,0.2828,0.2562,0.233,0.2127,0.1948,0.1789,0.1649,0.1523,0.1411,0.1311,0.1221,0.1139,0.1066,0.0999,0.0938,0.0883,0.0832,0.0785,0.0742,0.0703,0.0666,0.0632,0.0601,0.0572,0.0545,0.052,0.0496,0.0475,0.0454,0.0435,0.0417,0.04,0.0384,0.0369,0.0355,0.0341,0.0329,0.0317,0.0305,0.0295,0.0284,0.0275,0.0266,0.0257,0.0249,0.0241,0.0233,0.0226,0.0219,0.0213,0.0206,0.02,0.0195,0.0189,0.0184,0.0179,0.0174,0.0169,0.0165,0.0161,0.0157,0.0153,0.0149,0.0145,1.3995,1.182,1.0007,0.8518,0.73,0.6302,0.5483,0.4805,0.4239,0.375,0.3331,0.2971,0.2661,0.2394,0.2163,0.1963,0.1788,0.1635,0.15,0.138,0.1274,0.1179,0.1094,0.1018,0.095,0.0888,0.0832,0.0781,0.0734,0.0692,0.0653,0.0617,0.0584,0.0553,0.0525,0.0499,0.0475,0.0452,0.0431,0.0412,0.0394,0.0377,0.0361,0.0346,0.0331,0.0318,0.0306,0.0294,0.0283,0.0272,0.0262,0.0253,0.0244,0.0236,0.0228,0.022,0.0213,0.0206,0.0199,0.0193,0.0187,0.0182,0.0176,0.0171,0.0166,0.0161,0.0157,0.0152,0.0148,0.0144,0.014,0.0137,0.0133,0.013,0.0126,0.0123,0.012,1.3085,1.0872,0.9078,0.7637,0.6482,0.555,0.4795,0.4177,0.3654,0.3212,0.2837,0.252,0.225,0.2019,0.182,0.1648,0.1499,0.1369,0.1254,0.1153,0.1063,0.0983,0.0912,0.0848,0.0791,0.0739,0.0692,0.0649,0.061,0.0575,0.0542,0.0512,0.0485,0.0459,0.0436,0.0414,0.0394,0.0375,0.0358,0.0342,0.0326,0.0312,0.0299,0.0286,0.0275,0.0264,0.0253,0.0244,0.0234,0.0226,0.0217,0.021,0.0202,0.0195,0.0189,0.0182,0.0176,0.0171,0.0165,0.016,0.0155,0.015,0.0146,0.0142,0.0137,0.0134,0.013,0.0126,0.0123,0.0119,0.0116,0.0113,0.011,0.0107,0.0105,0.0102,0.0099],"tc":[0.9835,0.97,0.9575,0.9282,0.9102,0.917,0.8963,0.8913,0.9114,0.8999,0.8812,0.8984,0.913,0.8857,0.8998,0.9123,0.8728,0.8857,0.8974,0.9083,0.9177,0.9263,0.8723,0.8825,0.8922,0.9012,0.9095,0.9173,0.9245,0.9311,0.9373,0.9429,0.9482,0.953,0.9574,0.9615,0.9653,0.9688,0.9145,0.9201,0.9258,0.9313,0.9365,0.9416,0.9463,0.9508,0.9551,0.9591,0.963,0.9666,0.9699,0.9731,0.9761,0.9788,0.9814,0.9838,0.986,0.9881,0.99,0.9917,0.9933,0.9948,0.996,0.9972,0.9982,0.9991,0.9997,null,null,null,null,null,null,null,null,null,null,0.9836,0.97,0.9426,0.9282,0.9266,0.917,0.9194,0.8915,0.9115,0.9001,0.8815,0.8986,0.9131,0.886,0.9001,0.9126,0.8732,0.8861,0.8979,0.9087,0.918,0.9266,0.8733,0.8834,0.893,0.9019,0.9103,0.918,0.9251,0.9317,0.9378,0.9435,0.9487,0.9535,0.958,0.962,0.9658,0.9692,0.9169,0.9223,0.9279,0.9333,0.9385,0.9435,0.9482,0.9526,0.9569,0.9609,0.9646,0.9682,0.9715,0.9746,0.9776,0.9803,0.9828,0.9852,0.9874,0.9894,0.9913,0.993,0.9945,0.9959,0.9972,0.9983,0.9993,1,null,null,null,null,null,null,null,null,null,null,null,0.9818,0.9614,0.9426,0.9282,0.9266,0.9171,0.9195,0.9177,0.9116,0.9003,0.8817,0.8988,0.8706,0.8862,0.9005,0.9128,0.8739,0.8866,0.8984,0.9092,0.9184,0.927,0.8744,0.8844,0.894,0.9029,0.9111,0.9188,0.9259,0.9325,0.9386,0.9442,0.9494,0.9542,0.9586,0.9626,0.9664,0.9698,0.9199,0.925,0.9304,0.9358,0.9409,0.9457,0.9504,0.9548,0.959,0.9629,0.9667,0.9701,0.9734,0.9765,0.9794,0.9821,0.9846,0.9869,0.989,0.991,0.9929,0.9945,0.996,0.9974,0.9986,0.9999,null,null,null,null,null,null,null,null,null,null,null,null,null,0.9699,0.9563,0.9333,0.9283,0.9267,0.9172,0.9196,0.9178,0.9118,0.9005,0.8819,0.8991,0.8709,0.8866,0.901,0.9132,0.8746,0.8873,0.8991,0.9097,0.9189,0.9275,0.8758,0.8857,0.8951,0.9039,0.9122,0.9198,0.9269,0.9334,0.9395,0.9451,0.9502,0.955,0.9593,0.9634,0.9671,0.9705,0.9234,0.9283,0.9335,0.9387,0.9437,0.9485,0.9531,0.9574,0.9615,0.9654,0.9691,0.9725,0.9758,0.9788,0.9816,0.9842,0.9867,0.989,0.9911,0.993,0.9948,0.9964,0.9979,0.9998,0.9999,null,null,null,null,null,null,null,null,null,null,null,null,null,null,0.9668,0.9439,0.9334,0.9284,0.9267,0.9173,0.9196,0.918,0.9119,0.9008,0.8821,0.8993,0.8713,0.8871,0.9016,0.9136,0.8755,0.8882,0.9001,0.9104,0.9195,0.9281,0.8775,0.8871,0.8965,0.9052,0.9134,0.921,0.928,0.9345,0.9405,0.9461,0.9512,0.9559,0.9602,0.9642,0.9679,0.9712,0.9277,0.9322,0.9373,0.9423,0.9472,0.9519,0.9564,0.9606,0.9646,0.9684,0.972,0.9754,0.9786,0.9815,0.9843,0.9869,0.9893,0.9915,0.9936,0.9955,0.9972,0.9997,0.9999,null,null,null,null,null,null,null,null,null,null,null,null,null,null,null,null,0.9668,0.9439,0.9334,0.9399,0.9268,0.9174,0.8969,0.9182,0.9121,0.9285,0.8825,0.8996,0.872,0.8879,0.9022,0.9141,0.8767,0.8894,0.9013,0.9112,0.9203,0.9289,0.8794,0.8889,0.8981,0.9068,0.9149,0.9224,0.9294,0.9359,0.9418,0.9473,0.9524,0.957,0.9613,0.9653,0.9689,0.9722,0.9329,0.9369,0.9417,0.9466,0.9513,0.9559,0.9603,0.9644,0.9684,0.9721,0.9756,0.9789,0.982,0.9849,0.9877,0.9902,0.9926,0.9948,0.9968,0.9995,0.9997,null,null,null,null,null,null,null,null,null,null,null,null,null,null,null,null,null,null,0.9594,0.944,0.9334,0.94,0.9269,0.9175,0.897,0.938,0.9123,0.9287,0.883,0.8999,0.8729,0.8888,0.9029,0.9146,0.9254,0.8912,0.9027,0.9122,0.9212,0.9297,0.8817,0.891,0.9001,0.9087,0.9167,0.9242,0.9311,0.9375,0.9433,0.9488,0.9538,0.9584,0.9626,0.9665,0.97,0.9733,0.9389,0.9425,0.9471,0.9518,0.9564,0.9608,0.9651,0.9691,0.973,0.9766,0.9801,0.9833,0.9864,0.9892,0.9919,0.9944,0.9988,0.9992,0.9999,null,null,null,null,null,null,null,null,null,null,null,null,null,null,null,null,null,null,null,null,0.9594,0.9506,0.9335,0.94,0.9271,0.9177,0.8973,0.9382,0.9127,0.9019,0.8835,0.9003,0.8742,0.8899,0.9038,0.9154,0.9261,0.9358,0.9041,0.9133,0.9222,0.9308,0.8844,0.8935,0.9025,0.911,0.9189,0.9262,0.933,0.9393,0.9451,0.9505,0.9554,0.9599,0.9641,0.9679,0.9714,0.9746,0.946,0.9493,0.9536,0.9581,0.9626,0.9668,0.971,0.975,0.9787,0.9823,0.9857,0.9889,0.9919,0.9978,0.9984,0.999,0.9999,null,null,null,null,null,null,null,null,null,null,null,null,null,null,null,null,null,null,null,null,null,null,0.9552,0.9366,0.9335,0.9151,0.9404,0.9179,0.8976,0.9385,0.9131,0.865,0.8842,0.901,0.9159,0.8913,0.9047,0.9163,0.9271,0.9368,0.9055,0.9146,0.9235,0.9321,0.8877,0.8965,0.9053,0.9137,0.9214,0.9286,0.9353,0.9415,0.9472,0.9524,0.9573,0.9617,0.9658,0.9696,0.973,0.9761,0.9549,0.9577,0.9618,0.966,0.9703,0.9745,0.9785,0.9824,0.9861,0.9954,0.9964,0.9973,0.9981,0.9988,null,null,null,null,null,null,null,null,null,null,null,null,null,null,null,null,null,null,null,null,null,null,null,null,null,0.9505,0.9441,0.9336,0.9152,0.9406,0.9181,0.8981,0.9387,0.9135,0.8655,0.8851,0.902,0.9169,0.8929,0.906,0.9176,0.9284,0.938,0.9072,0.9162,0.9251,0.9336,0.8915,0.9001,0.9086,0.9167,0.9243,0.9314,0.9379,0.944,0.9496,0.9547,0.9595,0.9638,0.9679,0.9716,0.9749,0.978,0.9666,0.9686,0.9722,0.9762,0.9803,0.9915,0.9931,0.9945,0.9957,0.9968,0.9978,0.9997,null,null,null,null,null,null,null,null,null,null,null,null,null,null,null,null,null,null,null,null,null,null,null,null,null,null,null,0.9454,0.9507,0.9338,0.9154,0.9276,0.898,0.8989,0.9389,0.9139,0.8665,0.8863,0.9033,0.918,0.9297,0.908,0.9196,0.9301,0.9395,0.9091,0.9181,0.927,0.9354,0.8956,0.904,0.9123,0.9201,0.9276,0.9345,0.9409,0.9468,0.9523,0.9574,0.9621,0.9664,0.9704,0.974,0.9773,0.9804,0.9831,0.9857,0.9879,0.99,0.9919,0.9936,0.9951,0.9964,0.9993,null,null,null,null,null,null,null,null,null,null,null,null,null,null,null,null,null,null,null,null,null,null,null,null,null,null,null,null,null,null,0.9553,0.9368,0.9432,0.9157,0.9119,0.8983,0.9214,0.9202,0.8852,0.8681,0.8883,0.9052,0.9193,0.9308,0.9415,0.9224,0.9323,0.9411,0.9113,0.9203,0.9291,0.9373,0.8999,0.9081,0.9162,0.924,0.9312,0.938,0.9444,0.9502,0.9556,0.9607,0.9653,0.9696,0.9735,0.9771,0.9804,0.9834,0.9861,0.9886,0.9908,0.9929,0.9947,0.9987,null,null,null,null,null,null,null,null,null,null,null,null,null,null,null,null,null,null,null,null,null,null,null,null,null,null,null,null,null,null,null,null,null,0.9506,0.9443,0.9433,0.9294,0.9122,0.8988,0.9221,0.8963,0.8861,0.8715,0.9213,0.9351,0.921,0.9324,0.9431,0.9521,0.9347,0.9052,0.9136,0.9225,0.9312,0.8969,0.9044,0.9127,0.9207,0.9284,0.9356,0.9423,0.9486,0.9545,0.9599,0.9649,0.9695,0.9737,0.9776,0.9811,0.9844,0.9873,0.99,0.9971,0.9979,null,null,null,null,null,null,null,null,null,null,null,null,null,null,null,null,null,null,null,null,null,null,null,null,null,null,null,null,null,null,null,null,null,null,null,null,0.9554,0.9445,0.9434,0.9297,0.9125,0.8995,0.9226,0.897,0.8877,0.9063,0.923,0.9367,0.9235,0.9346,0.9453,0.9539,0.9365,0.907,0.9159,0.9248,0.8934,0.9016,0.9098,0.9181,0.9262,0.9339,0.9411,0.9479,0.9542,0.96,0.9654,0.9704,0.975,0.9792,0.983,0.994,0.9954,0.9988,null,null,null,null,null,null,null,null,null,null,null,null,null,null,null,null,null,null,null,null,null,null,null,null,null,null,null,null,null,null,null,null,null,null,null,null,null,null,null,0.9555,0.9511,0.9346,0.9299,0.9129,0.9009,0.9233,0.8989,0.8902,0.9085,0.9256,0.939,0.9494,0.9377,0.9478,0.9554,0.9014,0.9089,0.9182,0.8888,0.8988,0.9081,0.9167,0.9253,0.9335,0.9413,0.9485,0.9553,0.9617,0.9675,0.9729,0.9887,0.9909,0.9929,0.9979,null,null,null,null,null,null,null,null,null,null,null,null,null,null,null,null,null,null,null,null,null,null,null,null,null,null,null,null,null,null,null,null,null,null,null,null,null,null,null,null,null,null,0.9509,0.9512,0.9241,0.9301,0.9138,0.921,0.9244,0.9235,0.9192,0.9125,0.9481,0.9588,0.9516,0.9408,0.9492,0.9307,0.9019,0.9113,0.8875,0.8966,0.9074,0.9174,0.9264,0.9351,0.9435,0.9514,0.9755,0.9796,0.9832,0.9865,0.9951,0.9963,null,null,null,null,null,null,null,null,null,null,null,null,null,null,null,null,null,null,null,null,null,null,null,null,null,null,null,null,null,null,null,null,null,null,null,null,null,null,null,null,null,null,null,null,null,0.9557,0.9449,0.9244,0.9179,0.9297,0.9375,0.9257,0.9251,0.9219,0.9373,0.9508,0.9609,0.9534,0.9413,0.923,0.8953,0.9044,0.9146,0.9247,0.9342,0.943,0.951,0.9582,0.9646,0.9704,0.9756,0.9802,0.9919,0.9972,0.9998,null,null,null,null,null,null,null,null,null,null,null,null,null,null,null,null,null,null,null,null,null,null,null,null,null,null,null,null,null,null,null,null,null,null,null,null,null,null,null,null,null,null,null,null,null,null,null,0.9599,0.9377,0.925,0.9313,0.9312,0.9392,0.9271,0.9273,0.9429,0.9557,0.966,0.9625,0.9325,0.9134,0.8895,0.8982,0.909,0.92,0.9305,0.9403,0.9493,0.9575,0.9648,0.9833,0.9868,0.9948,0.9992,null,null,null,null,null,null,null,null,null,null,null,null,null,null,null,null,null,null,null,null,null,null,null,null,null,null,null,null,null,null,null,null,null,null,null,null,null,null,null,null,null,null,null,null,null,null,null,null,null,null,0.9462,0.93,0.936,0.9324,0.945,0.9519,0.9287,0.9455,0.9588,0.969,0.9675,0.9238,0.9021,0.9133,0.8933,0.9048,0.9167,0.9283,0.9392,0.9671,0.9732,0.9786,0.9906,0.9963,null,null,null,null,null,null,null,null,null,null,null,null,null,null,null,null,null,null,null,null,null,null,null,null,null,null,null,null,null,null,null,null,null,null,null,null,null,null,null,null,null,null,null,null,null,null,null,null,null,null,null,null,null,0.9407,0.9385,0.9455,0.9442,0.9634,0.9414,0.9449,0.9598,0.9706,0.9705,0.9367,0.891,0.903,0.916,0.9279,0.9387,0.9487,0.9577,0.9657,0.9831,0.9926,0.9984,null,null,null,null,null,null,null,null,null,null,null,null,null,null,null,null,null,null,null,null,null,null,null,null,null,null,null,null,null,null,null,null,null,null,null,null,null,null,null,null,null,null,null,null,null,null,null,null,null,null,null,null,null,null,null,0.9466,0.9525,0.9462,0.9612,0.964,0.9425,0.9583,0.971,0.9724,0.9262,0.9091,0.8933,0.9079,0.9221,0.9349,0.963,0.9705,0.9855,0.9936,1,null,null,null,null,null,null,null,null,null,null,null,null,null,null,null,null,null,null,null,null,null,null,null,null,null,null,null,null,null,null,null,null,null,null,null,null,null,null,null,null,null,null,null,null,null,null,null,null,null,null,null,null,null,null,null,null,null,0.9567,0.9636,0.9543,0.9732,0.947,0.955,0.9694,0.9785,0.933,0.897,0.9102,0.9243,0.9375,0.9495,0.9724,0.9789,0.9938,null,null,null,null,null,null,null,null,null,null,null,null,null,null,null,null,null,null,null,null,null,null,null,null,null,null,null,null,null,null,null,null,null,null,null,null,null,null,null,null,null,null,null,null,null,null,null,null,null,null,null,null,null,null,null,null,null,null,null,null,0.961,0.9683,0.9711,0.9625,0.9489,0.9718,0.9815,0.9515,0.9076,0.922,0.9159,0.9486,0.9597,0.9786,0.9896,null,null,null,null,null,null,null,null,null,null,null,null,null,null,null,null,null,null,null,null,null,null,null,null,null,null,null,null,null,null,null,null,null,null,null,null,null,null,null,null,null,null,null,null,null,null,null,null,null,null,null,null,null,null,null,null,null,null,null,null,null,null,0.9683,0.9641,0.9819,0.9475,0.9662,0.9826,0.9618,0.9145,0.9094,0.9264,0.9561,0.9667,0.988,0.9984,null,null,null,null,null,null,null,null,null,null,null,null,null,null,null,null,null,null,null,null,null,null,null,null,null,null,null,null,null,null,null,null,null,null,null,null,null,null,null,null,null,null,null,null,null,null,null,null,null,null,null,null,null,null,null,null,null,null,null,null,null,null,null,0.981,0.9727,0.9626,0.9631,0.9817,0.9828,0.9177,0.9156,0.933,0.9606,0.9789,0.9928,null,null,null,null,null,null,null,null,null,null,null,null,null,null,null,null,null,null,null,null,null,null,null,null,null,null,null,null,null,null,null,null,null,null,null,null,null,null,null,null,null,null,null,null,null,null,null,null,null,null,null,null,null,null,null,null,null,null,null,null,null,null,null,null,null,0.9771,0.9855,0.9503,0.9786,0.9901,0.9327,0.9179,0.9364,0.963,0.9804,0.9988,null,null,null,null,null,null,null,null,null,null,null,null,null,null,null,null,null,null,null,null,null,null,null,null,null,null,null,null,null,null,null,null,null,null,null,null,null,null,null,null,null,null,null,null,null,null,null,null,null,null,null,null,null,null,null,null,null,null,null,null,null,null,null,null,null,null,0.9695,0.9734,0.9681,0.9912,0.9596,0.9166,0.9367,0.9635,0.989,null,null,null,null,null,null,null,null,null,null,null,null,null,null,null,null,null,null,null,null,null,null,null,null,null,null,null,null,null,null,null,null,null,null,null,null,null,null,null,null,null,null,null,null,null,null,null,null,null,null,null,null,null,null,null,null,null,null,null,null,null,null,null,null,null,null,null,null,0.9833,0.956,0.9851,0.9948,0.9255,0.9451,0.9693,0.9908,null,null,null,null,null,null,null,null,null,null,null,null,null,null,null,null,null,null,null,null,null,null,null,null,null,null,null,null,null,null,null,null,null,null,null,null,null,null,null,null,null,null,null,null,null,null,null,null,null,null,null,null,null,null,null,null,null,null,null,null,null,null,null,null,null,null,null,null,null,0.9918,0.9732,0.9975,0.9394,0.9385,0.9655,0.9914,null,null,null,null,null,null,null,null,null,null,null,null,null,null,null,null,null,null,null,null,null,null,null,null,null,null,null,null,null,null,null,null,null,null,null,null,null,null,null,null,null,null,null,null,null,null,null,null,null,null,null,null,null,null,null,null,null,null,null,null,null,null,null,null,null,null,null,null,null,null,0.9632,0.9889,0.9976,0.9381,0.9591,0.989,null,null,null,null,null,null,null,null,null,null,null,null,null,null,null,null,null,null,null,null,null,null,null,null,null,null,null,null,null,null,null,null,null,null,null,null,null,null,null,null,null,null,null,null,null,null,null,null,null,null,null,null,null,null,null,null,null,null,null,null,null,null,null,null,null,null,null,null,null,null,null,0.9697,null,0.9419,0.9491,0.985,null,null,null,null,null,null,null,null,null,null,null,null,null,null,null,null,null,null,null,null,null,null,null,null,null,null,null,null,null,null,null,null,null,null,null,null,null,null,null,null,null,null,null,null,null,null,null,null,null,null,null,null,null,null,null,null,null,null,null,null,null,null,null,null,null,null,null,null,null,null,null,null,0.9865,null,0.9417,0.9747,null,null,null,null,null,null,null,null,null,null,null,null,null,null,null,null,null,null,null,null,null,null,null,null,null,null,null,null,null,null,null,null,null,null,null,null,null,null,null,null,null,null,null,null,null,null,null,null,null,null,null,null,null,null,null,null,null,null,null,null,null,null,null,null,null,null,null,null,null,null,null,null,null,0.9998,0.9436,0.9626,0.9978,null,null,null,null,null,null,null,null,null,null,null,null,null,null,null,null,null,null,null,null,null,null,null,null,null,null,null,null,null,null,null,null,null,null,null,null,null,null,null,null,null,null,null,null,null,null,null,null,null,null,null,null,null,null,null,null,null,null,null,null,null,null,null,null,null,null,null,null,null,null,null,null,null,null,0.9435,0.985,null,null,null,null,null,null,null,null,null,null,null,null,null,null,null,null,null,null,null,null,null,null,null,null,null,null,null,null,null,null,null,null,null,null,null,null,null,null,null,null,null,null,null,null,null,null,null,null,null,null,null,null,null,null,null,null,null,null,null,null,null,null,null,null,null,null,null,null,null,null,null,null,null,null,0.9777,0.9653,null,null,null,null,null,null,null,null,null,null,null,null,null,null,null,null,null,null,null,null,null,null,null,null,null,null,null,null,null,null,null,null,null,null,null,null,null,null,null,null,null,null,null,null,null,null,null,null,null,null,null,null,null,null,null,null,null,null,null,null,null,null,null,null,null,null,null,null,null,null,null,null,null,null,null,0.9445,0.9874,null,null,null,null,null,null,null,null,null,null,null,null,null,null,null,null,null,null,null,null,null,null,null,null,null,null,null,null,null,null,null,null,null,null,null,null,null,null,null,null,null,null,null,null,null,null,null,null,null,null,null,null,null,null,null,null,null,null,null,null,null,null,null,null,null,null,null,null,null,null,null,null,null,null,null,0.9587,null,null,null,null,null,null,null,null,null,null,null,null,null,null,null,null,null,null,null,null,null,null,null,null,null,null,null,null,null,null,null,null,null,null,null,null,null,null,null,null,null,null,null,null,null,null,null,null,null,null,null,null,null,null,null,null,null,null,null,null,null,null,null,null,null,null,null,null,null,null,null,null,null,null,null,null,0.9797,null,null,null,null,null,null,null,null,null,null,null,null,null,null,null,null,null,null,null,null,null,null,null,null,null,null,null,null,null,null,null,null,null,null,null,null,null,null,null,null,null,null,null,null,null,null,null,null,null,null,null,null,null,null,null,null,null,null,null,null,null,null,null,null,null,null,null,null,null,null,null,null,null,null,null,null,null,null,null,null,null,null,null,null,null,null,null,null,null,null,null,null,null,null,null,null,null,null,null,null,null,null,null,null,null,null,null,null,null,null,null,null,null,null,null,null,null,null,null,null,null,null,null,null,null,null,null,null,null,null,null,null,null,null,null,null,null,null,null,null,null,null,null,null,null,null,null,null,null,null,null,null,null,null,null,null,null,null,null,null,null,null,null,null,null,null,null,null,null,null,null,null,null,null,null,null,null,null,null,null,null,null,null,null,null,null,null,null,null,null,null,null,null,null,null,null,null,null,null,null,null,null,null,null,null,null,null,null,null,null,null,null,null,null,null,null,null,null,null,null,null,null,null,null,null,null,null,null,null,null,null,null,null,null,null,null,null,null,null,null,null,null,null,null,null,null,null,null,null,null,null,null,null,null,null,null,null,null,null,null,null,null,null,null,null,null,null,null,null,null,null,null,null,null,null,null,null,null,null,null,null,null,null,null,null,null,null,null,null,null,null,null,null,null,null,null,null,null,null,null,null,null,null,null,null,null,null],"m":[-0.0158,-0.0231,-0.0317,-0.0806,-0.0879,-0.0952,-0.1067,-0.1265,-0.117,-0.1213,-0.1331,-0.1256,-0.1303,-0.1306,-0.1654,-0.1435,-0.149,-0.1479,-0.1556,-0.1509,-0.1582,-0.1539,-0.1535,-0.1558,-0.1555,-0.1547,-0.1536,-0.1522,-0.1503,-0.1481,-0.1456,-0.1429,-0.1399,-0.1367,-0.1334,-0.1299,-0.1265,-0.123,-0.1194,-0.1159,-0.1125,-0.109,-0.1056,-0.1022,-0.0987,-0.0953,-0.0917,-0.0882,-0.0844,-0.0806,-0.0766,-0.0723,-0.0679,-0.0633,-0.0585,-0.0534,-0.0482,-0.0428,-0.0373,-0.0317,-0.0261,-0.0206,-0.0154,-0.0104,-0.006,-0.0035,-0.0018,0.0003,0.0031,0.0043,0.0056,0.0078,0.0082,0.0079,0.0075,0.005,0,-0.014,-0.024,-0.0464,-0.0835,-0.0895,-0.0958,-0.1077,-0.1216,-0.1147,-0.1259,-0.1304,-0.1237,-0.1233,-0.1399,-0.1593,-0.1416,-0.1471,-0.1464,-0.1597,-0.1447,-0.1599,-0.1542,-0.1523,-0.155,-0.1544,-0.1534,-0.152,-0.1501,-0.1479,-0.1454,-0.1426,-0.1396,-0.1364,-0.1331,-0.1297,-0.1263,-0.1229,-0.1195,-0.1161,-0.1128,-0.1095,-0.1062,-0.1029,-0.0995,-0.0961,-0.0926,-0.089,-0.0852,-0.0812,-0.077,-0.0727,-0.068,-0.0632,-0.0581,-0.0528,-0.0473,-0.0417,-0.036,-0.0303,-0.0246,-0.0191,-0.0139,-0.0091,-0.005,-0.0024,-0.001,0.001,0.0033,0.006,0.0073,0.0085,0.0102,0.0102,0.0094,0.0083,0.0052,0,-0.0153,-0.0333,-0.0582,-0.0827,-0.087,-0.0972,-0.0993,-0.1154,-0.1143,-0.1281,-0.1236,-0.1203,-0.1237,-0.1528,-0.1512,-0.1392,-0.1444,-0.1476,-0.161,-0.1422,-0.1608,-0.1532,-0.1513,-0.1537,-0.1527,-0.1513,-0.1494,-0.1472,-0.1446,-0.1417,-0.1387,-0.1355,-0.1322,-0.1289,-0.1257,-0.1224,-0.1192,-0.1161,-0.1129,-0.1098,-0.1066,-0.1035,-0.1002,-0.0969,-0.0933,-0.0896,-0.0857,-0.0816,-0.0772,-0.0726,-0.0677,-0.0625,-0.0572,-0.0516,-0.0459,-0.04,-0.0341,-0.0283,-0.0226,-0.0171,-0.012,-0.0074,-0.0043,-0.0012,0.0007,0.0025,0.0047,0.0071,0.0096,0.0108,0.0116,0.0127,0.0122,0.0108,0.009,0.0054,0,-0.0226,-0.0384,-0.0621,-0.0867,-0.0841,-0.0954,-0.0893,-0.1115,-0.1146,-0.1269,-0.1189,-0.1153,-0.1337,-0.1618,-0.1429,-0.136,-0.1425,-0.1513,-0.159,-0.1434,-0.1601,-0.1505,-0.15,-0.1516,-0.1501,-0.1482,-0.1458,-0.1431,-0.1402,-0.1372,-0.134,-0.1309,-0.1277,-0.1246,-0.1216,-0.1187,-0.1158,-0.1129,-0.11,-0.107,-0.104,-0.1008,-0.0974,-0.0939,-0.0901,-0.086,-0.0817,-0.077,-0.0721,-0.0669,-0.0614,-0.0557,-0.0498,-0.0438,-0.0377,-0.0316,-0.0256,-0.0199,-0.0145,-0.0096,-0.0055,-0.0029,-0.0006,0.0027,0.005,0.007,0.0092,0.0114,0.0135,0.0144,0.0148,0.0152,0.014,0.0121,0.0096,0.0055,0,-0.0284,-0.0472,-0.0681,-0.0837,-0.0839,-0.0952,-0.0896,-0.1089,-0.1129,-0.1225,-0.1185,-0.1118,-0.147,-0.1632,-0.1347,-0.1325,-0.1434,-0.155,-0.1554,-0.1464,-0.1571,-0.1463,-0.1478,-0.1483,-0.1462,-0.1437,-0.141,-0.138,-0.135,-0.132,-0.129,-0.1261,-0.1233,-0.1206,-0.1179,-0.1153,-0.1127,-0.11,-0.1073,-0.1043,-0.1012,-0.0979,-0.0942,-0.0902,-0.0859,-0.0813,-0.0763,-0.071,-0.0654,-0.0595,-0.0534,-0.0472,-0.0409,-0.0346,-0.0284,-0.0223,-0.0167,-0.0115,-0.007,-0.0042,-0.0011,0.002,0.0046,0.008,0.0104,0.0123,0.0144,0.0162,0.0178,0.0181,0.0179,0.0176,0.0158,0.0132,0.0101,0.0057,0,-0.0273,-0.0551,-0.073,-0.0742,-0.084,-0.0955,-0.0983,-0.1055,-0.1135,-0.1132,-0.1219,-0.1145,-0.1567,-0.1583,-0.1263,-0.1306,-0.1466,-0.1566,-0.1521,-0.1484,-0.1513,-0.1412,-0.1443,-0.1436,-0.141,-0.1381,-0.1352,-0.1322,-0.1294,-0.1267,-0.1241,-0.1216,-0.1193,-0.117,-0.1148,-0.1125,-0.1101,-0.1075,-0.1047,-0.1016,-0.0981,-0.0943,-0.0901,-0.0854,-0.0804,-0.075,-0.0692,-0.0632,-0.0568,-0.0504,-0.0438,-0.0372,-0.0307,-0.0244,-0.0185,-0.0131,-0.0083,-0.0047,-0.0011,0.0018,0.0052,0.0085,0.0112,0.0144,0.0167,0.0184,0.02,0.0212,0.0221,0.0218,0.0209,0.0198,0.0174,0.0142,0.0105,0.0058,0,-0.0387,-0.0577,-0.0693,-0.0669,-0.0858,-0.0925,-0.1106,-0.0996,-0.1152,-0.1037,-0.1287,-0.1252,-0.1588,-0.1494,-0.119,-0.1313,-0.15,-0.1558,-0.1497,-0.1469,-0.1429,-0.1354,-0.1391,-0.1374,-0.1345,-0.1316,-0.1288,-0.1262,-0.1238,-0.1217,-0.1197,-0.1178,-0.116,-0.1142,-0.1123,-0.1101,-0.1077,-0.105,-0.1018,-0.0982,-0.0941,-0.0895,-0.0844,-0.0789,-0.0729,-0.0666,-0.06,-0.0532,-0.0463,-0.0394,-0.0326,-0.026,-0.0198,-0.0142,-0.0094,-0.0052,-0.0013,0.0025,0.0065,0.0097,0.0132,0.0164,0.019,0.0218,0.0236,0.0248,0.0258,0.0263,0.0264,0.0253,0.0237,0.0218,0.0188,0.0151,0.0109,0.0059,0,-0.0402,-0.0572,-0.0747,-0.0627,-0.0911,-0.0922,-0.1191,-0.0915,-0.1104,-0.1048,-0.1378,-0.1375,-0.1528,-0.1392,-0.115,-0.1339,-0.152,-0.1537,-0.1464,-0.1403,-0.1328,-0.1288,-0.1322,-0.13,-0.1272,-0.1247,-0.1225,-0.1206,-0.119,-0.1177,-0.1164,-0.1152,-0.1139,-0.1123,-0.1104,-0.1081,-0.1053,-0.1019,-0.098,-0.0934,-0.0883,-0.0826,-0.0764,-0.0698,-0.0629,-0.0557,-0.0484,-0.0412,-0.034,-0.0271,-0.0207,-0.0148,-0.0102,-0.0051,-0.0008,0.0039,0.0082,0.0123,0.0163,0.0194,0.0227,0.0255,0.0276,0.0297,0.0308,0.0314,0.0315,0.0312,0.0304,0.0286,0.0263,0.0236,0.02,0.0158,0.0113,0.006,0,-0.0442,-0.0622,-0.0775,-0.0764,-0.0832,-0.0943,-0.1207,-0.0834,-0.1032,-0.1183,-0.1439,-0.1428,-0.1425,-0.1305,-0.1152,-0.1367,-0.1522,-0.1496,-0.139,-0.129,-0.1216,-0.1211,-0.1241,-0.122,-0.12,-0.1184,-0.1172,-0.1164,-0.1158,-0.1153,-0.1148,-0.1139,-0.1127,-0.111,-0.1086,-0.1056,-0.1018,-0.0973,-0.0921,-0.0862,-0.0797,-0.0728,-0.0654,-0.0578,-0.0501,-0.0425,-0.0349,-0.0277,-0.021,-0.0151,-0.0098,-0.0043,0.0008,0.0063,0.0111,0.0159,0.0202,0.0241,0.0277,0.0305,0.0331,0.0352,0.0366,0.0378,0.0381,0.0378,0.037,0.0358,0.0342,0.0316,0.0286,0.0252,0.0211,0.0165,0.0115,0.006,0,-0.0467,-0.0602,-0.0786,-0.0912,-0.0689,-0.0944,-0.1201,-0.0771,-0.1045,-0.134,-0.1432,-0.1395,-0.1344,-0.1245,-0.118,-0.1379,-0.1484,-0.1406,-0.1259,-0.1146,-0.1105,-0.113,-0.1158,-0.1148,-0.1141,-0.114,-0.1142,-0.1146,-0.115,-0.115,-0.1147,-0.1136,-0.1119,-0.1092,-0.1056,-0.1012,-0.0958,-0.0897,-0.0829,-0.0755,-0.0677,-0.0595,-0.0513,-0.0432,-0.0352,-0.0277,-0.0209,-0.0145,-0.0083,-0.0019,0.0042,0.0102,0.0156,0.0211,0.0257,0.0302,0.0341,0.0374,0.0403,0.0423,0.044,0.0452,0.0456,0.0458,0.0452,0.0439,0.0422,0.0401,0.0376,0.0343,0.0306,0.0266,0.022,0.017,0.0118,0.0061,0,-0.0517,-0.0525,-0.0765,-0.0918,-0.0703,-0.096,-0.1126,-0.0765,-0.1157,-0.1433,-0.1362,-0.1335,-0.13,-0.1193,-0.1199,-0.135,-0.1381,-0.1252,-0.1089,-0.1002,-0.1008,-0.106,-0.1095,-0.1102,-0.1114,-0.1129,-0.1144,-0.1157,-0.1163,-0.1162,-0.1151,-0.1129,-0.1096,-0.1051,-0.0996,-0.0932,-0.0859,-0.0779,-0.0695,-0.0608,-0.052,-0.0433,-0.0349,-0.0274,-0.0197,-0.0121,-0.0047,0.0026,0.0095,0.0163,0.0225,0.0284,0.0335,0.0384,0.0424,0.0461,0.0491,0.0514,0.0532,0.0542,0.0549,0.0549,0.0543,0.0534,0.0517,0.0495,0.0469,0.0439,0.0406,0.0366,0.0323,0.0278,0.0228,0.0174,0.012,0.0061,0,-0.0524,-0.0591,-0.0611,-0.0847,-0.0811,-0.098,-0.1002,-0.0862,-0.1292,-0.1437,-0.126,-0.1287,-0.1244,-0.113,-0.118,-0.1254,-0.1205,-0.1056,-0.0921,-0.0891,-0.0947,-0.1022,-0.1072,-0.1101,-0.1131,-0.1157,-0.1177,-0.1187,-0.1184,-0.1168,-0.1138,-0.1093,-0.1035,-0.0966,-0.0887,-0.0801,-0.0709,-0.0615,-0.0521,-0.0429,-0.0341,-0.025,-0.0161,-0.0073,0.0014,0.0098,0.0177,0.0251,0.0319,0.0383,0.0439,0.049,0.0533,0.0571,0.0601,0.0626,0.0643,0.0654,0.066,0.0657,0.0651,0.064,0.0622,0.0602,0.0576,0.0544,0.051,0.0472,0.0431,0.0385,0.0337,0.0287,0.0233,0.0177,0.0121,0.0061,0,-0.051,-0.0604,-0.0552,-0.0742,-0.0866,-0.1013,-0.0969,-0.1019,-0.135,-0.1348,-0.1159,-0.1229,-0.1146,-0.1051,-0.1103,-0.1091,-0.0991,-0.0868,-0.0803,-0.0843,-0.0944,-0.1042,-0.1107,-0.1152,-0.1187,-0.1211,-0.1219,-0.1209,-0.1182,-0.1137,-0.1076,-0.1001,-0.0915,-0.082,-0.072,-0.0618,-0.0518,-0.0414,-0.0307,-0.02,-0.0095,0.0009,0.0108,0.0201,0.0289,0.0371,0.0446,0.0513,0.0572,0.0624,0.0669,0.0707,0.0736,0.076,0.0775,0.0785,0.0788,0.0785,0.0777,0.0762,0.0743,0.072,0.0691,0.066,0.0624,0.0584,0.0542,0.0497,0.045,0.0399,0.0347,0.0293,0.0237,0.0179,0.0121,0.0061,0,-0.0501,-0.0599,-0.0622,-0.0662,-0.0924,-0.1068,-0.1053,-0.1117,-0.1283,-0.1192,-0.1073,-0.1134,-0.1021,-0.0953,-0.0967,-0.0893,-0.0795,-0.0745,-0.0774,-0.0879,-0.1019,-0.1126,-0.1193,-0.1233,-0.1254,-0.1254,-0.1231,-0.1185,-0.112,-0.1038,-0.0942,-0.0837,-0.0729,-0.0613,-0.0493,-0.0367,-0.024,-0.0114,0.0009,0.0126,0.0237,0.0342,0.0437,0.0524,0.0604,0.0674,0.0735,0.0788,0.0831,0.0867,0.0895,0.0916,0.0928,0.0935,0.0934,0.0928,0.0916,0.0898,0.0877,0.0849,0.0818,0.0784,0.0745,0.0705,0.0661,0.0613,0.0565,0.0514,0.0462,0.0407,0.0352,0.0296,0.0237,0.0179,0.012,0.006,0,-0.0474,-0.0577,-0.0639,-0.0706,-0.0999,-0.1086,-0.1099,-0.1091,-0.1115,-0.1033,-0.1002,-0.1013,-0.0887,-0.0825,-0.0798,-0.072,-0.0687,-0.0736,-0.0853,-0.1013,-0.1153,-0.1245,-0.129,-0.1301,-0.1283,-0.1238,-0.1168,-0.1077,-0.0972,-0.0854,-0.0722,-0.0578,-0.043,-0.028,-0.0134,0.0011,0.015,0.0281,0.0404,0.0516,0.0619,0.0712,0.0793,0.0864,0.0925,0.0977,0.1018,0.1051,0.1074,0.109,0.1099,0.1101,0.1094,0.1084,0.1067,0.1045,0.1018,0.0987,0.0953,0.0914,0.0872,0.0828,0.0781,0.0733,0.0683,0.0629,0.0576,0.0521,0.0466,0.0408,0.0351,0.0293,0.0235,0.0176,0.0118,0.0059,0,-0.0526,-0.05,-0.0725,-0.0847,-0.1005,-0.1031,-0.1025,-0.0964,-0.0929,-0.0924,-0.0935,-0.0871,-0.0736,-0.068,-0.0659,-0.0649,-0.0718,-0.0858,-0.1037,-0.1192,-0.1297,-0.1344,-0.134,-0.1296,-0.1221,-0.1123,-0.0993,-0.0846,-0.0682,-0.0511,-0.0336,-0.016,0.001,0.0174,0.0326,0.047,0.0603,0.0723,0.0831,0.0925,0.1008,0.1079,0.1137,0.1184,0.1222,0.1249,0.1268,0.1278,0.128,0.1274,0.1263,0.1246,0.1222,0.1196,0.1163,0.1128,0.1088,0.1045,0.1,0.0952,0.0902,0.0851,0.0797,0.0744,0.0688,0.0631,0.0575,0.0517,0.046,0.0402,0.0344,0.0286,0.0228,0.017,0.0114,0.0057,0,-0.0443,-0.0552,-0.0848,-0.0926,-0.0926,-0.0932,-0.0862,-0.0801,-0.0809,-0.0867,-0.0836,-0.0701,-0.0587,-0.0582,-0.0636,-0.0733,-0.0893,-0.1084,-0.1242,-0.1344,-0.1382,-0.136,-0.1278,-0.1154,-0.0994,-0.0815,-0.0617,-0.0415,-0.021,-0.001,0.0182,0.0365,0.0534,0.0689,0.0827,0.0953,0.1064,0.1159,0.124,0.1307,0.1361,0.1404,0.1435,0.1455,0.1466,0.1469,0.1454,0.1405,0.1389,0.1342,0.1327,0.1283,0.1269,0.1256,0.1213,0.1172,0.1122,0.1071,0.1018,0.0963,0.0907,0.0851,0.0793,0.0736,0.0678,0.0619,0.0561,0.0503,0.0446,0.0388,0.0331,0.0275,0.0218,0.0163,0.0108,0.0054,0,-0.0416,-0.0696,-0.0863,-0.0868,-0.0808,-0.0802,-0.0667,-0.0692,-0.0769,-0.0785,-0.0676,-0.0537,-0.0517,-0.0622,-0.0779,-0.0962,-0.115,-0.1297,-0.1385,-0.1388,-0.1312,-0.1171,-0.0983,-0.0769,-0.0538,-0.0304,-0.0067,0.0159,0.0375,0.0575,0.0757,0.0923,0.107,0.1198,0.1307,0.1401,0.1479,0.1533,0.148,0.1429,0.1408,0.1359,0.134,0.1295,0.1278,0.1234,0.1219,0.1177,0.1163,0.1124,0.1111,0.1073,0.1062,0.1051,0.1015,0.1005,0.0995,0.0961,0.0952,0.0944,0.0888,0.0829,0.077,0.0712,0.0653,0.0595,0.0537,0.048,0.0424,0.0368,0.0313,0.0259,0.0205,0.0153,0.0101,0.005,0,-0.0538,-0.0749,-0.0777,-0.0713,-0.0712,-0.0626,-0.0549,-0.0681,-0.0713,-0.0624,-0.0504,-0.0477,-0.0611,-0.0833,-0.1055,-0.1231,-0.1341,-0.1371,-0.1311,-0.1169,-0.0967,-0.0723,-0.0457,-0.0187,0.0081,0.0333,0.0574,0.0792,0.0989,0.1163,0.1314,0.1445,0.1513,0.1458,0.1406,0.1355,0.1333,0.1286,0.124,0.1197,0.1179,0.1138,0.1122,0.1083,0.1069,0.1032,0.1019,0.0984,0.0972,0.0939,0.0928,0.0896,0.0887,0.0877,0.0847,0.0839,0.0831,0.0802,0.0795,0.0787,0.076,0.0753,0.0732,0.0674,0.0617,0.056,0.0504,0.0449,0.0394,0.0342,0.029,0.0239,0.019,0.0141,0.0093,0.0046,0,-0.0627,-0.0678,-0.066,-0.0587,-0.0591,-0.0479,-0.0573,-0.0664,-0.0568,-0.0454,-0.0458,-0.0613,-0.0884,-0.1134,-0.1282,-0.1332,-0.1288,-0.1154,-0.0945,-0.0682,-0.0388,-0.0083,0.0218,0.0502,0.0766,0.1002,0.1213,0.1396,0.1475,0.1419,0.1366,0.1316,0.1267,0.1221,0.1177,0.1134,0.1115,0.1075,0.1037,0.1,0.0985,0.0951,0.0937,0.0905,0.0892,0.0861,0.0851,0.0821,0.0811,0.0783,0.0774,0.0747,0.0739,0.0731,0.0706,0.0699,0.0692,0.0668,0.0662,0.0656,0.0633,0.0627,0.0622,0.06,0.0563,0.051,0.0458,0.0408,0.0359,0.0311,0.0263,0.0217,0.0172,0.0128,0.0084,0.0042,0,-0.0592,-0.0549,-0.0496,-0.0539,-0.0426,-0.0488,-0.062,-0.0539,-0.0406,-0.0431,-0.0633,-0.0913,-0.1156,-0.128,-0.1271,-0.1148,-0.0934,-0.0657,-0.0338,-0.0002,0.033,0.0647,0.0938,0.1196,0.1422,0.1415,0.1359,0.1285,0.1235,0.1188,0.1143,0.11,0.106,0.1021,0.0983,0.0947,0.0931,0.0898,0.0866,0.0835,0.0822,0.0793,0.0781,0.0754,0.0744,0.0718,0.0709,0.0684,0.0676,0.0652,0.0645,0.0622,0.0615,0.0609,0.0588,0.0582,0.0576,0.0556,0.0551,0.0546,0.0527,0.0522,0.0517,0.0499,0.0495,0.0458,0.0412,0.0366,0.0322,0.0278,0.0236,0.0195,0.0154,0.0114,0.0075,0.0037,0,-0.0509,-0.0479,-0.0418,-0.042,-0.0381,-0.0579,-0.0535,-0.0379,-0.0403,-0.0623,-0.0923,-0.1142,-0.1228,-0.1162,-0.0961,-0.067,-0.0326,0.004,0.0407,0.0757,0.1076,0.136,0.1385,0.1307,0.1235,0.1184,0.1137,0.1074,0.1032,0.0993,0.0955,0.0919,0.0884,0.0851,0.082,0.079,0.0776,0.0748,0.0721,0.0695,0.0685,0.066,0.0651,0.0628,0.0619,0.0597,0.059,0.0569,0.0562,0.0542,0.0536,0.0517,0.0512,0.0506,0.0489,0.0484,0.0479,0.0462,0.0458,0.0453,0.0437,0.0434,0.043,0.0415,0.0411,0.0407,0.0365,0.0325,0.0285,0.0247,0.0209,0.0172,0.0136,0.0101,0.0067,0.0033,0,-0.0398,-0.0354,-0.0426,-0.0294,-0.0497,-0.0542,-0.0372,-0.0356,-0.0584,-0.0903,-0.1109,-0.1147,-0.1015,-0.0743,-0.0379,0.0024,0.0431,0.0818,0.1172,0.1382,0.1302,0.1228,0.1158,0.1093,0.1031,0.0989,0.0949,0.0896,0.0861,0.0828,0.0796,0.0766,0.0737,0.0709,0.0683,0.0658,0.0646,0.0623,0.06,0.0578,0.057,0.0549,0.0541,0.0522,0.0515,0.0497,0.049,0.0473,0.0467,0.0451,0.0446,0.043,0.0425,0.0421,0.0406,0.0402,0.0398,0.0384,0.038,0.0377,0.0363,0.036,0.0357,0.0344,0.0341,0.0339,0.0321,0.0285,0.025,0.0217,0.0184,0.0151,0.012,0.0089,0.0059,0.0029,0,-0.0312,-0.0286,-0.0316,-0.0361,-0.0545,-0.0369,-0.0299,-0.052,-0.086,-0.1057,-0.1052,-0.085,-0.0505,-0.0079,0.0375,0.0813,0.1212,0.1323,0.1228,0.1155,0.1088,0.1025,0.0967,0.0912,0.086,0.0824,0.0791,0.0747,0.0717,0.0689,0.0663,0.0637,0.0613,0.059,0.0568,0.0547,0.0537,0.0518,0.0499,0.0481,0.0473,0.0456,0.045,0.0434,0.0428,0.0413,0.0407,0.0393,0.0388,0.0374,0.037,0.0357,0.0353,0.0349,0.0337,0.0333,0.033,0.0318,0.0315,0.0312,0.0301,0.0299,0.0296,0.0285,0.0283,0.0281,0.0279,0.0248,0.0218,0.0188,0.0159,0.0131,0.0104,0.0077,0.0051,0.0025,0,-0.0298,-0.0345,-0.0236,-0.0507,-0.0391,-0.0235,-0.0435,-0.0794,-0.0996,-0.0953,-0.0685,-0.0269,0.0217,0.071,0.1171,0.1286,0.1192,0.1105,0.1025,0.0964,0.0908,0.0855,0.0806,0.076,0.0716,0.0686,0.0658,0.0621,0.0597,0.0573,0.0551,0.053,0.051,0.049,0.0472,0.0454,0.0446,0.043,0.0414,0.0399,0.0393,0.0379,0.0373,0.036,0.0355,0.0342,0.0338,0.0326,0.0322,0.0311,0.0307,0.0296,0.0293,0.029,0.0279,0.0277,0.0274,0.0264,0.0261,0.0259,0.025,0.0248,0.0245,0.0237,0.0235,0.0233,0.0231,0.0214,0.0188,0.0162,0.0138,0.0113,0.0089,0.0066,0.0044,0.0022,0,-0.0191,-0.0266,-0.0369,-0.044,-0.0192,-0.0323,-0.071,-0.093,-0.0862,-0.0535,-0.005,0.0492,0.1021,0.127,0.1161,0.1074,0.0994,0.0922,0.0855,0.0803,0.0756,0.0712,0.067,0.0632,0.0596,0.0571,0.0547,0.0517,0.0496,0.0476,0.0458,0.044,0.0423,0.0407,0.0392,0.0377,0.0371,0.0357,0.0344,0.0331,0.0326,0.0314,0.031,0.0299,0.0295,0.0284,0.028,0.027,0.0267,0.0257,0.0255,0.0245,0.0243,0.024,0.0232,0.0229,0.0227,0.0219,0.0217,0.0215,0.0207,0.0205,0.0204,0.0196,0.0194,0.0193,0.0191,0.0184,0.0161,0.0139,0.0118,0.0097,0.0077,0.0057,0.0037,0.0019,0,-0.0245,-0.0189,-0.046,-0.0206,-0.0196,-0.0595,-0.0864,-0.079,-0.0413,0.0138,0.0735,0.1296,0.1174,0.1061,0.0969,0.0895,0.0829,0.0768,0.0712,0.0669,0.0629,0.0592,0.0558,0.0525,0.0495,0.0474,0.0455,0.0429,0.0412,0.0395,0.038,0.0365,0.0351,0.0338,0.0325,0.0313,0.0307,0.0296,0.0285,0.0275,0.0271,0.0261,0.0257,0.0248,0.0244,0.0235,0.0232,0.0224,0.0221,0.0214,0.0211,0.0203,0.0201,0.0199,0.0192,0.019,0.0188,0.0181,0.018,0.0178,0.0172,0.017,0.0169,0.0163,0.0161,0.016,0.0159,0.0153,0.0137,0.0118,0.01,0.0083,0.0065,0.0048,0.0032,0.0016,0,-0.0279,-0.0305,-0.0306,-0.0086,-0.0435,-0.0791,-0.0746,-0.0331,0.0281,0.0934,0.1206,0.1086,0.0979,0.0884,0.0807,0.0746,0.069,0.0639,0.0592,0.0556,0.0523,0.0492,0.0463,0.0436,0.0411,0.0394,0.0377,0.0356,0.0342,0.0328,0.0315,0.0303,0.0291,0.028,0.027,0.0259,0.0255,0.0245,0.0236,0.0228,0.0224,0.0216,0.0213,0.0205,0.0202,0.0195,0.0193,0.0186,0.0183,0.0177,0.0175,0.0169,0.0167,0.0165,0.0159,0.0157,0.0156,0.015,0.0149,0.0147,0.0142,0.0141,0.014,0.0135,0.0134,0.0132,0.0131,0.0127,0.0116,0.01,0.0085,0.007,0.0055,0.0041,0.0027,0.0013,0,-0.0147,-0.0389,-0.0069,-0.023,-0.0691,-0.0727,-0.0304,0.0369,0.1081,0.114,0.1006,0.0905,0.0816,0.0736,0.0671,0.062,0.0573,0.0531,0.0491,0.0462,0.0434,0.0408,0.0384,0.0362,0.0341,0.0326,0.0313,0.0295,0.0283,0.0272,0.0261,0.0251,0.0242,0.0232,0.0223,0.0215,0.0211,0.0203,0.0196,0.0189,0.0186,0.0179,0.0176,0.017,0.0168,0.0162,0.0159,0.0154,0.0152,0.0146,0.0145,0.014,0.0138,0.0137,0.0132,0.013,0.0129,0.0124,0.0123,0.0122,0.0118,0.0117,0.0116,0.0111,0.0111,0.011,0.0109,0.0105,0.0098,0.0085,0.0072,0.0059,0.0047,0.0034,0.0023,0.0011,0,-0.0163,-0.0228,-0.0032,-0.0532,-0.072,-0.0336,0.0388,0.1169,0.1088,0.095,0.0838,0.0754,0.0679,0.0612,0.0558,0.0515,0.0476,0.0441,0.0408,0.0383,0.036,0.0339,0.0319,0.03,0.0283,0.0271,0.026,0.0245,0.0235,0.0225,0.0216,0.0208,0.02,0.0192,0.0185,0.0178,0.0175,0.0169,0.0162,0.0156,0.0154,0.0148,0.0146,0.0141,0.0139,0.0134,0.0132,0.0127,0.0126,0.0121,0.012,0.0116,0.0114,0.0113,0.0109,0.0108,0.0107,0.0103,0.0102,0.0101,0.0097,0.0097,0.0096,0.0092,0.0092,0.0091,0.009,0.0087,0.0083,0.0071,0.006,0.005,0.0039,0.0029,0.0019,0.0009,0,-0.0306,0.0008,-0.0262,-0.0688,-0.0424,0.0326,0.1185,0.1048,0.0906,0.0791,0.0697,0.0627,0.0564,0.0508,0.0463,0.0428,0.0395,0.0366,0.0338,0.0318,0.0299,0.0281,0.0264,0.0249,0.0234,0.0224,0.0215,0.0203,0.0194,0.0187,0.0179,0.0172,0.0166,0.0159,0.0153,0.0147,0.0145,0.014,0.0134,0.0129,0.0127,0.0123,0.0121,0.0117,0.0115,0.0111,0.0109,0.0105,0.0104,0.01,0.0099,0.0096,0.0095,0.0094,0.009,0.0089,0.0088,0.0085,0.0084,0.0084,0.0081,0.008,0.0079,0.0076,0.0076,0.0075,0.0075,0.0072,0.0069,0.006,0.0051,0.0042,0.0033,0.0024,0.0016,0.0008,0,-0.0247,0.003,-0.0556,-0.0548,0.0172,0.1115,0.1027,0.0873,0.0755,0.0658,0.058,0.052,0.0468,0.0422,0.0384,0.0355,0.0328,0.0303,0.0281,0.0263,0.0248,0.0233,0.0219,0.0206,0.0194,0.0186,0.0178,0.0168,0.0161,0.0155,0.0149,0.0143,0.0137,0.0132,0.0127,0.0122,0.012,0.0115,0.0111,0.0107,0.0106,0.0102,0.01,0.0097,0.0095,0.0092,0.0091,0.0087,0.0086,0.0083,0.0082,0.0079,0.0078,0.0077,0.0075,0.0074,0.0073,0.007,0.007,0.0069,0.0067,0.0066,0.0066,0.0063,0.0063,0.0062,0.0062,0.0059,0.0058,0.005,0.0042,0.0035,0.0027,0.002,0.0013,0.0007,0,-0.0006,-0.022,-0.0629,-0.0075,0.094,0.1023,0.0856,0.0727,0.0627,0.0547,0.0481,0.0432,0.0389,0.035,0.0319,0.0294,0.0272,0.0251,0.0232,0.0218,0.0205,0.0193,0.0181,0.0171,0.0161,0.0154,0.0147,0.0139,0.0133,0.0128,0.0123,0.0118,0.0114,0.0109,0.0105,0.0101,0.0099,0.0096,0.0092,0.0089,0.0087,0.0084,0.0083,0.008,0.0079,0.0076,0.0075,0.0072,0.0071,0.0069,0.0068,0.0066,0.0065,0.0064,0.0062,0.0061,0.006,0.0058,0.0058,0.0057,0.0055,0.0055,0.0054,0.0052,0.0052,0.0051,0.0051,0.0049,0.0048,0.0042,0.0035,0.0029,0.0023,0.0017,0.0011,0.0006,0,0.0117,-0.0517,-0.0376,0.0635,0.1048,0.0852,0.0712,0.0604,0.0521,0.0454,0.0399,0.0358,0.0322,0.029,0.0264,0.0244,0.0225,0.0208,0.0193,0.0181,0.017,0.016,0.015,0.0141,0.0133,0.0127,0.0122,0.0115,0.011,0.0106,0.0102,0.0098,0.0094,0.009,0.0087,0.0084,0.0082,0.0079,0.0076,0.0073,0.0072,0.007,0.0069,0.0066,0.0065,0.0063,0.0062,0.006,0.0059,0.0057,0.0056,0.0054,0.0054,0.0053,0.0051,0.0051,0.005,0.0048,0.0048,0.0047,0.0046,0.0045,0.0045,0.0043,0.0043,0.0043,0.0042,0.0041,0.004,0.0035,0.0029,0.0024,0.0019,0.0014,0.0009,0.0005,0,-0.0047,-0.0583,0.0193,0.1101,0.0873,0.0709,0.0592,0.0502,0.0432,0.0377,0.0331,0.0297,0.0267,0.024,0.0219,0.0202,0.0186,0.0172,0.0159,0.015,0.0141,0.0132,0.0124,0.0117,0.011,0.0106,0.0101,0.0095,0.0091,0.0088,0.0084,0.0081,0.0078,0.0075,0.0072,0.0069,0.0068,0.0066,0.0063,0.0061,0.006,0.0058,0.0057,0.0055,0.0054,0.0052,0.0051,0.0049,0.0049,0.0047,0.0046,0.0045,0.0044,0.0044,0.0042,0.0042,0.0041,0.004,0.004,0.0039,0.0038,0.0037,0.0037,0.0036,0.0036,0.0035,0.0035,0.0034,0.0033,0.0029,0.0024,0.002,0.0016,0.0012,0.0008,0.0004,0,-0.0381,-0.0316,0.0948,0.0918,0.0726,0.0589,0.0491,0.0416,0.0359,0.0312,0.0274,0.0246,0.0221,0.0199,0.0181,0.0167,0.0154,0.0143,0.0132,0.0124,0.0116,0.0109,0.0103,0.0097,0.0091,0.0087,0.0084,0.0079,0.0076,0.0073,0.007,0.0067,0.0064,0.0062,0.006,0.0057,0.0056,0.0054,0.0052,0.005,0.005,0.0048,0.0047,0.0045,0.0045,0.0043,0.0042,0.0041,0.004,0.0039,0.0039,0.0037,0.0037,0.0036,0.0035,0.0035,0.0034,0.0033,0.0033,0.0032,0.0031,0.0031,0.0031,0.003,0.0029,0.0029,0.0029,0.0028,0.0028,0.0024,0.002,0.0017,0.0013,0.001,0.0006,0.0003,0,-0.0557,0.0265,0.1008,0.0764,0.0604,0.0489,0.0408,0.0345,0.0297,0.0259,0.0227,0.0204,0.0183,0.0165,0.015,0.0138,0.0128,0.0118,0.0109,0.0103,0.0096,0.0091,0.0085,0.008,0.0076,0.0072,0.0069,0.0065,0.0063,0.006,0.0058,0.0055,0.0053,0.0051,0.0049,0.0047,0.0047,0.0045,0.0043,0.0042,0.0041,0.0039,0.0039,0.0037,0.0037,0.0036,0.0035,0.0034,0.0033,0.0032,0.0032,0.0031,0.003,0.003,0.0029,0.0029,0.0028,0.0027,0.0027,0.0027,0.0026,0.0026,0.0025,0.0024,0.0024,0.0024,0.0024,0.0023,0.0023,0.002,0.0017,0.0014,0.0011,0.0008,0.0005,0.0003,0,-0.0424,0.1024,0.0839,0.0635,0.0501,0.0406,0.0338,0.0286,0.0246,0.0214,0.0188,0.0169,0.0152,0.0137,0.0124,0.0115,0.0106,0.0098,0.0091,0.0085,0.008,0.0075,0.007,0.0066,0.0063,0.006,0.0057,0.0054,0.0052,0.005,0.0048,0.0046,0.0044,0.0042,0.0041,0.0039,0.0039,0.0037,0.0036,0.0034,0.0034,0.0033,0.0032,0.0031,0.0031,0.0029,0.0029,0.0028,0.0028,0.0027,0.0026,0.0025,0.0025,0.0025,0.0024,0.0024,0.0024,0.0023,0.0022,0.0022,0.0021,0.0021,0.0021,0.002,0.002,0.002,0.002,0.0019,0.0019,0.0017,0.0014,0.0012,0.0009,0.0007,0.0004,0.0002,0,0.005,0.097,0.0698,0.0527,0.0416,0.0337,0.028,0.0237,0.0204,0.0177,0.0156,0.014,0.0126,0.0113,0.0103,0.0095,0.0088,0.0081,0.0075,0.007,0.0066,0.0062,0.0058,0.0055,0.0052,0.005,0.0047,0.0045,0.0043,0.0041,0.004,0.0038,0.0037,0.0035,0.0034,0.0032,0.0032,0.0031,0.0029,0.0028,0.0028,0.0027,0.0027,0.0026,0.0025,0.0024,0.0024,0.0023,0.0023,0.0022,0.0022,0.0021,0.0021,0.0021,0.002,0.002,0.0019,0.0019,0.0019,0.0018,0.0018,0.0018,0.0017,0.0017,0.0017,0.0016,0.0016,0.0016,0.0016,0.0014,0.0012,0.001,0.0008,0.0006,0.0004,0.0002,0,0.076,0.0808,0.058,0.0437,0.0345,0.0279,0.0232,0.0196,0.0169,0.0147,0.0129,0.0116,0.0104,0.0094,0.0085,0.0078,0.0073,0.0067,0.0062,0.0058,0.0055,0.0051,0.0048,0.0045,0.0043,0.0041,0.0039,0.0037,0.0035,0.0034,0.0033,0.0031,0.003,0.0029,0.0028,0.0027,0.0026,0.0025,0.0024,0.0024,0.0023,0.0022,0.0022,0.0021,0.0021,0.002,0.002,0.0019,0.0019,0.0018,0.0018,0.0017,0.0017,0.0017,0.0016,0.0016,0.0016,0.0015,0.0015,0.0015,0.0015,0.0014,0.0014,0.0014,0.0014,0.0014,0.0014,0.0013,0.0013,0.0011,0.001,0.0008,0.0006,0.0005,0.0003,0.0001,0,0.1011,0.0672,0.0481,0.0363,0.0286,0.0231,0.0192,0.0163,0.014,0.0122,0.0107,0.0096,0.0086,0.0077,0.007,0.0065,0.006,0.0055,0.0051,0.0048,0.0045,0.0042,0.004,0.0038,0.0035,0.0034,0.0032,0.0031,0.0029,0.0028,0.0027,0.0026,0.0025,0.0024,0.0023,0.0022,0.0022,0.0021,0.002,0.0019,0.0019,0.0018,0.0018,0.0018,0.0017,0.0017,0.0016,0.0016,0.0016,0.0015,0.0015,0.0014,0.0014,0.0014,0.0014,0.0013,0.0013,0.0013,0.0013,0.0013,0.0012,0.0012,0.0012,0.0011,0.0011,0.0011,0.0011,0.0011,0.0011,0.0009,0.0008,0.0007,0.0005,0.0004,0.0003,0.0001,0]};
-const CASOS = [
-  { t: "D máximo", a: 0.26, m: 1.3, d: "la mayor amplificación del mapa, D = 1,61." },
-  { t: "Despega antes", a: 0.16, m: 0.26, d: "la partícula pierde el contacto lo más temprano del mapa, en τ = 0,86." },
-  { t: "Sube al llegar", a: 0.075, m: 22, d: "llega lo más alto sobre los apoyos, ȳ(1) = −0,049; su λ = 0,12 queda entre los valores de Smith 1/12 y 1/6." },
-  { t: "En el borde", a: 0.4, m: 1.04, d: "sobre la curva λ = 1/6, que el borde de la zona sin contacto sigue hasta α ≈ 0,5; pierde el contacto recién en τ = 0,994." },
-  { t: "Muy liviana", a: 0.3, m: 0.05, d: "una partícula veinte veces más liviana que la cuerda igual se despega, en τ = 0,92: el límite de carga liviana es singular." },
-  { t: "Dyniewicz–Bajer", a: 0.2, m: 2, d: "el caso del artículo de Dyniewicz y Bajer; se despega en τ = 0,905 y llega sobre los apoyos." },
-  { t: "Casi Caso II", a: 0.05, m: 100, d: "λ = 0,25 con α pequeño: llega a ȳ(1) = 0,158, cerca del 0,156 de la cuerda sin masa de Smith." },
-  { t: "Pesada y rápida", a: 0.8, m: 30, d: "casi caída libre: el centro de la cuerda apenas se mueve, D = 0,05." },
-  { t: "Crítica", a: 1, m: 1, d: "v = c, con solución cerrada; llega a ȳ(1) = 0,284." }
-];
-const A_MIN = 0.05, A_MAX = 1, M_MIN = 0.05, M_MAX = 100;
-const LM0 = Math.log10(M_MIN), LM1 = Math.log10(M_MAX);
-const E = { a: CASOS[0].a, m: CASOS[0].m, mapa: "tc", vista: "cuerda", r: null };
-try {
-  const g = JSON.parse(localStorage.getItem("caso3") || "null");
-  if (g && g.a >= A_MIN && g.a <= A_MAX && g.m >= M_MIN && g.m <= M_MAX) { E.a = g.a; E.m = g.m; }
-  if (g && ["tc", "y1", "D", "ymax"].indexOf(g.mapa) >= 0) E.mapa = g.mapa;
-  if (g && (g.vista === "cuerda" || g.vista === "numeros")) E.vista = g.vista;
-} catch (err) { /* sin almacenamiento */ }
-let guardarT = 0;
-function guardar() {
-  clearTimeout(guardarT);
-  guardarT = setTimeout(() => { try { localStorage.setItem("caso3", JSON.stringify({ a: E.a, m: E.m, mapa: E.mapa, vista: E.vista })); } catch (err) { /* sin almacenamiento */ } }, 300);
-}
+(() => {
+  "use strict";
+  const lienzo = document.getElementById("lienzo");
+  const ctx = lienzo.getContext("2d");
+  const boton = document.getElementById("pausa");
 
-// ---------- formato ----------
-function num(v, d) {
-  if (Math.abs(v) < 0.5 * Math.pow(10, -d)) v = 0;
-  return (v < 0 ? "−" : "") + Math.abs(v).toFixed(d).replace(".", ",");
-}
-const fmtA = a => { const s = a.toFixed(3); return (s.charAt(s.length - 1) === "0" ? a.toFixed(2) : s).replace(".", ","); };
-const fmtM = m => m < 0.1 ? num(m, 3) : m < 10 ? num(m, 2) : m < 100 ? num(m, 1) : num(m, 0);
-const leer = s => parseFloat(String(s).replace(/\s/g, "").replace("−", "-").replace(",", "."));
-const acot = (v, a, b) => Math.max(a, Math.min(b, v));
-const redA = a => +(Math.round(a * 200) / 200).toFixed(3);
-const redM = m => +(+m).toPrecision(3);
+  // Caso I: fuerza sin masa que cruza la cuerda con alfa = v/c fijo.
+  // Desplazamiento por modos, w(xi, tau) = suma eta_j(tau) sen(j pi xi), con
+  // eta_j = 2/((j pi)^2 (1 - alfa^2)) [sen(j pi tau) - alfa sen(j pi tau/alfa)] mientras la fuerza está encima,
+  // y vibración libre con frecuencia j pi/alfa después de tau = 1.
+  const ALFA = 0.5, N = 120, P = 241;
+  const RITMO = 1 / 3.6;              // tau por segundo
+  const T_LIBRE = 2;                  // la vibración libre se sigue hasta tau = 2
+  const FUNDIDO = 0.9, DESCANSO = 0.6;
+  const DUR = T_LIBRE / RITMO, CICLO = DUR + FUNDIDO + DESCANSO;
+  const TAU_QUIETO = 0.62;
 
-// ---------- escalas de color ----------
-const hex = h => [parseInt(h.slice(1, 3), 16), parseInt(h.slice(3, 5), 16), parseInt(h.slice(5, 7), 16)];
-const PAL = {
-  viridis: ["#440154", "#482878", "#3E4A89", "#31688E", "#26828E", "#1F9E89", "#35B779", "#6DCD59", "#B4DE2C", "#FDE725"].map(hex),
-  rdbu: ["#2166AC", "#4393C3", "#92C5DE", "#D1E5F0", "#F7F7F7", "#FDDBC7", "#F4A582", "#D6604D", "#B2182B", "#67001F"].map(hex),
-  magma: ["#FCFDBF", "#FEC287", "#FB8761", "#E55064", "#B5367A", "#812581", "#4F127B", "#1C1044", "#000004"].map(hex),
-  blues: ["#F7FBFF", "#DEEBF7", "#C6DBEF", "#9ECAE1", "#6BAED6", "#4292C6", "#2171B5", "#08519C", "#08306B"].map(hex)
-};
-function color(p, t) {
-  t = acot(t, 0, 1);
-  const x = t * (p.length - 1), i = Math.min(p.length - 2, Math.floor(x)), f = x - i, c0 = p[i], c1 = p[i + 1];
-  return [c0[0] + (c1[0] - c0[0]) * f, c0[1] + (c1[1] - c0[1]) * f, c0[2] + (c1[2] - c0[2]) * f];
-}
-// la llegada usa dos pendientes: de −0,05 a 0 y de 0 a 0,5 (0 queda en blanco)
-const tLlegada = v => v < 0 ? 0.5 - 0.5 * Math.min(1, v / -0.05) : 0.5 + 0.5 * Math.min(1, v / 0.5);
-const MAPAS = {
-  tc: { pal: "viridis", t: v => (v - 0.86) / 0.14, titulo: "τ en que se pierde el contacto", marcas: [0.88, 0.92, 0.96, 1], dec: 2, nulo: true },
-  y1: { pal: "rdbu", t: tLlegada, titulo: "Llegada ȳ(1) · positiva: bajo los apoyos", marcas: [-0.05, 0, 0.1, 0.2, 0.3, 0.4, 0.5], dec: 2 },
-  D: { pal: "magma", t: v => v / 1.7, titulo: "Amplificación dinámica D", marcas: [0, 0.5, 1, 1.5], dec: 1 },
-  ymax: { pal: "blues", t: v => v / 0.5, titulo: "Deflexión máxima ȳ máx", marcas: [0, 0.1, 0.2, 0.3, 0.4, 0.5], dec: 1 }
-};
-const css = n => getComputedStyle(document.documentElement).getPropertyValue(n).trim();
-
-// imagen de NA × NM píxeles con el valor de cada nodo de la grilla (fila 0 = mu máximo)
-const cacheImg = {};
-function imagen(tipo) {
-  if (cacheImg[tipo]) return cacheImg[tipo];
-  const NA = DATOS.NA, NM = DATOS.NM, c = document.createElement("canvas");
-  c.width = NA; c.height = NM;
-  const g = c.getContext("2d"), img = g.createImageData(NA, NM), M = MAPAS[tipo], p = PAL[M.pal], v = DATOS[tipo];
-  const neutro = hex(css("--neutro") || "#FFFFFF");
-  for (let j = 0; j < NM; j++) for (let i = 0; i < NA; i++) {
-    const q = j * NA + i, val = v[q], col = val === null ? neutro : color(p, M.t(val)), o = ((NM - 1 - j) * NA + i) * 4;
-    img.data[o] = col[0]; img.data[o + 1] = col[1]; img.data[o + 2] = col[2]; img.data[o + 3] = 255;
+  const xi = new Float64Array(P);
+  for (let i = 0; i < P; i++) xi[i] = i / (P - 1);
+  const senos = new Float64Array(N * P), sigma = new Float64Array(N), c = new Float64Array(N);
+  const e1 = new Float64Array(N), de1 = new Float64Array(N), eta = new Float64Array(N);
+  for (let j = 1; j <= N; j++) {
+    const k = j * Math.PI, q = k / (N + 1);
+    sigma[j - 1] = Math.sin(q) / q;                       // factores de Lanczos
+    c[j - 1] = 2 / (k * k * (1 - ALFA * ALFA));
+    e1[j - 1] = c[j - 1] * (Math.sin(k) - ALFA * Math.sin(k / ALFA));
+    de1[j - 1] = c[j - 1] * k * (Math.cos(k) - Math.cos(k / ALFA));
+    for (let i = 0; i < P; i++) senos[(j - 1) * P + i] = sigma[j - 1] * Math.sin(k * xi[i]);
   }
-  g.putImageData(img, 0, 0);
-  return (cacheImg[tipo] = c);
-}
-
-// ---------- el mapa ----------
-const G = {};
-function dibujarMapa() {
-  const fig = $("fig"), cv = $("cv"), sv = $("sv"), W = fig.clientWidth, H = fig.clientHeight;
-  if (!W || !H) return;
-  const angosto = W < 360;
-  const M = { l: angosto ? 38 : 42, r: 8, t: 6, b: 32 }, pw = W - M.l - M.r, ph = H - M.t - M.b;
-  const X = a => M.l + (a - A_MIN) / (A_MAX - A_MIN) * pw, Y = m => M.t + (LM1 - Math.log10(m)) / (LM1 - LM0) * ph;
-  Object.assign(G, { W, H, M, pw, ph, X, Y });
-  // mapa de calor: los centros de los píxeles caen en los nodos de la grilla
-  const dpr = window.devicePixelRatio || 1;
-  cv.width = Math.round(W * dpr); cv.height = Math.round(H * dpr);
-  const g = cv.getContext("2d");
-  g.setTransform(dpr, 0, 0, dpr, 0, 0);
-  g.clearRect(0, 0, W, H);
-  g.save();
-  g.beginPath(); g.rect(M.l, M.t, pw, ph); g.clip();
-  g.imageSmoothingEnabled = true;
-  if ("imageSmoothingQuality" in g) g.imageSmoothingQuality = "high";
-  const dA = (A_MAX - A_MIN) / (DATOS.NA - 1), dL = (LM1 - LM0) / (DATOS.NM - 1);
-  const x0 = X(A_MIN - dA / 2), x1 = X(A_MAX + dA / 2), y0 = M.t + (-dL / 2) / (LM1 - LM0) * ph, y1 = M.t + (LM1 - LM0 + dL / 2) / (LM1 - LM0) * ph;
-  g.drawImage(imagen(E.mapa), x0, y0, x1 - x0, y1 - y0);
-  g.restore();
-  // capas vectoriales
-  const gx = gi => X(A_MIN + dA * gi), gy = gj => M.t + (LM1 - (LM0 + dL * gj)) / (LM1 - LM0) * ph;
-  let s = `<defs><clipPath id="clip"><rect x="${M.l}" y="${M.t}" width="${pw}" height="${ph}"/></clipPath></defs>`;
-  let z = "";
-  for (const m of [0.1, 1, 10]) z += `<line x1="${M.l}" y1="${Y(m)}" x2="${M.l + pw}" y2="${Y(m)}" style="stroke:var(--rejilla)"/>`;
-  for (const a of [0.2, 0.4, 0.6, 0.8]) z += `<line x1="${X(a)}" y1="${M.t}" x2="${X(a)}" y2="${M.t + ph}" style="stroke:var(--rejilla)"/>`;
-  // curvas de Smith, lambda = 1/6 y 1/12
-  for (const [l0, dash] of [[1 / 6, ""], [1 / 12, ' stroke-dasharray="5 4"']]) {
-    let d = "";
-    for (let k = 0; k <= 120; k++) { const a = A_MIN + (A_MAX - A_MIN) * k / 120, m = Math.min(1e4, l0 / (a * a)); d += (k ? "L" : "M") + X(a).toFixed(1) + " " + Y(m).toFixed(1); }
-    z += `<path d="${d}" fill="none" style="stroke:var(--curva-halo)" stroke-width="3.4"/><path d="${d}" fill="none" style="stroke:var(--curva)" stroke-width="1.9"${dash}/>`;
-  }
-  // borde de la zona sin contacto: m = 0 por cuadrados que marchan
-  const borde = contorno(gx, gy);
-  z += `<path d="${borde}" fill="none" style="stroke:var(--borde-halo)" stroke-width="5.4" stroke-linecap="round"/>`;
-  z += `<path d="${borde}" fill="none" style="stroke:var(--borde-c)" stroke-width="3" stroke-linecap="round"/>`;
-  if (!angosto) z += `<text class="rot-curva" x="${X(0.78)}" y="${Y(1 / (6 * 0.78 * 0.78)) - 6}" text-anchor="middle">λ = 1/6</text><text class="rot-curva" x="${X(0.86)}" y="${Y(1 / (12 * 0.86 * 0.86)) + 15}" text-anchor="middle">λ = 1/12</text>`;
-  s += `<g clip-path="url(#clip)">${z}</g><rect x="${M.l}" y="${M.t}" width="${pw}" height="${ph}" fill="none" stroke="var(--linea)"/>`;
-  for (const a of [0.2, 0.4, 0.6, 0.8, 1]) s += `<text x="${X(a)}" y="${M.t + ph + 15}" text-anchor="middle">${a === 1 ? "1" : num(a, 1)}</text>`;
-  for (const [m, t] of [[0.1, "0,1"], [1, "1"], [10, "10"], [100, "100"]]) s += `<text x="${M.l - 5}" y="${Y(m) + 4}" text-anchor="end">${t}</text>`;
-  s += `<text class="eje" x="${M.l + pw}" y="${H - 2}" text-anchor="end">velocidad, α = v/c</text>`;
-  s += `<text class="eje" transform="translate(11 ${M.t + ph / 2}) rotate(-90)" text-anchor="middle">razón de masas, μ</text>`;
-  s += `<g id="cursor"></g>`;
-  sv.innerHTML = s;
-  dibujarCursor();
-}
-let cacheContorno = null;
-function contorno(gx, gy) {
-  const NA = DATOS.NA, NM = DATOS.NM, v = DATOS.m;
-  const val = (i, j) => { const x = v[j * NA + i]; return x === null ? 1 : x; };
-  const segs = [];
-  for (let j = 0; j < NM - 1; j++) for (let i = 0; i < NA - 1; i++) {
-    const c = [val(i, j), val(i + 1, j), val(i + 1, j + 1), val(i, j + 1)];
-    const k = (c[0] < 0 ? 1 : 0) | (c[1] < 0 ? 2 : 0) | (c[2] < 0 ? 4 : 0) | (c[3] < 0 ? 8 : 0);
-    if (k === 0 || k === 15) continue;
-    const corte = (p, q) => p / (p - q);
-    const P = [
-      [i + corte(c[0], c[1]), j], [i + 1, j + corte(c[1], c[2])],
-      [i + corte(c[3], c[2]), j + 1], [i, j + corte(c[0], c[3])]
-    ];
-    const T = { 1: [[3, 0]], 2: [[0, 1]], 3: [[3, 1]], 4: [[1, 2]], 5: [[3, 2], [0, 1]], 6: [[0, 2]], 7: [[3, 2]], 8: [[2, 3]], 9: [[0, 2]], 10: [[0, 3], [1, 2]], 11: [[1, 2]], 12: [[1, 3]], 13: [[0, 1]], 14: [[0, 3]] }[k];
-    for (const [e0, e1] of T) segs.push([P[e0], P[e1]]);
-  }
-  let d = "";
-  for (const [p, q] of segs) d += "M" + gx(p[0]).toFixed(1) + " " + gy(p[1]).toFixed(1) + "L" + gx(q[0]).toFixed(1) + " " + gy(q[1]).toFixed(1);
-  return d;
-}
-function dibujarCursor() {
-  const c = $("cursor"); if (!c || !G.X) return;
-  const x = G.X(E.a), y = G.Y(E.m), M = G.M;
-  let s = "";
-  if (x - 11 > M.l) s += `<line x1="${M.l}" y1="${y}" x2="${x - 11}" y2="${y}" style="stroke:var(--curva)" stroke-width="1.2" stroke-dasharray="3 3" opacity=".8"/>`;
-  if (y + 11 < M.t + G.ph) s += `<line x1="${x}" y1="${y + 11}" x2="${x}" y2="${M.t + G.ph}" style="stroke:var(--curva)" stroke-width="1.2" stroke-dasharray="3 3" opacity=".8"/>`;
-  s += `<circle cx="${x}" cy="${y}" r="10" fill="none" stroke="#FFFFFF" stroke-width="6"/><circle cx="${x}" cy="${y}" r="10" fill="none" stroke="#16202B" stroke-width="2.8"/><circle cx="${x}" cy="${y}" r="2.6" fill="#16202B"/>`;
-  c.innerHTML = s;
-  if (arr.activo) globo(x, y);
-}
-function globo(x, y) {
-  const b = $("globo");
-  const c = casoEn(E.a, E.m);
-  b.textContent = (c ? c.t + " · " : "") + "α = " + fmtA(E.a) + " · μ = " + fmtM(E.m);
-  b.hidden = false;
-  const w = b.offsetWidth, h = b.offsetHeight;
-  let top = y - 22 - h; if (top < 0) top = y + 22;
-  b.style.left = acot(x - w / 2, 0, G.W - w) + "px"; b.style.top = top + "px";
-}
-function escala() {
-  const M = MAPAS[E.mapa], p = PAL[M.pal], pasos = [];
-  for (let k = 0; k <= 20; k++) { const c = color(p, k / 20); pasos.push(`rgb(${c.map(Math.round).join(",")}) ${k * 5}%`); }
-  let h = `<div class="escala-cab"><b>${M.titulo}</b>${M.nulo ? '<span class="sin"><i></i>no lo pierde</span>' : ""}</div>`;
-  h += `<div class="barra-color" style="background:linear-gradient(90deg,${pasos.join(",")})"></div><div class="marcas">`;
-  for (const v of M.marcas) h += `<span style="left:${(100 * acot(M.t(v), 0, 1)).toFixed(1)}%">${v === 1 && E.mapa === "tc" ? "1" : num(v, M.dec)}</span>`;
-  $("escala").innerHTML = h + "</div>";
-}
-
-// ---------- cálculo del punto en un hilo aparte (el último pedido manda) ----------
-const fuente = $("motor").textContent;
-let trabajador = null, ocupado = false, pendiente = null, ultimo = null, idPed = 0, local = null;
-function calcularLocal(p) {
-  if (!local) local = new Function(fuente + "\nreturn analizar;")();
-  const t0 = performance.now();
-  let r;
-  try { r = local(p.a, p.m); } catch (err) { r = { error: String(err) }; }
-  r.a = p.a; r.m = p.m; r.id = p.id; r.ms = performance.now() - t0;
-  return r;
-}
-try {
-  const url = URL.createObjectURL(new Blob([fuente + "\nself.onmessage = function (e) { var p = e.data, t0 = Date.now(), r; try { r = analizar(p.a, p.m); } catch (err) { r = { error: String(err) }; } r.a = p.a; r.m = p.m; r.id = p.id; r.ms = Date.now() - t0; self.postMessage(r, r.cuadros ? [r.cuadros.w.buffer, r.cuadros.y.buffer] : []); };"], { type: "text/javascript" }));
-  trabajador = new Worker(url);
-  trabajador.onmessage = e => recibir(e.data);
-  trabajador.onerror = ev => {
-    if (ev && ev.preventDefault) ev.preventDefault();
-    trabajador = null; ocupado = false;
-    if (!pendiente && ultimo) pendiente = ultimo;
-    lanzar();
-  };
-} catch (err) { trabajador = null; }
-function pedir() {
-  pendiente = { a: E.a, m: E.m, id: ++idPed };
-  $("res").classList.add("calculando"); $("estado").textContent = "calculando…";
-  if (!ocupado) lanzar();
-}
-function lanzar() {
-  if (!pendiente) return;
-  const p = pendiente; pendiente = null; ultimo = p; ocupado = true;
-  if (trabajador) trabajador.postMessage(p);
-  else setTimeout(() => recibir(calcularLocal(p)), 16);
-}
-function recibir(r) {
-  ocupado = false;
-  if (pendiente) lanzar();
-  mostrar(r);
-  if (!pendiente && !ocupado) $("res").classList.remove("calculando");
-}
-function mostrar(r) {
-  if (r.error) { $("estado").textContent = "no se pudo calcular este punto"; return; }
-  const lam = r.a * r.a * r.m, ts = 2 * r.a / (1 + r.a);
-  $("t-lam").textContent = num(lam, lam < 0.01 ? 4 : lam < 1 ? 3 : lam < 10 ? 2 : 1);
-  $("t-ts").textContent = num(ts, 3);
-  $("t-D").textContent = num(r.D, 2);
-  $("t-y1").textContent = num(r.y1, 3);
-  $("t-y1-sub").textContent = r.y1 > 5e-4 ? "bajo apoyos" : r.y1 < -5e-4 ? "sobre apoyos" : "al nivel";
-  $("t-ymax").textContent = num(r.ymax, 3);
-  $("t-ymax-sub").textContent = "en τ = " + num(r.tmax, 2);
-  const c = $("t-cont");
-  if (r.tc === null) { c.textContent = "se mantiene"; c.className = "val chico ok"; $("t-cont-sub").textContent = "fuerza ≥ 0"; }
-  else { c.textContent = "se pierde"; c.className = "val chico alerta"; $("t-cont-sub").textContent = "en τ = " + num(r.tc, 3); }
-  const ms = Math.max(1, Math.round(r.ms)), caso = casoEn(r.a, r.m);
-  $("estado").textContent = (caso ? caso.t : "α = " + fmtA(r.a) + " · μ = " + fmtM(r.m)) + " · " + (ms < 1000 ? ms + " ms" : num(ms / 1000, 1) + " s");
-  $("resumen").textContent = "D = " + num(r.D, 2) + " · ȳ(1) = " + num(r.y1, 3) + " · " + (r.tc === null ? "contacto se mantiene" : "se pierde en τ = " + num(r.tc, 3));
-  E.r = r;
-  if (E.vista === "cuerda") { fondoCuerda(); animar(); }
-}
-
-// ---------- la cuerda en el instante tau ----------
-const A = { tau: 0, play: true, ult: 0, espera: 0, raf: 0, arr: false, id: null };
-const GC = {};
-const ICONO = { pausa: '<svg viewBox="0 0 16 16" aria-hidden="true"><rect x="3" y="2" width="3.6" height="12" rx="1" fill="currentColor"/><rect x="9.4" y="2" width="3.6" height="12" rx="1" fill="currentColor"/></svg>',
-  seguir: '<svg viewBox="0 0 16 16" aria-hidden="true"><path d="M4 2.2 L13.5 8 L4 13.8 Z" fill="currentColor"/></svg>' };
-function iconoPlay() { $("b-play").innerHTML = A.play ? ICONO.pausa : ICONO.seguir; $("b-play").setAttribute("aria-label", A.play ? "Pausar" : "Seguir"); }
-function fondoCuerda() {
-  const fig = $("fig-cuerda"), W = fig.clientWidth, H = fig.clientHeight;
-  if (!W || !H) return;
-  const c = E.r && E.r.cuadros;
-  const lo = Math.min(-0.12, c ? c.lo - 0.02 : 0), hi = Math.max(0.52, c ? c.hi + 0.02 : 0);
-  const M = { l: 12, r: 12, t: 12, b: 6 }, pw = W - M.l - M.r, ph = H - M.t - M.b;
-  Object.assign(GC, { W, H, M, pw, ph, X: x => M.l + x * pw, Y: w => M.t + (w - lo) / (hi - lo) * ph });
-  const X = GC.X, Y = GC.Y;
-  let s = `<line x1="${X(0)}" y1="${Y(0)}" x2="${X(1)}" y2="${Y(0)}" style="stroke:var(--tinta-3)" stroke-dasharray="3 4"/>`;
-  for (const x of [0, 1]) s += `<path d="M${X(x)} ${Y(0)} l-6 9 h12 z" style="fill:var(--tinta-3)"/>`;
-  $("sv-cuerda").innerHTML = s + '<g id="cuerda-din"></g>';
-  dibujarCuerda();
-}
-function dibujarCuerda() {
-  const g = $("cuerda-din"), r = E.r;
-  if (!g || !r || !r.cuadros || !GC.X) return;
-  const c = r.cuadros, X = GC.X, Y = GC.Y, F = c.F, NX = c.NX;
-  const tau = Math.max(0, Math.min(A.tau, c.tmax)), kf = tau / c.tmax * F, k0 = Math.min(F - 1, Math.floor(kf)), f = kf - k0;
-  const yp = c.y[k0] * (1 - f) + c.y[k0 + 1] * f;
-  // la cuerda, con la partícula como vértice
-  let d = "", puesto = false;
-  const P = (x, w) => (d ? "L" : "M") + X(x).toFixed(1) + " " + Y(w).toFixed(1);
-  for (let i = 0; i < NX; i++) {
-    const x = i / (NX - 1);
-    if (!puesto && x >= tau) { d += P(tau, yp); puesto = true; if (x === tau) continue; }
-    d += P(x, c.w[k0 * NX + i] * (1 - f) + c.w[(k0 + 1) * NX + i] * f);
-  }
-  // trayectoria recorrida; tras perder el contacto, segmentada en naranjo
-  const pts = [];
-  for (let k = 0; k <= k0; k++) pts.push([c.tmax * k / F, c.y[k]]);
-  pts.push([tau, yp]);
-  let d1 = "", d2 = "";
-  for (let j = 0; j < pts.length; j++) {
-    const p = X(pts[j][0]).toFixed(1) + " " + Y(pts[j][1]).toFixed(1);
-    if (r.tc === null || pts[j][0] <= r.tc) d1 += (d1 ? "L" : "M") + p;
-    else { if (!d2) { const q = pts[Math.max(0, j - 1)]; d2 = "M" + X(q[0]).toFixed(1) + " " + Y(q[1]).toFixed(1); } d2 += "L" + p; }
-  }
-  const suelta = r.tc !== null && tau > r.tc;
-  g.innerHTML = (d1 ? `<path d="${d1}" fill="none" style="stroke:var(--acento)" stroke-width="2"/>` : "") +
-    (d2 ? `<path d="${d2}" fill="none" style="stroke:var(--alerta)" stroke-width="2" stroke-dasharray="4 3"/>` : "") +
-    `<path d="${d}" fill="none" style="stroke:var(--tinta)" stroke-width="2.4" stroke-linejoin="round" stroke-linecap="round"/>` +
-    `<circle cx="${X(tau).toFixed(1)}" cy="${Y(yp).toFixed(1)}" r="5.5" fill="#EB6834" style="stroke:var(--panel)" stroke-width="2"/>`;
-  const t = $("t-tau");
-  t.textContent = "τ = " + num(tau, 2) + (suelta ? " · sin contacto" : "");
-  t.className = suelta ? "tau suelta" : "tau";
-}
-function bucle(ts) {
-  A.raf = 0;
-  if (E.vista !== "cuerda" || !A.play || document.hidden) { A.ult = 0; return; }
-  const dt = A.ult ? Math.min(0.1, (ts - A.ult) / 1000) : 0;
-  A.ult = ts;
-  const tmax = E.r && E.r.cuadros ? E.r.cuadros.tmax : 0.999;
-  if (A.espera > 0) { A.espera -= dt; if (A.espera <= 0) A.tau = 0; }
-  else { A.tau += dt / 6; if (A.tau >= tmax) { A.tau = tmax; A.espera = 0.9; } }
-  dibujarCuerda();
-  A.raf = requestAnimationFrame(bucle);
-}
-function animar() { if (!A.raf && A.play && E.vista === "cuerda") { A.ult = 0; A.raf = requestAnimationFrame(bucle); } }
-$("b-play").addEventListener("click", () => { A.play = !A.play; A.espera = 0; if (A.play && E.r && E.r.cuadros && A.tau >= E.r.cuadros.tmax) A.tau = 0; iconoPlay(); animar(); });
-function tauDesde(ev) { const R = $("fig-cuerda").getBoundingClientRect(); A.tau = acot((ev.clientX - R.left - GC.M.l) / GC.pw, 0, 0.999); A.espera = 0; dibujarCuerda(); }
-$("fig-cuerda").addEventListener("pointerdown", ev => {
-  if (ev.target.closest(".play") || !GC.X || (ev.pointerType === "mouse" && ev.button !== 0)) return;
-  A.arr = true; A.id = ev.pointerId; A.play = false; iconoPlay();
-  try { $("fig-cuerda").setPointerCapture(ev.pointerId); } catch (err) { /* sin captura */ }
-  tauDesde(ev);
-});
-window.addEventListener("pointermove", ev => { if (A.arr && ev.pointerId === A.id) tauDesde(ev); });
-window.addEventListener("pointerup", ev => { if (A.arr && ev.pointerId === A.id) A.arr = false; });
-window.addEventListener("pointercancel", ev => { if (A.arr && ev.pointerId === A.id) A.arr = false; });
-document.addEventListener("visibilitychange", () => { if (!document.hidden) animar(); });
-
-// Cuerda o números
-function marcarVista() {
-  for (const b of $("vistas").children) b.setAttribute("aria-pressed", String(b.dataset.v === E.vista));
-  $("v-cuerda").hidden = E.vista !== "cuerda";
-  $("v-numeros").hidden = E.vista !== "numeros";
-}
-$("vistas").addEventListener("click", ev => {
-  const b = ev.target.closest("button"); if (!b || b.dataset.v === E.vista) return;
-  E.vista = b.dataset.v; marcarVista(); guardar();
-  if (E.vista === "cuerda") { fondoCuerda(); animar(); }
-});
-
-// aviso breve en la línea de estado
-let avisoT = 0;
-function aviso(t) {
-  const e = $("estado"), antes = e.textContent;
-  e.textContent = t; e.style.color = "var(--alerta)";
-  clearTimeout(avisoT);
-  avisoT = setTimeout(() => { e.style.color = ""; if (e.textContent === t) e.textContent = antes; }, 2500);
-}
-
-// ---------- elegir el punto ----------
-function fijar(a, m, desde) {
-  a = acot(a, A_MIN, A_MAX); m = acot(m, M_MIN, M_MAX);
-  const cambio = a !== E.a || m !== E.m;
-  E.a = a; E.m = m;
-  if (desde !== "va" && document.activeElement !== $("v-alfa")) $("v-alfa").value = fmtA(a);
-  if (desde !== "vm" && document.activeElement !== $("v-mu")) $("v-mu").value = fmtM(m);
-  if (desde !== "ra") $("r-alfa").value = a;
-  if (desde !== "rm") $("r-mu").value = Math.log10(m);
-  for (const b of $("casos").children) b.setAttribute("aria-pressed", String(+b.dataset.a === a && +b.dataset.m === m));
-  dibujarCursor();
-  if (cambio || desde === "inicio") { pedir(); guardar(); }
-}
-
-function casoEn(a, m) { for (const c of CASOS) if (c.a === a && c.m === m) return c; return null; }
-
-// arrastre sobre el mapa
-const arr = { activo: false, id: null, raf: 0, pt: null };
-function enMapa(ev) { const R = $("fig").getBoundingClientRect(); return [ev.clientX - R.left, ev.clientY - R.top]; }
-function moverA(x, y) {
-  const M = G.M;
-  let a = A_MIN + (x - M.l) / G.pw * (A_MAX - A_MIN);
-  let lm = LM1 - (y - M.t) / G.ph * (LM1 - LM0);
-  a = acot(a, A_MIN, A_MAX); lm = acot(lm, LM0, LM1);
-  const xc = G.X(a), yc = G.Y(Math.pow(10, lm));
-  let mejor = null, dmin = 13;
-  for (const c of CASOS) { const d = Math.hypot(G.X(c.a) - xc, G.Y(c.m) - yc); if (d < dmin) { dmin = d; mejor = c; } }
-  if (mejor) fijar(mejor.a, mejor.m, "mapa");
-  else fijar(redA(a), redM(Math.pow(10, lm)), "mapa");
-}
-$("fig").addEventListener("pointerdown", ev => {
-  if (!G.X || (ev.pointerType === "mouse" && ev.button !== 0)) return;
-  const [x, y] = enMapa(ev), M = G.M;
-  if (x < M.l - 14 || x > M.l + G.pw + 14 || y < M.t - 14 || y > M.t + G.ph + 14) return;
-  arr.activo = true; arr.id = ev.pointerId;
-  try { $("fig").setPointerCapture(ev.pointerId); } catch (err) { /* sin captura */ }
-  ev.preventDefault();
-  moverA(x, y);
-});
-window.addEventListener("pointermove", ev => {
-  if (!arr.activo || ev.pointerId !== arr.id) return;
-  arr.pt = enMapa(ev);
-  if (!arr.raf) arr.raf = requestAnimationFrame(() => { arr.raf = 0; if (arr.activo && arr.pt) moverA(arr.pt[0], arr.pt[1]); });
-});
-function soltar(ev, mover) {
-  if (!arr.activo || ev.pointerId !== arr.id) return;
-  if (arr.raf) { cancelAnimationFrame(arr.raf); arr.raf = 0; }
-  if (mover) { const p = enMapa(ev); moverA(p[0], p[1]); }
-  arr.activo = false; arr.id = null; $("globo").hidden = true;
-}
-window.addEventListener("pointerup", ev => soltar(ev, true));
-window.addEventListener("pointercancel", ev => soltar(ev, false));
-
-// botones − y +: un toque da un paso; mantenidos, avanzan solos
-const ESCALERA = [];
-for (let e = -2; e <= 2; e++) for (const k of [1, 1.2, 1.5, 2, 2.5, 3, 4, 5, 6, 8]) { const v = +(k * Math.pow(10, e)).toPrecision(3); if (v >= M_MIN - 1e-12 && v <= M_MAX + 1e-12) ESCALERA.push(v); }
-function paso(p, d) {
-  if (p === "a") fijar(+(Math.round((E.a + 0.01 * d) * 1000) / 1000).toFixed(3), E.m, "boton");
-  else {
-    let v = E.m;
-    if (d > 0) { for (const x of ESCALERA) if (x > E.m * (1 + 1e-9)) { v = x; break; } }
-    else { for (let k = ESCALERA.length - 1; k >= 0; k--) if (ESCALERA[k] < E.m * (1 - 1e-9)) { v = ESCALERA[k]; break; } }
-    fijar(E.a, v, "boton");
-  }
-}
-for (const b of document.querySelectorAll(".pm")) {
-  let t = 0, porPuntero = false;
-  const parar = () => { clearTimeout(t); t = 0; };
-  const repetir = () => { paso(b.dataset.p, +b.dataset.d); t = setTimeout(repetir, 85); };
-  b.addEventListener("pointerdown", ev => {
-    if (ev.pointerType === "mouse" && ev.button !== 0) return;
-    ev.preventDefault(); porPuntero = true; parar();
-    paso(b.dataset.p, +b.dataset.d);
-    t = setTimeout(repetir, 450);
-  });
-  for (const tipo of ["pointerup", "pointerleave", "pointercancel"]) b.addEventListener(tipo, parar);
-  b.addEventListener("contextmenu", ev => ev.preventDefault());
-  b.addEventListener("click", ev => { if (porPuntero) { porPuntero = false; return; } paso(b.dataset.p, +b.dataset.d); });
-}
-
-// valores escritos
-for (const [id, p] of [["v-alfa", "a"], ["v-mu", "m"]]) {
-  const inp = $(id);
-  // al tocar el campo se selecciona el valor, salvo que ya se haya empezado a escribir
-  inp.addEventListener("focus", () => { const v0 = inp.value; setTimeout(() => { if (document.activeElement === inp && inp.value === v0) inp.select(); }, 0); });
-  inp.addEventListener("keydown", ev => { if (ev.key === "Enter") inp.blur(); });
-  inp.addEventListener("blur", () => {
-    const v = leer(inp.value), lo = p === "a" ? A_MIN : M_MIN, hi = p === "a" ? A_MAX : M_MAX;
-    if (isFinite(v) && v >= lo - 1e-9 && v <= hi + 1e-9) {
-      if (p === "a") fijar(redA(acot(v, lo, hi)), E.m, "texto"); else fijar(E.a, redM(acot(v, lo, hi)), "texto");
-    } else if (inp.value.trim() !== "") {
-      aviso(p === "a" ? "α va de 0,05 a 1" : "μ va de 0,05 a 100");
+  function amplitudes(tau) {
+    for (let j = 1; j <= N; j++) {
+      const k = j * Math.PI;
+      if (tau <= 1) eta[j - 1] = c[j - 1] * (Math.sin(k * tau) - ALFA * Math.sin(k * tau / ALFA));
+      else {
+        const om = k / ALFA, s = tau - 1;
+        eta[j - 1] = e1[j - 1] * Math.cos(om * s) + de1[j - 1] / om * Math.sin(om * s);
+      }
     }
-    inp.value = p === "a" ? fmtA(E.a) : fmtM(E.m);
+  }
+  const w = new Float64Array(P);
+  function forma(tau) {
+    amplitudes(tau);
+    w.fill(0);
+    for (let j = 0; j < N; j++) {
+      const a = eta[j], o = j * P;
+      for (let i = 0; i < P; i++) w[i] += a * senos[o + i];
+    }
+  }
+  function bajoLaCarga(tau) {           // usa las amplitudes ya calculadas para este tau
+    let s = 0;
+    for (let j = 1; j <= N; j++) s += eta[j - 1] * sigma[j - 1] * Math.sin(j * Math.PI * tau);
+    return s;
+  }
+
+  let wMax = 0;
+  for (let t = 0; t <= T_LIBRE + 0.5; t += 0.005) {
+    forma(t);
+    for (let i = 0; i < P; i++) wMax = Math.max(wMax, Math.abs(w[i]));
+  }
+  const NT = 401, tray = new Float64Array(NT);
+  for (let m = 0; m < NT; m++) { const t = m / (NT - 1); amplitudes(t); tray[m] = bajoLaCarga(t); }
+
+  const col = {};
+  function leerColores() {
+    const cs = getComputedStyle(document.documentElement);
+    for (const k of ["tinta", "tinta-2", "tenue", "cuerda", "particula"]) col[k] = cs.getPropertyValue("--" + k).trim();
+  }
+  let W = 0, H = 0;
+  function medir() {
+    const r = lienzo.getBoundingClientRect(), dpr = Math.min(window.devicePixelRatio || 1, 2);
+    W = r.width; H = r.height;
+    lienzo.width = Math.max(1, Math.round(W * dpr));
+    lienzo.height = Math.max(1, Math.round(H * dpr));
+    ctx.setTransform(dpr, 0, 0, dpr, 0, 0);
+  }
+  const FUENTE = '"STIX Two Text", Georgia, serif';
+
+  function dibujar(tau, op) {
+    const m = Math.max(12, Math.min(26, W * 0.035));
+    const x0 = m, x1 = W - m, L = x1 - x0, y0 = H / 2, esc = (H / 2 - 16) / wMax;
+    ctx.clearRect(0, 0, W, H);
+
+    ctx.lineWidth = 1;
+    ctx.strokeStyle = col.tenue;
+    ctx.setLineDash([2, 5]);
+    ctx.beginPath(); ctx.moveTo(x0, y0); ctx.lineTo(x1, y0); ctx.stroke();
+    ctx.setLineDash([]);
+
+    ctx.fillStyle = col["tinta-2"];
+    for (const x of [x0, x1]) {
+      ctx.beginPath(); ctx.moveTo(x, y0); ctx.lineTo(x - 6, y0 + 10); ctx.lineTo(x + 6, y0 + 10); ctx.closePath(); ctx.fill();
+    }
+
+    const tc = Math.min(tau, 1), mFin = Math.round(tc * (NT - 1));
+    if (mFin > 0) {
+      ctx.globalAlpha = 0.45 * op;
+      ctx.strokeStyle = col.particula;
+      ctx.lineWidth = 1.2;
+      ctx.beginPath();
+      for (let k = 0; k <= mFin; k++) {
+        const x = x0 + L * k / (NT - 1), y = y0 + esc * tray[k];
+        if (k) ctx.lineTo(x, y); else ctx.moveTo(x, y);
+      }
+      ctx.stroke();
+      ctx.globalAlpha = 1;
+    }
+
+    forma(tau);
+    ctx.strokeStyle = col.cuerda;
+    ctx.lineWidth = 2.2;
+    ctx.lineJoin = "round";
+    ctx.beginPath();
+    for (let i = 0; i < P; i++) {
+      const x = x0 + L * xi[i], y = y0 + esc * w[i] * op;
+      if (i) ctx.lineTo(x, y); else ctx.moveTo(x, y);
+    }
+    ctx.stroke();
+
+    let px = null, py = y0, pa = 1;
+    if (tau <= 1) { px = x0 + L * tau; py = y0 + esc * bajoLaCarga(tau) * op; }
+    else if (tau < 1.05) { px = x1 + (tau - 1) * (m / 0.05); pa = 1 - (tau - 1) / 0.05; }
+    if (px !== null) {
+      ctx.globalAlpha = pa;
+      ctx.fillStyle = col.particula;
+      ctx.beginPath(); ctx.arc(px, py, 6, 0, 2 * Math.PI); ctx.fill();
+      ctx.globalAlpha = 1;
+    }
+
+    const texto = " = " + tau.toFixed(2).replace(".", ",");
+    ctx.font = "15px " + FUENTE;
+    const ancho = ctx.measureText(texto).width;
+    ctx.textBaseline = "alphabetic";
+    ctx.textAlign = "left";
+    ctx.fillStyle = col["tinta-2"];
+    ctx.fillText(texto, x1 - ancho, 18);
+    ctx.font = "italic 15px " + FUENTE;
+    ctx.textAlign = "right";
+    ctx.fillText("τ", x1 - ancho, 18);
+  }
+
+  const reducido = window.matchMedia("(prefers-reduced-motion: reduce)");
+  let corriendo = !reducido.matches;
+  let fase = corriendo ? 0 : TAU_QUIETO / RITMO;
+  let enVista = true, ultimo = null, raf = 0;
+
+  function estado(s) {
+    if (s < DUR) return [s * RITMO, 1];
+    if (s < DUR + FUNDIDO) {
+      const u = (s - DUR) / FUNDIDO;
+      return [s * RITMO, 1 - u * u * (3 - 2 * u)];
+    }
+    return [0, 1];
+  }
+  function pintar() { const [t, op] = estado(fase); dibujar(t, op); }
+  function cuadro(ahora) {
+    raf = 0;
+    if (ultimo !== null) fase = (fase + Math.min(0.1, (ahora - ultimo) / 1000)) % CICLO;
+    ultimo = ahora;
+    pintar();
+    if (corriendo && enVista && !document.hidden) raf = requestAnimationFrame(cuadro);
+    else ultimo = null;
+  }
+  function seguir() {
+    if (!raf && corriendo && enVista && !document.hidden) { ultimo = null; raf = requestAnimationFrame(cuadro); }
+  }
+  function rotular() {
+    boton.textContent = corriendo ? "Pausar" : (reducido.matches && fase === TAU_QUIETO / RITMO ? "Animar" : "Reanudar");
+  }
+  boton.addEventListener("click", () => {
+    corriendo = !corriendo;
+    rotular();
+    if (corriendo) seguir();
   });
-}
 
-// barras
-$("r-alfa").addEventListener("input", e => fijar(redA(+e.target.value), E.m, "ra"));
-$("r-mu").addEventListener("input", e => fijar(E.a, redM(Math.pow(10, +e.target.value)), "rm"));
+  leerColores();
+  medir();
+  pintar();
+  rotular();
+  seguir();
 
-// casos de ejemplo
-const corto = v => num(v, 3).replace(/0+$/, "").replace(/,$/, "");
-$("casos").innerHTML = CASOS.map(c => `<button type="button" data-a="${c.a}" data-m="${c.m}"><b>${c.t}</b><span>α ${corto(c.a)} · μ ${corto(c.m)}</span></button>`).join("");
-$("lista-casos").innerHTML = CASOS.map(c => `<li><b>${c.t}</b> (α = ${corto(c.a)}; μ = ${corto(c.m)}): ${c.d}</li>`).join("");
-$("casos").addEventListener("click", ev => { const b = ev.target.closest("button"); if (b) fijar(+b.dataset.a, +b.dataset.m, "caso"); });
-
-// qué colorea el mapa
-function marcarSelector() { for (const b of $("selector").children) b.setAttribute("aria-pressed", String(b.dataset.v === E.mapa)); }
-$("selector").addEventListener("click", ev => {
-  const b = ev.target.closest("button"); if (!b || b.dataset.v === E.mapa) return;
-  E.mapa = b.dataset.v; marcarSelector(); escala(); dibujarMapa(); guardar();
-});
-
-// hoja de información; la flecha atrás de Android la cierra
-const hoja = $("hoja");
-$("b-info").addEventListener("click", () => { hoja.hidden = false; $("b-cerrar").focus(); });
-$("b-cerrar").addEventListener("click", () => { hoja.hidden = true; $("b-info").focus(); });
-hoja.addEventListener("click", ev => { if (ev.target === hoja) hoja.hidden = true; });
-window.atras = () => { if (!hoja.hidden) { hoja.hidden = true; return true; } return false; };
-document.addEventListener("keydown", ev => { if (ev.key === "Escape" && !hoja.hidden) hoja.hidden = true; });
-
-// tema claro u oscuro: la app de Android fija data-theme; en un navegador sigue al sistema
-function cambioTema() { for (const k in cacheImg) delete cacheImg[k]; escala(); dibujarMapa(); }
-new MutationObserver(cambioTema).observe(document.documentElement, { attributes: true, attributeFilter: ["data-theme"] });
-if (window.matchMedia) { const mq = window.matchMedia("(prefers-color-scheme: dark)"); if (mq.addEventListener) mq.addEventListener("change", cambioTema); }
-
-const obs = new ResizeObserver(() => dibujarMapa());
-obs.observe($("fig"));
-const obsCuerda = new ResizeObserver(() => fondoCuerda());
-obsCuerda.observe($("fig-cuerda"));
-marcarSelector(); escala(); marcarVista(); iconoPlay();
-fijar(E.a, E.m, "inicio");
-}
+  new ResizeObserver(() => { medir(); pintar(); }).observe(lienzo);
+  window.matchMedia("(prefers-color-scheme: dark)").addEventListener("change", () => { leerColores(); pintar(); });
+  if (document.fonts && document.fonts.ready) document.fonts.ready.then(pintar);
+  new IntersectionObserver(e => { enVista = e[0].isIntersecting; seguir(); }).observe(lienzo);
+  document.addEventListener("visibilitychange", seguir);
+})();
 </script>
 </body>
 </html>
